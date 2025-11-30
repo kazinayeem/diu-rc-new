@@ -1,15 +1,11 @@
+"use client";
+
 import React from "react";
+import { useGetResearchPapersQuery } from "@/lib/api/api";
 
-async function getPapers() {
- 
-  const res = await fetch(`/api/research-papers`);
-
-  const data = await res.json();
-  return data?.data || [];
-}
-
-export default async function ResearchPublicationsPage() {
-  const papers = await getPapers();
+export default function ResearchPublicationsPage() {
+  const { data, isLoading } = useGetResearchPapersQuery({});
+  const papers = data?.data || [];
 
   return (
     <div className="min-h-screen py-16 px-4 md:px-8 bg-transparent">

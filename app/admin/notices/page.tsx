@@ -5,36 +5,29 @@ import DataTable from '@/components/admin/DataTable';
 import { Button } from '@/components/ui/Button';
 import { Plus } from 'lucide-react';
 
+import { useGetNoticesQuery, useDeleteNoticeMutation } from '@/lib/api/api';
+
 export default function NoticesPage() {
   const [notices, setNotices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchNotices();
-  }, []);
+  const { data, isFetching } = useGetNoticesQuery({ query: 'limit=50' });
+  const [deleteNotice] = useDeleteNoticeMutation();
 
-  const fetchNotices = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch('/api/notices?limit=50');
-      const data = await res.json();
-      if (data.success) {
-        setNotices(data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching notices:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    setLoading(isFetching);
+    if (data?.success) setNotices(data.data);
+    else setNotices([]);
+  }, [data, isFetching]);
 
   const handleDelete = async (notice: any) => {
     if (!confirm(`Are you sure you want to delete "${notice.title}"?`)) return;
 
     try {
-      const res = await fetch(`/api/notices/${notice._id}`, { method: 'DELETE' });
-      if (res.ok) {
-        fetchNotices();
+      try {
+        await deleteNotice(notice._id).unwrap();
+      } catch (err) {
+        console.error(err);
       }
     } catch (error) {
       console.error('Error deleting notice:', error);

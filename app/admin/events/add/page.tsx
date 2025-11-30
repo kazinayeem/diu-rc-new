@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/Button";
+import { useCreateEventMutation } from "@/lib/api/api";
 import { useRouter } from "next/navigation";
 
 // Load ReactQuill (client only)
@@ -37,6 +38,8 @@ export default function AddEventPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const [createEvent] = useCreateEventMutation();
+
   // SUBMIT FORM
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,18 +61,11 @@ export default function AddEventPage() {
         eventLink: formData.mode === "online" ? formData.eventLink : undefined,
       };
 
-      const res = await fetch("/api/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(submitData),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
+      try {
+        await createEvent(submitData).unwrap();
         router.push("/admin/events");
-      } else {
-        setError(data.error || "Something went wrong");
+      } catch (err: any) {
+        setError(err?.data?.message || err?.message || "Something went wrong");
       }
     } catch {
       setError("Something went wrong");

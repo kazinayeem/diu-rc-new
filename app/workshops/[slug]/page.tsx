@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
+import { useGetEventsQuery, useGetEventQuery } from "@/lib/api/api";
 import AnimatedWorkshopHero from "@/components/public/AnimatedWorkshopHero";
 import AnimatedWorkshopContent from "@/components/public/AnimatedWorkshopContent";
 import AnimatedWorkshopRegistration from "@/components/public/AnimatedWorkshopRegistration";
@@ -29,13 +30,16 @@ export default function WorkshopDetailPage({
   const [workshop, setWorkshop] = useState<Workshop | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const { data: listData, isFetching: fetchingList } = useGetEventsQuery({ query: `slug=${params.slug}` });
+
+  const foundId = listData?.success ? listData.data?.[0]?._id : "";
+  const { data: detailData, isFetching: fetchingDetail } = useGetEventQuery(foundId || "");
+
   const getWorkshop = useCallback(async () => {
     try {
      
-      const res = await fetch(`/api/events?slug=${params.slug}`);
-
-      const data = await res.json();
-      const found = data?.data?.[0];
+      // prefer RTK Query data when available
+      const found = listData?.success ? listData.data?.[0] : undefined;
 
       if (!found) {
         setWorkshop(null);
@@ -43,26 +47,21 @@ export default function WorkshopDetailPage({
         return;
       }
 
-      const detailRes = await fetch(`/api/events/${found._id}`);
-
-      if (detailRes.ok) {
-        const detailData = await detailRes.json();
-        setWorkshop(detailData.data);
-      } else {
-        setWorkshop(found);
-      }
+      if (detailData?.success) setWorkshop(detailData.data);
+      else setWorkshop(found);
     } catch (error) {
       console.error("Error fetching workshop:", error);
       setWorkshop(null);
     }
 
     setLoading(false);
-  }, [params.slug]); // <-- dependency
+  }, [params.slug, listData, detailData]); // <-- dependency
 
   // --- FIX: add "getWorkshop" ---
   useEffect(() => {
+    setLoading(fetchingList || fetchingDetail);
     getWorkshop();
-  }, [getWorkshop]);
+  }, [getWorkshop, fetchingList, fetchingDetail]);
 
   // === Loading State ===
   if (loading) {

@@ -1,27 +1,17 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import EventCard from "@/components/public/EventCard";
+import { useGetEventsQuery } from "@/lib/api/api";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 
 export default function LatestEvents() {
-  const [events, setEvents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  // use RTK Query to load latest events
+  const { data, isLoading } = useGetEventsQuery({ query: "limit=3&sort=latest" });
+  const events = data?.data || [];
 
-  useEffect(() => {
-    async function load() {
-      setLoading(true);
-     
-      const res = await fetch(`/api/events?limit=3&sort=latest`);
-      const data = await res.json();
-      setEvents(data.data || []);
-      setLoading(false);
-    }
-    load();
-  }, []);
-
-  if (loading)
+  if (isLoading)
     return (
       <div className="text-center text-white/60 py-10">Loading Events...</div>
     );
@@ -40,7 +30,7 @@ export default function LatestEvents() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {events.map((event) => (
+          {events.map((event: any) => (
             <EventCard key={event._id} event={event} />
           ))}
         </div>

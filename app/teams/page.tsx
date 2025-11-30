@@ -6,14 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 // UI Components
 import MemberCard from "@/components/public/MemberCard";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
-// ---- Fetch Members ----
-async function fetchTeamMembers() {
-  const res = await fetch(`${baseUrl}/api/members?limit=100`);
-  const data = await res.json();
-  return data.data || [];
-}
+import { useGetMembersQuery } from "@/lib/api/api";
 
 export default function TeamPage() {
   const [members, setMembers] = useState<any[]>([]);
@@ -25,16 +18,12 @@ export default function TeamPage() {
   const ITEMS = 12;
   const [page, setPage] = useState(1);
 
-  // Load Members
+  const { data, isFetching } = useGetMembersQuery({ query: "limit=100" });
+
   useEffect(() => {
-    async function load() {
-      setLoading(true);
-      const data = await fetchTeamMembers();
-      setMembers(data);
-      setLoading(false);
-    }
-    load();
-  }, []);
+    setLoading(isFetching);
+    if (data?.success) setMembers(data.data || []);
+  }, [data, isFetching]);
 
   // SEARCH FILTER
   const filtered = useMemo(

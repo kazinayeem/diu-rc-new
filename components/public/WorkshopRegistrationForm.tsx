@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { CheckCircle, AlertCircle } from "lucide-react";
+import { useGetEventQuery, useCreateWorkshopRegistrationMutation } from "@/lib/api/api";
 
 interface WorkshopRegistrationFormProps {
   workshopId: string;
@@ -33,57 +34,41 @@ export default function WorkshopRegistrationForm({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  // Fetch workshop details
+  // Fetch workshop details (RTK Query)
+  const { data: eventData, isFetching: loadingEvent } = useGetEventQuery(workshopId);
   useEffect(() => {
-    async function fetchWorkshop() {
-      try {
-        setLoadingWorkshop(true);
-        const res = await fetch(`/api/events/${workshopId}`);
-        const data = await res.json();
-        if (data.success) setWorkshop(data.data);
-      } catch (err) {
-        console.error("Error fetching workshop:", err);
-      }
-      setLoadingWorkshop(false);
-    }
-    if (workshopId) fetchWorkshop();
-  }, [workshopId]);
+    setLoadingWorkshop(loadingEvent);
+    if (eventData?.success) setWorkshop(eventData.data);
+  }, [eventData, loadingEvent]);
 
   // Handle form submission
+  const [createWorkshopRegistration] = useCreateWorkshopRegistrationMutation();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const res = await fetch(`/api/workshops/${workshopId}/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      await createWorkshopRegistration({ workshopId, body: formData }).unwrap();
+      setSuccess(true);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        studentId: "",
+        department: "",
+        batch: "",
+        message: "",
+        paymentMethod: "bkash",
+        paymentNumber: "",
+        transactionId: "",
       });
-
-      const data = await res.json();
-      if (data.success) {
-        setSuccess(true);
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          studentId: "",
-          department: "",
-          batch: "",
-          message: "",
-          paymentMethod: "bkash",
-          paymentNumber: "",
-          transactionId: "",
-        });
-      } else {
-        setError(data.error || "Registration failed. Please try again.");
-      }
-    } catch {
-      setError("Something went wrong. Try again.");
+    } catch (err: any) {
+      setError(err?.data?.message || err?.message || "Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   // Success Screen

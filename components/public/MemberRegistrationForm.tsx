@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { CheckCircle, AlertCircle } from "lucide-react";
+import { useCreateMemberRegistrationMutation } from "@/lib/api/api";
 
 /* ============================================
    Types
@@ -85,48 +86,38 @@ export default function MemberRegistrationForm() {
      Submit Handler
   ============================================ */
 
+  const [createMemberRegistration] = useCreateMemberRegistrationMutation();
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     try {
-      const res = await fetch("/api/member-registrations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      await createMemberRegistration(formData).unwrap();
+      setSuccess(true);
+
+      // reset form
+      setFormData({
+        name: "",
+        studentId: "",
+        email: "",
+        phone: "",
+        department: "",
+        batch: "",
+        currentYear: "",
+        cgpa: "",
+        previousExperience: "",
+        whyJoin: "",
+        skills: [],
+        portfolio: "",
+        linkedin: "",
+        github: "",
+        paymentNumber: "0194312421",
+        paymentMethod: "",
+        transactionId: "",
       });
-
-      const data = await res.json();
-
-      if (data.success) {
-        setSuccess(true);
-
-        // reset form
-        setFormData({
-          name: "",
-          studentId: "",
-          email: "",
-          phone: "",
-          department: "",
-          batch: "",
-          currentYear: "",
-          cgpa: "",
-          previousExperience: "",
-          whyJoin: "",
-          skills: [],
-          portfolio: "",
-          linkedin: "",
-          github: "",
-          paymentNumber: "0194312421",
-          paymentMethod: "",
-          transactionId: "",
-        });
-      } else {
-        setError(data.error || "Registration failed");
-      }
-    } catch {
-      setError("Something went wrong.");
+    } catch (err: any) {
+      setError(err?.data?.message || err?.message || "Registration failed");
     } finally {
       setLoading(false);
     }

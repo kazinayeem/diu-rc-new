@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { X } from "lucide-react";
+import { useCreateMemberMutation, useUpdateMemberMutation } from "@/lib/api/api";
 
 interface MemberFormProps {
   member?: any;
@@ -46,6 +47,9 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
     }
   }, [member]);
 
+  const [createMember] = useCreateMemberMutation();
+  const [updateMember] = useUpdateMemberMutation();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -55,18 +59,15 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
       const url = member ? `/api/members/${member._id}` : "/api/members";
       const method = member ? "PUT" : "POST";
 
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
+      try {
+        if (member) {
+          await updateMember({ id: member._id, body: formData }).unwrap();
+        } else {
+          await createMember(formData).unwrap();
+        }
         onClose();
-      } else {
-        setError(data.error || "An error occurred");
+      } catch (err: any) {
+        setError(err?.data?.message || err?.message || "An error occurred");
       }
     } catch (err) {
       setError("An error occurred. Please try again.");

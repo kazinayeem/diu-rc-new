@@ -219,6 +219,64 @@ diu-rc/
    ```
 
 4. **Run the development server**
+  ## 🔁 State management and API (Redux + RTK Query)
+
+  This project now uses Redux Toolkit and RTK Query for client-side API calls and caching.
+
+  - Store configuration: `lib/store.ts` — the RTK Query API reducer and middleware are wired into the store and provided at the top level via `app/StoreProvider.tsx` (which is added to `app/layout.tsx`).
+  - Central API: `lib/api/api.ts` — a single RTK Query `api` with endpoints defined for Members, Events, Seminars, Notices, Posts, Projects, Research Papers, Member Registrations, Workshops, Uploads and Admin stats.
+
+  How to use the generated hooks in client components:
+
+  1. Import the desired hook exported from `@/lib/api/api`. Hooks follow the naming convention:
+     - Queries: `useGetMembersQuery`, `useGetEventsQuery`, etc.
+     - Mutations: `useCreateMemberMutation`, `useUpdateEventMutation`, `useDeletePostMutation`, etc.
+
+  2. Call the hook inside a client component:
+
+  ```tsx
+  import { useGetEventsQuery } from "@/lib/api/api";
+
+  function LatestEvents() {
+    const { data, isLoading } = useGetEventsQuery({ query: "limit=3&sort=latest" });
+    const events = data?.data || [];
+
+    if (isLoading) return <div>Loading…</div>;
+    return <div>{events.map(e => <div key={e._id}>{e.title}</div>)}</div>;
+  }
+  ```
+
+  Mutation example (in a form component):
+
+  ```tsx
+  import { useCreateEventMutation } from "@/lib/api/api";
+
+  function EventForm() {
+    const [createEvent, { isLoading }] = useCreateEventMutation();
+
+    async function submit(data) {
+      await createEvent(data).unwrap();
+    }
+  }
+  ```
+
+  If a mutation invalidates a tag (e.g., `Events`), any active queries that provide the same tag will automatically refetch.
+
+  Migration notes:
+  - I converted the main client-side API usage (admin forms/pages and public components) to use RTK Query hooks. Server-side data fetching (Next.js server components) still uses fetch — that is correct and appropriate for server-rendered data.
+  - If you want more endpoints typed, replace the HOF `any` types in `lib/api/api.ts` with your domain models in `lib/models/*`.
+
+  If you'd like, I can continue converting every single page to use RTK Query (there are some server-only fetches that remain intentionally server-side), add TypeScript models and runtime tests, or extract per-resource API files — tell me which next step you want.
+
+  Note: I converted many client-side pages and admin screens to use the central RTK Query API and Redux. Files updated to use RTK Query/hooks include:
+
+  - Public pages: `app/publications/page.tsx`, `app/projects/page.tsx`, `app/members/page.tsx`, `app/events/page.tsx`, `app/workshops/page.tsx`, `app/teams/page.tsx`, `components/public/LatestEvents.tsx`, `components/public/LatestWorkshops.tsx`.
+  - Admin pages & forms: `app/admin/events/*`, `app/admin/members/*`, `app/admin/projects/*`, `app/admin/research/*`, `app/admin/seminars/*`, `app/admin/notices/*`, `app/admin/posts/*`, `app/admin/member-registrations/*`, `app/admin/workshops/*`.
+
+  Client components now use RTK Query hooks (e.g. `useGetEventsQuery`, `useCreateEventMutation`) — any mutations invalidate tags and cause automatic refetches.
+
+  Remaining server-side fetches (kept intentionally server-rendered): `app/page.tsx`, `app/seminars/page.tsx`, `app/research/page.tsx`. These are server components and fetching on the server is correct — if you'd like them converted to client + RTK Query instead, I can do that next.
+
    ```bash
    npm run dev
    # or

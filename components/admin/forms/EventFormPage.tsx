@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { useGetEventQuery, useCreateEventMutation, useUpdateEventMutation } from "@/lib/api/api";
 
 // ReactQuill (Rich Editor)
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -37,49 +38,45 @@ export default function EventFormPage({ eventId }: { eventId?: string }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Fetch event if editing
+  // Fetch event if editing (RTK Query)
+  const { data: eventData, isFetching: loadingEvent } = useGetEventQuery(eventId || "");
   useEffect(() => {
     if (!eventId) return;
+    if (eventData?.success) {
+      const e = eventData.data;
 
-    async function loadEvent() {
-      const res = await fetch(`/api/events/${eventId}`);
-      const data = await res.json();
-
-      if (data.success) {
-        const e = data.data;
-
-        setFormData({
-          title: e.title,
-          description: e.description,
-          content: e.content,
-          eventDate: e.eventDate ? e.eventDate.split("T")[0] : "",
-          eventTime: e.eventTime || "",
-          location: e.location || "",
-          mode: e.mode || "offline",
-          eventLink: e.eventLink || "",
-          image: e.image || "",
-          registrationLink: e.registrationLink || "",
-          type: e.type || "event",
-          status: e.status || "upcoming",
-          featured: e.featured || false,
-          registrationLimit: e.registrationLimit?.toString() || "",
-          registrationOpen: e.registrationOpen ?? true,
-          isPaid: e.isPaid || false,
-          registrationFee: e.registrationFee?.toString() || "",
-          paymentMethod: e.paymentMethod || "both",
-          paymentNumber: e.paymentNumber || "",
-        });
-      }
+      setFormData({
+        title: e.title,
+        description: e.description,
+        content: e.content,
+        eventDate: e.eventDate ? e.eventDate.split("T")[0] : "",
+        eventTime: e.eventTime || "",
+        location: e.location || "",
+        mode: e.mode || "offline",
+        eventLink: e.eventLink || "",
+        image: e.image || "",
+        registrationLink: e.registrationLink || "",
+        type: e.type || "event",
+        status: e.status || "upcoming",
+        featured: e.featured || false,
+        registrationLimit: e.registrationLimit?.toString() || "",
+        registrationOpen: e.registrationOpen ?? true,
+        isPaid: e.isPaid || false,
+        registrationFee: e.registrationFee?.toString() || "",
+        paymentMethod: e.paymentMethod || "both",
+        paymentNumber: e.paymentNumber || "",
+      });
     }
-
-    loadEvent();
-  }, [eventId]);
+  }, [eventId, eventData]);
 
   // Submit handler
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    const [createEvent] = useCreateEventMutation();
+    const [updateEvent] = useUpdateEventMutation();
 
     try {
       const method = eventId ? "PUT" : "POST";
@@ -97,19 +94,12 @@ export default function EventFormPage({ eventId }: { eventId?: string }) {
         eventLink: formData.mode === "online" ? formData.eventLink : undefined,
       };
 
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(submitData),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        router.push("/admin/events");
+      if (eventId) {
+        await updateEvent({ id: eventId, body: submitData }).unwrap();
       } else {
-        setError(data.error || "Error occurred");
+        await createEvent(submitData).unwrap();
       }
+      router.push("/admin/events");
     } catch (err) {
       setError("Something went wrong.");
     }

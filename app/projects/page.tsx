@@ -1,14 +1,11 @@
+"use client";
+
 import React from "react";
+import { useGetProjectsQuery } from "@/lib/api/api";
 
-async function getProjects() {
- 
-  const res = await fetch(`/api/projects`);
-  const data = await res.json();
-  return data?.data || [];
-}
-
-export default async function ProjectsPage() {
-  const projects = await getProjects();
+export default function ProjectsPage() {
+  const { data, isLoading } = useGetProjectsQuery({});
+  const projects = data?.data || [];
 
   return (
     <div className="min-h-screen px-6 py-16 bg-transparent text-white">

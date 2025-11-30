@@ -5,37 +5,25 @@ import DataTable from '@/components/admin/DataTable';
 import { Button } from '@/components/ui/Button';
 import { Plus } from 'lucide-react';
 
+import { useGetPostsQuery, useDeletePostMutation } from '@/lib/api/api';
+
 export default function PostsPage() {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
+  const { data, isFetching } = useGetPostsQuery({ query: 'limit=50' });
+  const [deletePost] = useDeletePostMutation();
 
-  const fetchPosts = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch('/api/posts?limit=50');
-      const data = await res.json();
-      if (data.success) {
-        setPosts(data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    setLoading(isFetching);
+    if (data?.success) setPosts(data.data);
+  }, [data, isFetching]);
 
   const handleDelete = async (post: any) => {
     if (!confirm(`Are you sure you want to delete "${post.title}"?`)) return;
 
     try {
-      const res = await fetch(`/api/posts/${post._id}`, { method: 'DELETE' });
-      if (res.ok) {
-        fetchPosts();
-      }
+      await deletePost(post._id).unwrap();
     } catch (error) {
       console.error('Error deleting post:', error);
     }

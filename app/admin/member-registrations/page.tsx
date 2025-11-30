@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import DataTable from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/Button";
 import { Eye, Trash2 } from "lucide-react";
+import { useGetMemberRegistrationsQuery, useUpdateMemberRegistrationMutation, useDeleteMemberRegistrationMutation } from "@/lib/api/api";
 
 export default function MemberRegistrationsPage() {
   const [registrations, setRegistrations] = useState<any[]>([]);
@@ -17,47 +18,34 @@ export default function MemberRegistrationsPage() {
 
   const [selectedRegistration, setSelectedRegistration] = useState<any>(null);
 
-  const fetchRegistrations = React.useCallback(async () => {
-    try {
-      setLoading(true);
+  const queryStr = useMemo(() =>
+    new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+      ...(selectedStatus ? { status: selectedStatus } : {}),
+      ...(search ? { search } : {}),
+    }).toString(),
+  [page, limit, selectedStatus, search]);
 
-      const query = new URLSearchParams({
-        page: String(page),
-        limit: String(limit),
-        ...(selectedStatus ? { status: selectedStatus } : {}),
-        ...(search ? { search } : {}),
-      }).toString();
+  const { data, isFetching } = useGetMemberRegistrationsQuery({ query: queryStr });
+  const [updateMemberRegistration] = useUpdateMemberRegistrationMutation();
+  const [deleteMemberRegistration] = useDeleteMemberRegistrationMutation();
 
-      const res = await fetch(`/api/member-registrations?${query}`);
-      const data = await res.json();
-
-      if (data.success) {
-        setRegistrations(data.data);
-        setTotalPages(data.pagination.pages);
-      }
-    } catch (error) {
-      console.error("Error fetching registrations:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, limit, selectedStatus, search]);
   useEffect(() => {
-    fetchRegistrations();
-  }, [fetchRegistrations]);
+    setLoading(isFetching);
+    if (data?.success) {
+      setRegistrations(data.data);
+      setTotalPages(data.pagination.pages);
+    } else {
+      setRegistrations([]);
+      setTotalPages(1);
+    }
+  }, [data, isFetching]);
 
   const handleStatusUpdate = async (id: string, status: string) => {
     try {
-      const res = await fetch(`/api/member-registrations/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        fetchRegistrations();
-        setSelectedRegistration(null);
-      }
+      await updateMemberRegistration({ id, body: { status } }).unwrap();
+      setSelectedRegistration(null);
     } catch (error) {
       console.error("Error updating status:", error);
     }
@@ -65,17 +53,8 @@ export default function MemberRegistrationsPage() {
 
   const handlePaymentStatus = async (id: string, paymentStatus: string) => {
     try {
-      const res = await fetch(`/api/member-registrations/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentStatus }),
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        fetchRegistrations();
-        setSelectedRegistration(null);
-      }
+      await updateMemberRegistration({ id, body: { paymentStatus } }).unwrap();
+      setSelectedRegistration(null);
     } catch (err) {
       console.error("Payment update error:", err);
     }
@@ -85,12 +64,7 @@ export default function MemberRegistrationsPage() {
     if (!confirm("Are you sure you want to delete this registration?")) return;
 
     try {
-      const res = await fetch(`/api/member-registrations/${id}`, {
-        method: "DELETE",
-      });
-
-      const data = await res.json();
-      if (data.success) fetchRegistrations();
+      await deleteMemberRegistration(id).unwrap();
     } catch (error) {
       console.error("Error deleting:", error);
     }

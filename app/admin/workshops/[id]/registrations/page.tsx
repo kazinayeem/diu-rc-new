@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import DataTable from "@/components/admin/DataTable";
 import { Card, CardContent } from "@/components/ui/Card";
 import { CheckCircle, XCircle, Clock } from "lucide-react";
+import { useGetWorkshopRegistrationsQuery, useGetEventQuery, useUpdateWorkshopRegistrationMutation } from "@/lib/api/api";
 
 export default function WorkshopRegistrationsPage() {
   const params = useParams();
@@ -20,64 +21,21 @@ export default function WorkshopRegistrationsPage() {
     confirmed: 0,
   });
 
-  const fetchData = React.useCallback(async () => {
-    try {
-      setLoading(true);
+  const { data: regData, isFetching: fetchingRegs } = useGetWorkshopRegistrationsQuery(workshopId);
+  const { data: workshopData, isFetching: fetchingWorkshop } = useGetEventQuery(workshopId);
+  const [updateWorkshopRegistration] = useUpdateWorkshopRegistrationMutation();
 
-      const [regRes, workshopRes] = await Promise.all([
-        fetch(`/api/workshops/${workshopId}/registrations`),
-        fetch(`/api/events/${workshopId}`),
-      ]);
-
-      const regData = await regRes.json();
-      const workshopData = await workshopRes.json();
-
-      if (regData.success) {
-        setRegistrations(regData.data);
-        setStats({
-          total: regData.total,
-          pendingPayments: regData.pendingPayments,
-          confirmed: regData.data.filter((r: any) => r.status === "confirmed")
-            .length,
-        });
-      }
-
-      if (workshopData.success) {
-        setWorkshop(workshopData.data);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [workshopId]);
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  // Data comes from RTK Query; keep a loading flag and mirror data when it arrives
 
   const handlePaymentApproval = async (
     registrationId: string,
     status: "paid" | "rejected"
   ) => {
     try {
-      const res = await fetch(
-        `/api/workshops/registrations/${registrationId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ paymentStatus: status }),
-        }
-      );
-
-      const data = await res.json();
-      if (data.success) {
-        fetchData();
-      } else {
-        alert(data.error || "Failed to update payment status");
-      }
-    } catch (error) {
-      console.error("Error updating payment:", error);
-      alert("An error occurred");
+      await updateWorkshopRegistration({ id: registrationId, body: { paymentStatus: status } }).unwrap();
+    } catch (err: any) {
+      console.error("Error updating payment:", err);
+      alert(err?.data?.message || err?.message || "An error occurred");
     }
   };
 
@@ -173,6 +131,21 @@ export default function WorkshopRegistrationsPage() {
       ),
     },
   ];
+
+  useEffect(() => {
+    setLoading(fetchingRegs || fetchingWorkshop);
+    // update state when rtk data changes
+    if (regData?.success) {
+      setRegistrations(regData.data);
+      setStats({
+        total: regData.total,
+        pendingPayments: regData.pendingPayments,
+        confirmed: regData.data.filter((r: any) => r.status === "confirmed")
+          .length,
+      });
+    }
+    if (workshopData?.success) setWorkshop(workshopData.data);
+  }, [regData, workshopData, fetchingRegs, fetchingWorkshop]);
 
   return (
     <div className="text-white">

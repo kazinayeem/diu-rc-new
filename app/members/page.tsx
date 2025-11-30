@@ -4,13 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import MemberCard from "@/components/public/MemberCard";
 import { motion, AnimatePresence } from "framer-motion";
 
-async function fetchMembers() {
- 
-  const res = await fetch(`/api/member-registrations?limit=50`);
-
-  const data = await res.json();
-  return data.data || [];
-}
+import { useGetMemberRegistrationsQuery } from "@/lib/api/api";
 
 export default function MembersPage() {
   const [members, setMembers] = useState<any[]>([]);
@@ -22,15 +16,13 @@ export default function MembersPage() {
 
   const ITEMS_PER_PAGE = 12;
 
+  // use registrations data (public-facing members list is built from member registrations)
+  const { data, isLoading: isFetching } = useGetMemberRegistrationsQuery({ query: "limit=50" });
+
   useEffect(() => {
-    async function load() {
-      setLoading(true);
-      const data = await fetchMembers();
-      setMembers(data);
-      setLoading(false);
-    }
-    load();
-  }, []);
+    setLoading(isFetching);
+    if (data?.success) setMembers(data.data || []);
+  }, [data, isFetching]);
 
   // Filter search
   const filteredMembers = useMemo(() => {

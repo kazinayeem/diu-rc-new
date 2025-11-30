@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import DataTable from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/Button";
 import ProjectForm from "@/components/admin/forms/ProjectForm";
+import { useGetProjectsQuery, useDeleteProjectMutation } from "@/lib/api/api";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 
 export default function ProjectsPage() {
@@ -16,24 +17,25 @@ export default function ProjectsPage() {
   const limit = 10;
   const [pages, setPages] = useState(1);
 
-  const fetchProjects = useCallback(async () => {
-    setLoading(true);
+  const query = useMemo(() => `page=${page}&limit=${limit}`, [page]);
+  const { data, isFetching } = useGetProjectsQuery({ query });
+  const [deleteProject] = useDeleteProjectMutation();
 
-    const res = await fetch(`/api/projects?page=${page}&limit=${limit}`);
-    const data = await res.json();
-
-    setProjects(data.data);
-    setPages(data.pagination.pages);
-    setLoading(false);
-  }, [page]);
   useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+    setLoading(isFetching);
+    if (data?.success) {
+      setProjects(data.data);
+      setPages(data.pagination.pages);
+    }
+  }, [data, isFetching]);
 
-  const deleteProject = async (id: string) => {
+  const handleDeleteProject = async (id: string) => {
     if (!confirm("Delete this project?")) return;
-    await fetch(`/api/projects/${id}`, { method: "DELETE" });
-    fetchProjects();
+    try {
+      await deleteProject(id).unwrap();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const columns = [
@@ -92,7 +94,7 @@ export default function ProjectsPage() {
 
           <button
             className="text-red-400 hover:text-red-300"
-            onClick={() => deleteProject(row._id)}
+            onClick={() => handleDeleteProject(row._id)}
           >
             <Trash2 size={18} />
           </button>
@@ -127,7 +129,6 @@ export default function ProjectsPage() {
           onClose={() => {
             setShowForm(false);
             setEditing(null);
-            fetchProjects();
           }}
         />
       )}

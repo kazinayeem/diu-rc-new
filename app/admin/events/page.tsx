@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import DataTable from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/Button";
 import { Plus } from "lucide-react";
 import EventForm from "@/components/admin/forms/EventForm";
+import { useGetEventsQuery, useDeleteEventMutation } from "@/lib/api/api";
 import Link from "next/link";
 
 export default function EventsPage() {
@@ -21,25 +22,28 @@ export default function EventsPage() {
   const [status, setStatus] = useState("");
   const [type, setType] = useState("");
   const [featured, setFeatured] = useState("");
+  const queryString = useMemo(() => {
+    return new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+      ...(search ? { search } : {}),
+      ...(status ? { status } : {}),
+      ...(type ? { type } : {}),
+      ...(featured ? { featured } : {}),
+    }).toString();
+  }, [page, limit, search, status, type, featured]);
+
+  const { data, isLoading: isFetching } = useGetEventsQuery({ query: queryString });
+  const [deleteEvent, { isLoading: deleting }] = useDeleteEventMutation();
+
   const fetchEvents = React.useCallback(async () => {
     try {
       setLoading(true);
 
-      const query = new URLSearchParams({
-        page: String(page),
-        limit: String(limit),
-        ...(search ? { search } : {}),
-        ...(status ? { status } : {}),
-        ...(type ? { type } : {}),
-        ...(featured ? { featured } : {}),
-      }).toString();
-
-      const res = await fetch(`/api/events?${query}`);
-      const data = await res.json();
-
-      if (data.success) {
+      // We still support the flow of fetching server style but prefer RTK Query data when available
+      if (data?.success) {
         setEvents(data.data);
-        setTotalPages(data.pagination.pages);
+        setTotalPages(data.pagination?.pages || 1);
       }
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -49,15 +53,20 @@ export default function EventsPage() {
   }, [page, limit, search, status, type, featured]);
 
   useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
+    // update local state when RTK Query result changes
+    setLoading(isFetching);
+    if (data?.success) {
+      setEvents(data.data || []);
+      setTotalPages(data.pagination?.pages || 1);
+    }
+  }, [data, isFetching]);
 
   const handleDelete = async (event: any) => {
     if (!confirm(`Are you sure you want to delete "${event.title}"?`)) return;
 
     try {
-      const res = await fetch(`/api/events/${event._id}`, { method: "DELETE" });
-      if (res.ok) fetchEvents();
+      await deleteEvent(event._id).unwrap();
+      // deleting invalidates 'Events' so useGetEventsQuery will refetch
     } catch (error: any) {
       console.error("Error deleting event:", error);
     }

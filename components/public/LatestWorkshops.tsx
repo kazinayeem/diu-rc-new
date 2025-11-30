@@ -1,27 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
+import { useGetEventsQuery } from "@/lib/api/api";
+
 export default function LatestWorkshops() {
-  const [workshops, setWorkshops] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = useGetEventsQuery({ query: "type=workshop&limit=3&sort=latest" });
+  const workshops = data?.data || [];
 
-  useEffect(() => {
-    async function load() {
-      setLoading(true);
-      const res = await fetch(
-        `/api/events?type=workshop&limit=3&sort=latest`
-      );
-      const data = await res.json();
-      setWorkshops(data.data || []);
-      setLoading(false);
-    }
-    load();
-  }, []);
-
-  if (loading)
+  if (isLoading)
     return (
       <div className="text-center text-white/60 py-10">
         Loading Workshops...
@@ -42,7 +31,7 @@ export default function LatestWorkshops() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {workshops.map((ws) => (
+          {workshops.map((ws: any) => (
             <Link
               key={ws._id}
               href={`/workshops/${ws.slug}`}

@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import DataTable from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/Button";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import ResearchPaperForm from "@/components/admin/forms/ResearchPaperForm";
+import { useGetResearchPapersQuery, useDeleteResearchPaperMutation } from "@/lib/api/api";
 
 export default function ResearchPapersPage() {
   const [papers, setPapers] = useState<any[]>([]);
@@ -17,30 +18,27 @@ export default function ResearchPapersPage() {
   const limit = 10;
   const [pages, setPages] = useState(1);
 
-  const fetchPapers = useCallback(async () => {
-    try {
-      setLoading(true);
-
-      const query = new URLSearchParams({
-        page: String(page),
-        limit: String(limit),
-        ...(search ? { search } : {}),
-      }).toString();
-
-      const res = await fetch(`/api/research-papers?${query}`);
-      const data = await res.json();
-
-      if (data.success) {
-        setPapers(data.data);
-        setPages(data.pagination.pages);
-      }
-    } finally {
-      setLoading(false);
-    }
+  const query = useMemo(() => {
+    return new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+      ...(search ? { search } : {}),
+    }).toString();
   }, [page, search]);
+
+  const { data, isFetching } = useGetResearchPapersQuery({ query });
+  const [deleteResearchPaper] = useDeleteResearchPaperMutation();
+
   useEffect(() => {
-    fetchPapers();
-  }, [fetchPapers]);
+    setLoading(isFetching);
+    if (data?.success) {
+      setPapers(data.data);
+      setPages(data.pagination.pages);
+    } else {
+      setPapers([]);
+      setPages(1);
+    }
+  }, [data, isFetching]);
 
   const handleEdit = (paper: any) => {
     setEditingPaper(paper);
@@ -49,9 +47,11 @@ export default function ResearchPapersPage() {
 
   const handleDelete = async (paper: any) => {
     if (!confirm(`Delete paper: ${paper.title}?`)) return;
-
-    await fetch(`/api/research-papers/${paper._id}`, { method: "DELETE" });
-    fetchPapers();
+    try {
+      await deleteResearchPaper(paper._id).unwrap();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const columns = [
@@ -131,7 +131,6 @@ export default function ResearchPapersPage() {
           onClose={() => {
             setShowForm(false);
             setEditingPaper(null);
-            fetchPapers();
           }}
         />
       )}

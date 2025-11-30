@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { X } from "lucide-react";
+import { useCreateResearchPaperMutation, useUpdateResearchPaperMutation } from "@/lib/api/api";
 
 /* ----------------------------------------------
    Reusable Styled Inputs (TypeScript Safe)
@@ -84,6 +85,9 @@ export default function ResearchPaperForm({
     }
   }, [paper]);
 
+  const [createResearchPaper] = useCreateResearchPaperMutation();
+  const [updateResearchPaper] = useUpdateResearchPaperMutation();
+
   /* Submit Form */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,14 +106,16 @@ export default function ResearchPaperForm({
       ? `/api/research-papers/${paper._id}`
       : "/api/research-papers";
 
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    const result = await res.json();
-    if (result.success) onClose();
+    try {
+      if (paper) {
+        await updateResearchPaper({ id: paper._id, body: payload }).unwrap();
+      } else {
+        await createResearchPaper(payload).unwrap();
+      }
+      onClose();
+    } catch {
+      // noop for now - preserve existing behaviour
+    }
   };
 
   /* ----------------------------------------------

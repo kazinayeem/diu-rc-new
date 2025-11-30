@@ -5,6 +5,7 @@ import DataTable from '@/components/admin/DataTable';
 import { Button } from '@/components/ui/Button';
 import { Plus } from 'lucide-react';
 import EventForm from '@/components/admin/forms/EventForm'; // Reusing EventForm for now - can create SeminarForm later
+import { useGetSeminarsQuery, useDeleteSeminarMutation } from '@/lib/api/api';
 
 export default function SeminarsPage() {
   const [seminars, setSeminars] = useState<any[]>([]);
@@ -12,24 +13,13 @@ export default function SeminarsPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingSeminar, setEditingSeminar] = useState<any>(null);
 
-  useEffect(() => {
-    fetchSeminars();
-  }, []);
+  const { data, isFetching } = useGetSeminarsQuery({ query: 'limit=50' });
+  const [deleteSeminar] = useDeleteSeminarMutation();
 
-  const fetchSeminars = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch('/api/seminars?limit=50');
-      const data = await res.json();
-      if (data.success) {
-        setSeminars(data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching seminars:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    setLoading(isFetching);
+    if (data?.success) setSeminars(data.data);
+  }, [data, isFetching]);
 
   const handleEdit = (seminar: any) => {
     setEditingSeminar(seminar);
@@ -40,9 +30,10 @@ export default function SeminarsPage() {
     if (!confirm(`Are you sure you want to delete "${seminar.title}"?`)) return;
 
     try {
-      const res = await fetch(`/api/seminars/${seminar._id}`, { method: 'DELETE' });
-      if (res.ok) {
-        fetchSeminars();
+      try {
+        await deleteSeminar(seminar._id).unwrap();
+      } catch (err) {
+        console.error(err);
       }
     } catch (error) {
       console.error('Error deleting seminar:', error);
@@ -52,7 +43,6 @@ export default function SeminarsPage() {
   const handleFormClose = () => {
     setShowForm(false);
     setEditingSeminar(null);
-    fetchSeminars();
   };
 
   const columns = [

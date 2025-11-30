@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { X } from "lucide-react";
+import { useCreateProjectMutation, useUpdateProjectMutation } from "@/lib/api/api";
 
 interface ProjectFormProps {
   project?: any;
@@ -27,20 +28,25 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
     }
   }, [project]);
 
+  const [createProject] = useCreateProjectMutation();
+  const [updateProject] = useUpdateProjectMutation();
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const url = project ? `/api/projects/${project._id}` : `/api/projects`;
     const method = project ? "PUT" : "POST";
 
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-
-    const data = await res.json();
-    if (data.success) onClose();
+    try {
+      if (project) {
+        await updateProject({ id: project._id, body: formData }).unwrap();
+      } else {
+        await createProject(formData).unwrap();
+      }
+      onClose();
+    } catch {
+      // keep existing behaviour: silent fail for now
+    }
   };
 
   return (

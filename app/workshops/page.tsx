@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import { useGetEventsQuery } from "@/lib/api/api";
 import { Button } from "@/components/ui/Button";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -31,26 +32,16 @@ export default function WorkshopsPage() {
 
   const limit = 6;
 
-  // === Fetch Workshops ===
-  const fetchWorkshops = async (pageNum: number) => {
-    setLoading(true);
-
-
-    const res = await fetch(
-      `/api/events?type=workshop&page=${pageNum}&limit=${limit}`
-    );
-
-    const data = await res.json();
-
-    // Backend already sorts by { eventDate: -1 } so newest first
-    setWorkshops(data.data || []);
-    setTotalPages(data.pagination?.pages || 1);
-    setLoading(false);
-  };
+  const query = `type=workshop&page=${page}&limit=${limit}`;
+  const { data, isFetching } = useGetEventsQuery({ query });
 
   useEffect(() => {
-    fetchWorkshops(page);
-  }, [page]);
+    setLoading(isFetching);
+    if (data?.success) {
+      setWorkshops(data.data || []);
+      setTotalPages(data.pagination?.pages || 1);
+    }
+  }, [data, isFetching]);
 
   // === Search Filter ===
   const filteredWorkshops = useMemo(() => {

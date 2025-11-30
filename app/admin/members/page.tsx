@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import DataTable from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/Button";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import MemberForm from "@/components/admin/forms/MemberForm";
+import { useGetMembersQuery, useDeleteMemberMutation } from "@/lib/api/api";
 
 export default function MembersPage() {
   const [members, setMembers] = useState<any[]>([]);
@@ -24,39 +25,34 @@ export default function MembersPage() {
     pages: 0,
   });
 
-  // FETCH MEMBERS
-  const fetchMembers = useCallback(async () => {
-    try {
-      setLoading(true);
+  const queryStr = useMemo(() =>
+    new URLSearchParams({
+      page: String(pagination.page),
+      limit: String(pagination.limit),
+      ...(search ? { search } : {}),
+      ...(role ? { role } : {}),
+      ...(isActive ? { isActive } : {}),
+    }).toString(),
+  [pagination.page, pagination.limit, search, role, isActive]);
 
-      const query = new URLSearchParams({
-        page: String(pagination.page),
-        limit: String(pagination.limit),
-        ...(search ? { search } : {}),
-        ...(role ? { role } : {}),
-        ...(isActive ? { isActive } : {}),
-      }).toString();
+  // fetch via RTK Query
+  const { data, isFetching } = useGetMembersQuery({ query: queryStr });
+  const [deleteMember] = useDeleteMemberMutation();
 
-      const res = await fetch(`/api/members?${query}`);
-      const data = await res.json();
-
-      if (data.success) {
-        setMembers(data.data);
-        setPagination((prev) => ({
-          ...prev,
-          total: data.pagination.total,
-          pages: data.pagination.pages,
-        }));
-      }
-    } catch (error) {
-      console.error("Error fetching members:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [pagination.page, pagination.limit, search, role, isActive]);
   useEffect(() => {
-    fetchMembers();
-  }, [fetchMembers]);
+    setLoading(isFetching);
+    if (data?.success) {
+      setMembers(data.data);
+      setPagination((prev) => ({
+        ...prev,
+        total: data.pagination.total,
+        pages: data.pagination.pages,
+      }));
+    } else {
+      setMembers([]);
+      setPagination((prev) => ({ ...prev, total: 0, pages: 0 }));
+    }
+  }, [data, isFetching]);
 
   const handleEdit = (member: any) => {
     setEditingMember(member);
@@ -67,12 +63,8 @@ export default function MembersPage() {
     if (!confirm(`Are you sure you want to delete ${member.name}?`)) return;
 
     try {
-      const res = await fetch(`/api/members/${member._id}`, {
-        method: "DELETE",
-      });
-
-      const data = await res.json();
-      if (data.success) fetchMembers();
+      await deleteMember(member._id).unwrap();
+      // RTK Query invalidation will refetch members for us
     } catch (error) {
       console.error("Error deleting member:", error);
     }
@@ -81,7 +73,7 @@ export default function MembersPage() {
   const handleFormClose = () => {
     setShowForm(false);
     setEditingMember(null);
-    fetchMembers();
+    // RTK Query will keep lists up to date via invalidation
   };
 
   // TABLE COLUMNS

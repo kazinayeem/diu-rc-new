@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import { useGetEventsQuery } from "@/lib/api/api";
 import { Button } from "@/components/ui/Button";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -33,22 +34,16 @@ export default function EventsPage() {
   const limit = 6;
 
   // === Fetch Events ===
-  const fetchEvents = async (pageNum: number) => {
-    setLoading(true);
-
-    const res = await fetch(
-      `/api/events?type=event&page=${pageNum}&limit=${limit}`
-    );
-
-    const data = await res.json();
-    setEvents(data.data || []);
-    setTotalPages(data.pagination?.pages || 1);
-    setLoading(false);
-  };
+  const query = `type=event&page=${page}&limit=${limit}`;
+  const { data, isFetching } = useGetEventsQuery({ query });
 
   useEffect(() => {
-    fetchEvents(page);
-  }, [page]);
+    setLoading(isFetching);
+    if (data?.success) {
+      setEvents(data.data || []);
+      setTotalPages(data.pagination?.pages || 1);
+    }
+  }, [data, isFetching]);
 
   // Search
   const filteredEvents = useMemo(() => {
