@@ -4,7 +4,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ['res.cloudinary.com', 'picsum.photos', 'avatars.githubusercontent.com'],
+    domains: ['res.cloudinary.com', 'picsum.photos', 'avatars.githubusercontent.com', 'diurc.vercel.app'],
   },
 
   eslint: {
