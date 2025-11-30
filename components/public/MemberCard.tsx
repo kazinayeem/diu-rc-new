@@ -32,7 +32,7 @@ const roleColors = {
 };
 
 const roleLabels = {
-  main: "Main Member",
+  president: "President",
   executive: "Executive",
   deputy: "Deputy",
   general: "General",
@@ -97,14 +97,14 @@ const MemberCard: React.FC<MemberCardProps> = ({ member }) => {
           <p className="text-sm text-gray-300 mb-1">{member.department}</p>
 
           {/* Batch */}
-          <p className="text-xs text-gray-400 mb-4">Batch: {member.batch}</p>
+        
 
-          {/* Bio */}
+{/*         
           {member.bio && (
             <p className="text-sm text-gray-400 mb-4 line-clamp-2">
               {member.bio}
             </p>
-          )}
+          )} */}
 
           {/* Social Links */}
           {member.socialLinks &&

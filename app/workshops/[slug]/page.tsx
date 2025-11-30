@@ -1,93 +1,130 @@
-import React from 'react';
-import Footer from '@/components/public/Footer';
-import AnimatedWorkshopHero from '@/components/public/AnimatedWorkshopHero';
-import AnimatedWorkshopContent from '@/components/public/AnimatedWorkshopContent';
-import AnimatedWorkshopRegistration from '@/components/public/AnimatedWorkshopRegistration';
+"use client";
 
-async function getWorkshop(slug: string) {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    // First try to get by slug
-    const res = await fetch(`${baseUrl}/api/events?slug=${slug}`, { cache: 'no-store' });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.data?.[0]) {
-        const event = data.data[0];
-        // Get full details with registration count
-        const detailRes = await fetch(`${baseUrl}/api/events/${event._id}`, { cache: 'no-store' });
-        if (detailRes.ok) {
-          const detailData = await detailRes.json();
-          return detailData.data || null;
-        }
-        return event;
-      }
-    }
-    return null;
-  } catch (error) {
-    console.error('Error fetching workshop:', error);
-    return null;
-  }
+import React, { useCallback, useEffect, useState } from "react";
+import AnimatedWorkshopHero from "@/components/public/AnimatedWorkshopHero";
+import AnimatedWorkshopContent from "@/components/public/AnimatedWorkshopContent";
+import AnimatedWorkshopRegistration from "@/components/public/AnimatedWorkshopRegistration";
+
+interface Workshop {
+  _id: string;
+  title: string;
+  description: string;
+  image?: string;
+  content?: string;
+  eventDate: string;
+  eventTime: string;
+  location: string;
+  registrationLimit?: number;
+  registrationOpen?: boolean;
+  registrationCount?: number;
+  type: string;
+  isPaid?: boolean;
 }
 
-export default async function WorkshopDetailPage({
+export default function WorkshopDetailPage({
   params,
 }: {
   params: { slug: string };
 }) {
-  const workshop = await getWorkshop(params.slug);
+  const [workshop, setWorkshop] = useState<Workshop | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!workshop) {
+  const getWorkshop = useCallback(async () => {
+    try {
+     
+      const res = await fetch(`/api/events?slug=${params.slug}`);
+
+      const data = await res.json();
+      const found = data?.data?.[0];
+
+      if (!found) {
+        setWorkshop(null);
+        setLoading(false);
+        return;
+      }
+
+      const detailRes = await fetch(`/api/events/${found._id}`);
+
+      if (detailRes.ok) {
+        const detailData = await detailRes.json();
+        setWorkshop(detailData.data);
+      } else {
+        setWorkshop(found);
+      }
+    } catch (error) {
+      console.error("Error fetching workshop:", error);
+      setWorkshop(null);
+    }
+
+    setLoading(false);
+  }, [params.slug]); // <-- dependency
+
+  // --- FIX: add "getWorkshop" ---
+  useEffect(() => {
+    getWorkshop();
+  }, [getWorkshop]);
+
+  // === Loading State ===
+  if (loading) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-dark-900 mb-4">Workshop not found</h1>
-            <a href="/events" className="text-primary-600 hover:text-primary-700">
-              ← Back to Events
-            </a>
-          </div>
-        </main>
-        <Footer />
+      <div className="min-h-screen flex items-center justify-center text-white text-xl">
+        Loading workshop...
       </div>
     );
   }
 
-  const registrationCount = workshop.registrationCount || 0;
-  const isRegistrationOpen = workshop.registrationOpen && 
-    (!workshop.registrationLimit || registrationCount < workshop.registrationLimit);
+  // === Not Found ===
+  if (!workshop) {
+    return (
+      <div className="min-h-screen flex flex-col text-white">
+        <main className="flex-grow flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Workshop not found</h1>
+            <a href="/workshops" className="text-cyan-400 underline">
+              ← Back to Workshops
+            </a>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  const registrationCount = workshop.registrationCount ?? 0;
+
+  const isRegistrationOpen =
+    Boolean(workshop.registrationOpen) &&
+    (workshop.registrationLimit === undefined ||
+      registrationCount < workshop.registrationLimit);
 
   return (
-    <div className="min-h-screen flex flex-col">
-   
-      
+    <div className="min-h-screen flex flex-col bg-transparent text-white">
       <main className="flex-grow">
-        {/* Hero Section */}
+        {/* HERO */}
         <AnimatedWorkshopHero workshop={workshop} />
 
-        {/* Content Section */}
-        <section className="py-12 bg-white">
+        {/* CONTENT */}
+        <section className="py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Main Content */}
-              <div className="md:col-span-2">
+            <div className="grid md:grid-cols-3 gap-8 items-start">
+              {/* LEFT CONTENT */}
+              <div className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md">
                 <AnimatedWorkshopContent workshop={workshop} />
               </div>
 
-              {/* Registration Form */}
-              <div className="md:col-span-1">
-                <AnimatedWorkshopRegistration 
-                  workshopId={workshop._id} 
-                  isRegistrationOpen={isRegistrationOpen}
-                  workshop={workshop}
-                />
+              {/* RIGHT SIDEBAR */}
+              <div className="md:col-span-1 sticky top-24">
+                <div className="bg-white/5 border border-white/10 rounded-2xl  backdrop-blur-md">
+                  <AnimatedWorkshopRegistration
+                    workshopId={workshop._id}
+                    isRegistrationOpen={isRegistrationOpen}
+                    workshop={workshop}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 }
-

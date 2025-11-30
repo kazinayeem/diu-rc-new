@@ -1,5 +1,4 @@
 import React from "react";
-import Footer from "@/components/public/Footer";
 import MemberRegistrationForm from "@/components/public/MemberRegistrationForm";
 import AnimatedJoinHero from "@/components/public/AnimatedJoinHero";
 import AnimatedBenefits from "@/components/public/AnimatedBenefits";
@@ -39,7 +38,7 @@ export default function JoinPage() {
         </section>
       </main>
 
-      <Footer />
+    
     </div>
   );
 }

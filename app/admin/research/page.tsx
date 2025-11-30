@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import DataTable from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/Button";
 import { Plus, Pencil, Trash2 } from "lucide-react";
@@ -17,11 +17,7 @@ export default function ResearchPapersPage() {
   const limit = 10;
   const [pages, setPages] = useState(1);
 
-  useEffect(() => {
-    fetchPapers();
-  }, [page, search]);
-
-  const fetchPapers = async () => {
+  const fetchPapers = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -41,7 +37,10 @@ export default function ResearchPapersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search]);
+  useEffect(() => {
+    fetchPapers();
+  }, [fetchPapers]);
 
   const handleEdit = (paper: any) => {
     setEditingPaper(paper);

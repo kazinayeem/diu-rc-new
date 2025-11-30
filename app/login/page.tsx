@@ -41,11 +41,8 @@ export default function LoginPage() {
   };
 
   return (
-    <body className="min-h-screen bg-[#071024] bg-gradient-to-br from-[#071024] via-[#082135] to-[#0e2840] text-white flex items-center justify-center p-4">
-      <Card
-        variant="elevated"
-        className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl"
-      >
+    <div className="min-h-screen bg-[#071024] bg-gradient-to-br from-[#071024] via-[#082135] to-[#0e2840] text-white flex items-center justify-center p-4">
+      <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl">
         <CardHeader>
           <div className="text-center space-y-3">
             <div className="w-16 h-16 bg-gradient-to-br from-[#12345a] to-[#0a1a35] rounded-xl flex items-center justify-center mx-auto shadow-lg shadow-black/40">
@@ -71,38 +68,26 @@ export default function LoginPage() {
             )}
 
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-white/80 mb-2"
-              >
+              <label className="block text-sm font-medium text-white/80 mb-2">
                 Email
               </label>
               <input
-                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-2 bg-white/5 text-white border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1f8fff] focus:border-transparent placeholder-white/40"
-                placeholder="admin@example.com"
+                className="w-full px-4 py-2 bg-white/5 text-white border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1f8fff] placeholder-white/40"
               />
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-white/80 mb-2"
-              >
+              <label className="block text-sm font-medium text-white/80 mb-2">
                 Password
               </label>
               <input
-                id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-2 bg-white/5 text-white border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1f8fff] focus:border-transparent placeholder-white/40"
-                placeholder="••••••••"
+                className="w-full px-4 py-2 bg-white/5 text-white border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1f8fff] placeholder-white/40"
               />
             </div>
 
@@ -125,6 +110,6 @@ export default function LoginPage() {
           </div>
         </CardContent>
       </Card>
-    </body>
+    </div>
   );
 }

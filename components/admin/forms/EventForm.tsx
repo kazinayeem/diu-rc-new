@@ -18,6 +18,9 @@ export default function EventForm({ event, onClose }: EventFormProps) {
     eventDate: "",
     eventTime: "",
     location: "",
+    mode: "offline", // NEW
+    eventLink: "", // NEW
+    image: "", // NEW
     registrationLink: "",
     type: "event",
     status: "upcoming",
@@ -33,6 +36,7 @@ export default function EventForm({ event, onClose }: EventFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // LOAD EVENT FOR EDITING
   useEffect(() => {
     if (event) {
       setFormData({
@@ -44,6 +48,9 @@ export default function EventForm({ event, onClose }: EventFormProps) {
           : "",
         eventTime: event.eventTime || "",
         location: event.location || "",
+        mode: event.mode || "offline",
+        eventLink: event.eventLink || "",
+        image: event.image || "",
         registrationLink: event.registrationLink || "",
         type: event.type || "event",
         status: event.status || "upcoming",
@@ -59,6 +66,7 @@ export default function EventForm({ event, onClose }: EventFormProps) {
     }
   }, [event]);
 
+  // SUBMIT FORM
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -79,6 +87,7 @@ export default function EventForm({ event, onClose }: EventFormProps) {
             : undefined,
         paymentMethod: formData.isPaid ? formData.paymentMethod : undefined,
         paymentNumber: formData.isPaid ? formData.paymentNumber : undefined,
+        eventLink: formData.mode === "online" ? formData.eventLink : undefined, // only for online
       };
 
       const res = await fetch(url, {
@@ -94,16 +103,16 @@ export default function EventForm({ event, onClose }: EventFormProps) {
       } else {
         setError(data.error || "An error occurred");
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-[#0f192d] border border-white/10 shadow-xl">
+      <Card className="w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-[#0f192d] border border-white/10 shadow-xl rounded-2xl">
         <CardHeader>
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold text-white">
@@ -126,88 +135,104 @@ export default function EventForm({ event, onClose }: EventFormProps) {
               </div>
             )}
 
-            {/* Title */}
+            {/* TITLE */}
             <div>
               <label className="block text-sm mb-2 text-white/80">
                 Title *
               </label>
               <input
                 type="text"
+                required
                 value={formData.title}
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
                 }
-                required
-                className="w-full px-4 py-2 bg-white/5 border border-white/20 text-white rounded-lg focus:ring-[#1f8fff]"
+                className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
               />
             </div>
 
-            {/* Description */}
+            {/* DESCRIPTION */}
             <div>
               <label className="block text-sm mb-2 text-white/80">
                 Description *
               </label>
               <textarea
                 rows={3}
+                required
                 value={formData.description}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                required
-                className="w-full px-4 py-2 bg-white/5 border border-white/20 text-white rounded-lg focus:ring-[#1f8fff]"
+                className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
               />
             </div>
 
-            {/* Date + Time */}
+            {/* IMAGE */}
+            <div>
+              <label className="block text-sm mb-2 text-white/80">
+                Image URL
+              </label>
+              <input
+                type="url"
+                value={formData.image}
+                onChange={(e) =>
+                  setFormData({ ...formData, image: e.target.value })
+                }
+                placeholder="https://example.com/image.jpg"
+                className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+              />
+            </div>
+
+            {/* DATE + TIME */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm mb-2 text-white/80">
-                  Event Date *
+                  Date *
                 </label>
                 <input
                   type="date"
+                  required
                   value={formData.eventDate}
                   onChange={(e) =>
                     setFormData({ ...formData, eventDate: e.target.value })
                   }
-                  required
-                  className="w-full px-4 py-2 bg-white/5 border border-white/20 text-white rounded-lg focus:ring-[#1f8fff]"
+                  className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
                 />
               </div>
 
               <div>
                 <label className="block text-sm mb-2 text-white/80">
-                  Event Time *
+                  Time *
                 </label>
                 <input
                   type="time"
+                  required
                   value={formData.eventTime}
                   onChange={(e) =>
                     setFormData({ ...formData, eventTime: e.target.value })
                   }
-                  required
-                  className="w-full px-4 py-2 bg-white/5 border border-white/20 text-white rounded-lg focus:ring-[#1f8fff]"
+                  className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
                 />
               </div>
             </div>
 
-            {/* Location */}
+            {/* LOCATION */}
             <div>
               <label className="block text-sm mb-2 text-white/80">
                 Location *
               </label>
               <input
                 type="text"
+                required
                 value={formData.location}
                 onChange={(e) =>
                   setFormData({ ...formData, location: e.target.value })
                 }
-                required
-                className="w-full px-4 py-2 bg-white/5 border border-white/20 text-white rounded-lg focus:ring-[#1f8fff]"
+                className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
               />
             </div>
 
-            {/* Type */}
+            {/* TYPE */}
             <div>
               <label className="block text-sm mb-2 text-white/80">Type *</label>
               <select
@@ -215,7 +240,7 @@ export default function EventForm({ event, onClose }: EventFormProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, type: e.target.value })
                 }
-                className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white focus:ring-[#1f8fff]"
+                className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
               >
                 <option className="text-black" value="event">
                   Event
@@ -229,165 +254,193 @@ export default function EventForm({ event, onClose }: EventFormProps) {
               </select>
             </div>
 
-            {/* Registration Limit */}
-            <div>
-              <label className="block text-sm mb-2 text-white/80">
-                Registration Limit
-              </label>
-              <input
-                type="number"
-                value={formData.registrationLimit}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    registrationLimit: e.target.value,
-                  })
-                }
-                placeholder="Leave empty for unlimited"
-                className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white focus:ring-[#1f8fff]"
-              />
-            </div>
-
-            {/* Registration Open */}
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="registrationOpen"
-                checked={formData.registrationOpen}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    registrationOpen: e.target.checked,
-                  })
-                }
-                className="w-4 h-4 accent-[#1f8fff]"
-              />
-              <label
-                htmlFor="registrationOpen"
-                className="ml-2 text-sm text-white/80"
-              >
-                Registration Open
-              </label>
-            </div>
-
-            {/* Paid Section */}
-            <div className="border-t border-white/10 pt-4">
-              <div className="flex items-center mb-4">
-                <input
-                  type="checkbox"
-                  id="isPaid"
-                  checked={formData.isPaid}
-                  onChange={(e) =>
-                    setFormData({ ...formData, isPaid: e.target.checked })
-                  }
-                  className="w-4 h-4 accent-[#1f8fff]"
-                />
-                <label
-                  htmlFor="isPaid"
-                  className="ml-2 text-sm text-white/80 font-medium"
-                >
-                  Paid Workshop/Event
-                </label>
-              </div>
-
-              {formData.isPaid && (
-                <div className="space-y-4 bg-white/5 p-4 border border-white/10 rounded-lg">
-                  <div>
-                    <label className="block text-sm mb-2 text-white/80">
-                      Registration Fee (৳) *
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.registrationFee}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          registrationFee: e.target.value,
-                        })
-                      }
-                      required={formData.isPaid}
-                      className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white focus:ring-[#1f8fff]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm mb-2 text-white/80">
-                      Payment Method *
-                    </label>
-                    <select
-                      value={formData.paymentMethod}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          paymentMethod: e.target.value,
-                        })
-                      }
-                      className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white focus:ring-[#1f8fff]"
-                    >
-                      <option className="text-black" value="both">
-                        Both (bKash & Nagad)
-                      </option>
-                      <option className="text-black" value="bkash">
-                        bKash Only
-                      </option>
-                      <option className="text-black" value="nagad">
-                        Nagad Only
-                      </option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm mb-2 text-white/80">
-                      Payment Number *
-                    </label>
-                    <input
-                      type="tel"
-                      value={formData.paymentNumber}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          paymentNumber: e.target.value,
-                        })
-                      }
-                      required={formData.isPaid}
-                      placeholder="017xxxxxxx"
-                      className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white focus:ring-[#1f8fff]"
-                    />
-                    <p className="text-xs text-white/50 mt-1">
-                      bKash or Nagad number to receive payments
-                    </p>
-                  </div>
+            {/* EVENT-SPECIFIC SETTINGS */}
+            {formData.type !== "workshop" && (
+              <div className="space-y-4 bg-white/5 p-4 rounded-lg border border-white/10">
+                {/* MODE */}
+                <div>
+                  <label className="block text-sm mb-2 text-white/80">
+                    Event Mode *
+                  </label>
+                  <select
+                    value={formData.mode}
+                    onChange={(e) =>
+                      setFormData({ ...formData, mode: e.target.value })
+                    }
+                    className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+                  >
+                    <option className="text-black" value="offline">
+                      Offline
+                    </option>
+                    <option className="text-black" value="online">
+                      Online
+                    </option>
+                  </select>
                 </div>
-              )}
-            </div>
 
-            {/* Registration Link */}
-            <div>
-              <label className="block text-sm mb-2 text-white/80">
-                Registration Link
-              </label>
-              <input
-                type="url"
-                value={formData.registrationLink}
-                onChange={(e) =>
-                  setFormData({ ...formData, registrationLink: e.target.value })
-                }
-                className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white focus:ring-[#1f8fff]"
-              />
-            </div>
+                {/* EVENT LINK */}
+                {formData.mode === "online" && (
+                  <div>
+                    <label className="block text-sm mb-2 text-white/80">
+                      Event Link *
+                    </label>
+                    <input
+                      type="url"
+                      required
+                      value={formData.eventLink}
+                      onChange={(e) =>
+                        setFormData({ ...formData, eventLink: e.target.value })
+                      }
+                      placeholder="https://meet.google.com/..."
+                      className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
 
-            {/* Status + Featured */}
+            {/* WORKSHOP SETTINGS */}
+            {formData.type === "workshop" && (
+              <div className="border-t border-white/10 pt-4 space-y-4">
+                {/* Registration Limit */}
+                <div>
+                  <label className="block text-sm mb-2 text-white/80">
+                    Registration Limit
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.registrationLimit}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        registrationLimit: e.target.value,
+                      })
+                    }
+                    placeholder="Leave empty for unlimited"
+                    className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+                  />
+                </div>
+
+                {/* Registration Open */}
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="registrationOpen"
+                    checked={formData.registrationOpen}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        registrationOpen: e.target.checked,
+                      })
+                    }
+                    className="w-4 h-4 accent-[#1f8fff]"
+                  />
+                  <label
+                    htmlFor="registrationOpen"
+                    className="ml-2 text-sm text-white/80"
+                  >
+                    Registration Open
+                  </label>
+                </div>
+
+                {/* Paid Workshop */}
+                <div className="flex items-center mb-4">
+                  <input
+                    type="checkbox"
+                    id="isPaid"
+                    checked={formData.isPaid}
+                    onChange={(e) =>
+                      setFormData({ ...formData, isPaid: e.target.checked })
+                    }
+                    className="w-4 h-4 accent-[#1f8fff]"
+                  />
+                  <label
+                    htmlFor="isPaid"
+                    className="ml-2 text-sm text-white/80"
+                  >
+                    Paid Workshop
+                  </label>
+                </div>
+
+                {formData.isPaid && (
+                  <div className="space-y-4 bg-white/5 p-4 rounded-lg border border-white/10">
+                    <div>
+                      <label className="block text-sm mb-2 text-white/80">
+                        Registration Fee (৳)
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.registrationFee}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            registrationFee: e.target.value,
+                          })
+                        }
+                        className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm mb-2 text-white/80">
+                        Payment Method
+                      </label>
+                      <select
+                        value={formData.paymentMethod}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            paymentMethod: e.target.value,
+                          })
+                        }
+                        className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+                      >
+                        <option className="text-black" value="both">
+                          Both (bKash & Nagad)
+                        </option>
+                        <option className="text-black" value="bkash">
+                          bKash
+                        </option>
+                        <option className="text-black" value="nagad">
+                          Nagad
+                        </option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm mb-2 text-white/80">
+                        Payment Number
+                      </label>
+                      <input
+                        type="tel"
+                        value={formData.paymentNumber}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            paymentNumber: e.target.value,
+                          })
+                        }
+                        placeholder="017xxxxxxxx"
+                        className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* STATUS + FEATURED */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm mb-2 text-white/80">
-                  Status *
+                  Status
                 </label>
                 <select
                   value={formData.status}
                   onChange={(e) =>
                     setFormData({ ...formData, status: e.target.value })
                   }
-                  className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white focus:ring-[#1f8fff]"
+                  className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
                 >
                   <option className="text-black" value="upcoming">
                     Upcoming
@@ -407,24 +460,18 @@ export default function EventForm({ event, onClose }: EventFormProps) {
               <div className="flex items-center pt-8">
                 <input
                   type="checkbox"
-                  id="featured"
                   checked={formData.featured}
                   onChange={(e) =>
                     setFormData({ ...formData, featured: e.target.checked })
                   }
                   className="w-4 h-4 accent-[#1f8fff]"
                 />
-                <label
-                  htmlFor="featured"
-                  className="ml-2 text-sm text-white/80"
-                >
-                  Featured Event
-                </label>
+                <label className="ml-2 text-sm text-white/80">Featured</label>
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex justify-end space-x-4 pt-6">
+            {/* ACTIONS */}
+            <div className="flex justify-end gap-4 pt-6">
               <Button
                 type="button"
                 variant="outline"
@@ -439,7 +486,11 @@ export default function EventForm({ event, onClose }: EventFormProps) {
                 disabled={loading}
                 className="bg-[#1f8fff] hover:bg-[#0e6fd8]"
               >
-                {loading ? "Saving..." : event ? "Update" : "Create"}
+                {loading
+                  ? "Saving..."
+                  : event
+                  ? "Update Event"
+                  : "Create Event"}
               </Button>
             </div>
           </form>

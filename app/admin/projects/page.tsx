@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import DataTable from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/Button";
 import ProjectForm from "@/components/admin/forms/ProjectForm";
@@ -16,18 +16,19 @@ export default function ProjectsPage() {
   const limit = 10;
   const [pages, setPages] = useState(1);
 
-  useEffect(() => {
-    fetchProjects();
-  }, [page]);
-
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     setLoading(true);
+
     const res = await fetch(`/api/projects?page=${page}&limit=${limit}`);
     const data = await res.json();
+
     setProjects(data.data);
     setPages(data.pagination.pages);
     setLoading(false);
-  };
+  }, [page]);
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
 
   const deleteProject = async (id: string) => {
     if (!confirm("Delete this project?")) return;

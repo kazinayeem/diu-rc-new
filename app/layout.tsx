@@ -1,8 +1,10 @@
+import React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import HideNavbarWrapper from "@/components/HideNavbarWrapper";
+import Footer from "@/components/public/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,10 +20,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.className}>
       <body className="bg-[#071024] bg-gradient-to-br from-[#071024] via-[#082135] to-[#0e2840] text-white">
         <SessionProvider>
-          <HideNavbarWrapper>{children}</HideNavbarWrapper>
+          <HideNavbarWrapper>
+            {children}
+            <Footer />
+          </HideNavbarWrapper>
         </SessionProvider>
       </body>
     </html>

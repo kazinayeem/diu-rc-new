@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IEvent extends Document {
   title: string;
@@ -9,15 +9,17 @@ export interface IEvent extends Document {
   eventDate: Date;
   eventTime: string;
   location: string;
+  mode: "online" | "offline"; // NEW
+  eventLink?: string; // NEW
   registrationLink?: string;
   registrationLimit?: number;
   registrationOpen: boolean;
   isPaid: boolean;
   registrationFee?: number;
-  paymentMethod?: 'bkash' | 'nagad' | 'both';
+  paymentMethod?: "bkash" | "nagad" | "both";
   paymentNumber?: string;
-  type: 'event' | 'workshop' | 'seminar';
-  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
+  type: "event" | "workshop" | "seminar";
+  status: "upcoming" | "ongoing" | "completed" | "cancelled";
   featured: boolean;
   attendees?: number;
   tags?: string[];
@@ -30,10 +32,11 @@ const EventSchema: Schema = new Schema(
   {
     title: {
       type: String,
-      required: [true, 'Event title is required'],
+      required: [true, "Event title is required"],
       trim: true,
-      maxlength: [200, 'Title cannot exceed 200 characters'],
+      maxlength: [200, "Title cannot exceed 200 characters"],
     },
+
     slug: {
       type: String,
       required: true,
@@ -41,88 +44,118 @@ const EventSchema: Schema = new Schema(
       lowercase: true,
       trim: true,
     },
+
     description: {
       type: String,
-      required: [true, 'Description is required'],
-      maxlength: [500, 'Description cannot exceed 500 characters'],
+      required: [true, "Description is required"],
+      maxlength: [500, "Description cannot exceed 500 characters"],
     },
+
     content: {
       type: String,
-      maxlength: [5000, 'Content cannot exceed 5000 characters'],
+      default: "",
     },
+
     image: {
       type: String,
-      default: '',
+      default: "",
     },
+
     eventDate: {
       type: Date,
-      required: [true, 'Event date is required'],
+      required: [true, "Event date is required"],
     },
+
     eventTime: {
       type: String,
-      required: [true, 'Event time is required'],
+      required: [true, "Event time is required"],
     },
+
     location: {
       type: String,
-      required: [true, 'Location is required'],
+      required: [true, "Location is required"],
       trim: true,
     },
+
+    // NEW
+    mode: {
+      type: String,
+      enum: ["online", "offline"],
+      default: "offline",
+    },
+
+    // NEW
+    eventLink: {
+      type: String,
+      trim: true,
+    },
+
     registrationLink: {
       type: String,
       trim: true,
     },
+
     registrationLimit: {
       type: Number,
-      min: [0, 'Registration limit must be positive'],
+      min: [0, "Registration limit must be positive"],
     },
+
     registrationOpen: {
       type: Boolean,
       default: true,
     },
+
     isPaid: {
       type: Boolean,
       default: false,
     },
+
     registrationFee: {
       type: Number,
-      min: [0, 'Registration fee must be positive'],
+      min: [0, "Registration fee must be positive"],
     },
+
     paymentMethod: {
       type: String,
-      enum: ['bkash', 'nagad', 'both'],
+      enum: ["bkash", "nagad", "both"],
     },
+
     paymentNumber: {
       type: String,
       trim: true,
     },
+
     type: {
       type: String,
-      enum: ['event', 'workshop', 'seminar'],
-      default: 'event',
+      enum: ["event", "workshop", "seminar"],
+      default: "event",
     },
+
     status: {
       type: String,
-      enum: ['upcoming', 'ongoing', 'completed', 'cancelled'],
-      default: 'upcoming',
+      enum: ["upcoming", "ongoing", "completed", "cancelled"],
+      default: "upcoming",
     },
+
     featured: {
       type: Boolean,
       default: false,
     },
+
     attendees: {
       type: Number,
       default: 0,
     },
+
     tags: [String],
+
     createdBy: {
       type: Schema.Types.ObjectId,
-      ref: 'Admin',
+      ref: "Admin",
       required: true,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 // Indexes
@@ -130,7 +163,7 @@ EventSchema.index({ status: 1, eventDate: 1 });
 EventSchema.index({ featured: 1 });
 EventSchema.index({ slug: 1 });
 
-const Event: Model<IEvent> = mongoose.models.Event || mongoose.model<IEvent>('Event', EventSchema);
+const Event: Model<IEvent> =
+  mongoose.models.Event || mongoose.model<IEvent>("Event", EventSchema);
 
 export default Event;
-

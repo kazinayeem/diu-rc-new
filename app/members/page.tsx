@@ -1,15 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Footer from "@/components/public/Footer";
+import React, { useState, useEffect, useMemo } from "react";
 import MemberCard from "@/components/public/MemberCard";
 import { motion, AnimatePresence } from "framer-motion";
 
 async function fetchMembers() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/api/members?isActive=true&limit=200`, {
-    cache: "no-store",
-  });
+ 
+  const res = await fetch(`/api/member-registrations?limit=50`);
 
   const data = await res.json();
   return data.data || [];
@@ -17,81 +14,122 @@ async function fetchMembers() {
 
 export default function MembersPage() {
   const [members, setMembers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const [selected, setSelected] = useState<any>(null);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+
+  const ITEMS_PER_PAGE = 12;
 
   useEffect(() => {
-    fetchMembers().then(setMembers);
+    async function load() {
+      setLoading(true);
+      const data = await fetchMembers();
+      setMembers(data);
+      setLoading(false);
+    }
+    load();
   }, []);
 
-  const membersByRole = {
-    main: members.filter((m) => m.role === "main"),
-    executive: members.filter((m) => m.role === "executive"),
-    deputy: members.filter((m) => m.role === "deputy"),
-    general: members.filter((m) => m.role === "general"),
-  };
-
-  const Section = ({ title, list }: any) =>
-    list.length > 0 && (
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="mb-16"
-      >
-        <h2 className="text-3xl font-bold text-white mb-6">{title}</h2>
-
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {list.map((member: any) => (
-            <div key={member._id} onClick={() => setSelected(member)}>
-              <MemberCard member={member} />
-            </div>
-          ))}
-        </div>
-      </motion.section>
+  // Filter search
+  const filteredMembers = useMemo(() => {
+    return members.filter((m) =>
+      m.name.toLowerCase().includes(search.toLowerCase())
     );
+  }, [search, members]);
+
+  const totalPages = Math.ceil(filteredMembers.length / ITEMS_PER_PAGE);
+  const paginated = filteredMembers.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
+  );
+
+  const Skeleton = () => (
+    <div className="animate-pulse bg-white/10 rounded-xl h-56 w-full"></div>
+  );
 
   return (
-    <div className="min-h-screen flex flex-col bg-transparent text-white">
+    <div className="min-h-screen flex flex-col text-white">
       {/* HERO */}
-      <section className="relative overflow-hidden py-20 text-center">
+      <section className="py-16 text-center">
         <motion.h1
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="text-5xl font-extrabold relative"
+          className="text-5xl font-extrabold"
         >
           Our Members
         </motion.h1>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-lg text-gray-300 mt-4 relative"
-        >
+        <p className="text-gray-300 mt-4">
           Meet the innovators behind DIU Robotics Club
-        </motion.p>
+        </p>
+
+        {/* Search */}
+        <div className="max-w-md mx-auto mt-8">
+          <input
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            placeholder="Search members by name..."
+            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white outline-none"
+          />
+        </div>
       </section>
 
-      {/* MEMBER LIST */}
-      <main className="flex-grow">
+      {/* MEMBERS GRID */}
+      <main className="flex-grow m-auto">
         <div className="max-w-7xl mx-auto px-6 py-16">
-          <Section title="Main Members" list={membersByRole.main} />
-          <Section title="Executive Members" list={membersByRole.executive} />
-          <Section title="Deputy Members" list={membersByRole.deputy} />
-          <Section title="General Members" list={membersByRole.general} />
+          <h2 className="text-3xl font-bold mb-6">All Members</h2>
 
-          {members.length === 0 && (
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {loading &&
+              Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} />)}
+
+            {!loading &&
+              paginated.map((m) => (
+                <div key={m._id} onClick={() => setSelected(m)}>
+                  <MemberCard member={m} />
+                </div>
+              ))}
+          </div>
+
+          {!loading && filteredMembers.length === 0 && (
             <div className="text-center py-20 text-gray-400 text-lg">
-              No active members available yet.
+              No members found
+            </div>
+          )}
+
+          {/* Pagination */}
+          {!loading && filteredMembers.length > 0 && (
+            <div className="flex items-center justify-center mt-12 gap-4">
+              <button
+                disabled={page === 1}
+                onClick={() => setPage((p) => p - 1)}
+                className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg"
+              >
+                Previous
+              </button>
+
+              <span className="text-gray-200">
+                Page {page} / {totalPages}
+              </span>
+
+              <button
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => p + 1)}
+                className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg"
+              >
+                Next
+              </button>
             </div>
           )}
         </div>
       </main>
 
-      <Footer />
-
-      {/* MEMBER MODAL */}
+      {/* MODAL */}
       <AnimatePresence>
         {selected && (
           <motion.div
@@ -100,133 +138,52 @@ export default function MembersPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            {/* BACKDROP */}
+            {/* Background */}
             <motion.div
               className="absolute inset-0 bg-black/80 backdrop-blur-xl"
               onClick={() => setSelected(null)}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
             />
 
-            {/* MODAL CARD */}
+            {/* POPUP */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 60 }}
+              initial={{ opacity: 0, scale: 0.8, y: 30 }}
               animate={{
                 opacity: 1,
                 scale: 1,
                 y: 0,
-                transition: { type: "spring", stiffness: 180, damping: 16 },
+                transition: { type: "spring", stiffness: 200, damping: 14 },
               }}
-              exit={{ opacity: 0, scale: 0.8, y: 40 }}
-              className="
-          relative z-10 
-          w-full max-w-xl 
-          bg-white/10 
-          backdrop-blur-2xl 
-          border border-white/20 
-          rounded-3xl 
-          shadow-[0_0_40px_rgba(0,0,0,0.4)]
-          overflow-hidden
-        "
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="relative bg-white/10 border border-white/20 rounded-2xl max-w-xl w-full shadow-2xl p-8 text-center"
             >
-              {/* TOP GRADIENT BANNER */}
-              <div className="h-32 bg-gradient-to-r from-indigo-500 to-purple-600 relative">
-                <motion.button
-                  onClick={() => setSelected(null)}
-                  whileHover={{ scale: 1.15 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="absolute top-4 right-4 text-white/80 hover:text-white text-3xl font-light"
-                >
-                  ✕
-                </motion.button>
-              </div>
-
-              {/* AVATAR */}
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.1, type: "spring" }}
-                className="flex justify-center -mt-16"
+              <button
+                onClick={() => setSelected(null)}
+                className="absolute top-4 right-4 text-2xl"
               >
-                <div
-                  className="
-            w-36 h-36 rounded-full 
-            bg-gradient-to-r from-purple-500 to-indigo-500 p-1
-            shadow-2xl
-          "
-                >
-                  <div className="w-full h-full rounded-full overflow-hidden bg-black">
-                    {selected.image ? (
-                      <img
-                        src={selected.image}
-                        className="w-full h-full object-cover"
-                        alt={selected.name}
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-5xl text-white">
-                        {selected.name.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
+                ✕
+              </button>
 
-              {/* MEMBER DETAILS */}
-              <div className="p-8 text-center text-white space-y-4">
-                <h2 className="text-3xl font-extrabold">{selected.name}</h2>
-
-                {/* ROLE BADGE */}
-                <span
-                  className="
-            px-4 py-1 
-            text-sm font-semibold 
-            rounded-full 
-            bg-gradient-to-r from-purple-500/30 to-indigo-500/30 
-            border border-white/20 
-            backdrop-blur-md
-            capitalize
-          "
-                >
-                  {selected.role} Member
-                </span>
-
-                <p className="text-white/60">
-                  {selected.department} • Batch {selected.batch}
-                </p>
-
-                <p className="text-white/60">{selected.email}</p>
-                <p className="text-white/60">{selected.phone}</p>
-
-                {/* SKILLS */}
-                {selected.skills?.length > 0 && (
-                  <div className="pt-2">
-                    <p className="text-white/50 mb-2">Skills:</p>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {selected.skills.map((skill: string) => (
-                        <span
-                          key={skill}
-                          className="
-                      px-3 py-1 text-sm 
-                      bg-white/10 border border-white/20 
-                      rounded-full 
-                      backdrop-blur-md
-                    "
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
+              {/* Avatar */}
+              <div className="w-28 h-28 mx-auto rounded-full overflow-hidden bg-white/20 mb-4">
+                {selected.image ? (
+                  <img
+                    src={selected.image}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center w-full h-full text-4xl">
+                    {selected.name.charAt(0)}
                   </div>
                 )}
+              </div>
 
-                {/* JOIN DATE */}
-                <div className="border-t border-white/10 pt-4">
-                  <p className="text-white/40 text-sm">
-                    Joined on{" "}
-                    {new Date(selected.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
+              <h2 className="text-3xl font-bold">{selected.name}</h2>
+              <p className="text-gray-300 mt-2">{selected.department}</p>
+              <p className="text-gray-300">{selected.email}</p>
+              <p className="text-gray-300">{selected.phone}</p>
+
+              <div className="mt-6 text-sm text-gray-400">
+                Joined: {new Date(selected.createdAt).toLocaleDateString()}
               </div>
             </motion.div>
           </motion.div>

@@ -21,6 +21,7 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
     department: "",
     batch: "",
     bio: "",
+    image: "", // ⭐ IMAGE URL
     isActive: true,
   });
 
@@ -39,7 +40,8 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
         department: member.department || "",
         batch: member.batch || "",
         bio: member.bio || "",
-        isActive: member.isActive !== undefined ? member.isActive : true,
+        image: member.image || "", // ⭐ Load existing image
+        isActive: member.isActive ?? true,
       });
     }
   }, [member]);
@@ -76,7 +78,6 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-[#0f192d] border border-white/10 shadow-xl">
-        {/* HEADER */}
         <CardHeader>
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold text-white">
@@ -91,17 +92,16 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
           </div>
         </CardHeader>
 
-        {/* CONTENT */}
         <CardContent className="text-white">
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Error */}
+            {/* ERROR */}
             {error && (
-              <div className="bg-red-500/20 border border-red-500/30 text-red-300 px-4 py-3 rounded-lg">
+              <div className="bg-red-500/20 border border-red-500 text-red-300 px-4 py-3 rounded-lg">
                 {error}
               </div>
             )}
 
-            {/* Name + Student ID */}
+            {/* NAME + STUDENT ID */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm mb-1 text-white/80">
@@ -114,7 +114,7 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
                     setFormData({ ...formData, name: e.target.value })
                   }
                   required
-                  className="w-full px-4 py-2 bg-white/5 border border-white/20 text-white rounded-lg focus:ring-[#1f8fff]"
+                  className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg"
                 />
               </div>
 
@@ -132,12 +132,12 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
                     })
                   }
                   required
-                  className="w-full px-4 py-2 bg-white/5 border border-white/20 text-white rounded-lg focus:ring-[#1f8fff]"
+                  className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg"
                 />
               </div>
             </div>
 
-            {/* Email + Phone */}
+            {/* EMAIL + PHONE */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm mb-1 text-white/80">
@@ -150,7 +150,7 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   required
-                  className="w-full px-4 py-2 bg-white/5 border border-white/20 text-white rounded-lg focus:ring-[#1f8fff]"
+                  className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg"
                 />
               </div>
 
@@ -165,12 +165,12 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
                     setFormData({ ...formData, phone: e.target.value })
                   }
                   required
-                  className="w-full px-4 py-2 bg-white/5 border border-white/20 text-white rounded-lg focus:ring-[#1f8fff]"
+                  className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg"
                 />
               </div>
             </div>
 
-            {/* Role + Position */}
+            {/* ROLE + POSITION */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm mb-1 text-white/80">
@@ -181,7 +181,7 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
                   onChange={(e) =>
                     setFormData({ ...formData, role: e.target.value })
                   }
-                  className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white focus:ring-[#1f8fff]"
+                  className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg"
                 >
                   <option className="text-black" value="general">
                     General
@@ -192,8 +192,8 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
                   <option className="text-black" value="executive">
                     Executive
                   </option>
-                  <option className="text-black" value="main">
-                    Main
+                  <option className="text-black" value="president">
+                    President 
                   </option>
                 </select>
               </div>
@@ -208,12 +208,12 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
                   onChange={(e) =>
                     setFormData({ ...formData, position: e.target.value })
                   }
-                  className="w-full px-4 py-2 bg-white/5 border border-white/20 text-white rounded-lg focus:ring-[#1f8fff]"
+                  className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg"
                 />
               </div>
             </div>
 
-            {/* Department + Batch */}
+            {/* DEPARTMENT + BATCH */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm mb-1 text-white/80">
@@ -226,7 +226,7 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
                     setFormData({ ...formData, department: e.target.value })
                   }
                   required
-                  className="w-full px-4 py-2 bg-white/5 border border-white/20 text-white rounded-lg focus:ring-[#1f8fff]"
+                  className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg"
                 />
               </div>
 
@@ -241,12 +241,39 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
                     setFormData({ ...formData, batch: e.target.value })
                   }
                   required
-                  className="w-full px-4 py-2 bg-white/5 border border-white/20 text-white rounded-lg focus:ring-[#1f8fff]"
+                  className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg"
                 />
               </div>
             </div>
 
-            {/* Bio */}
+            {/* IMAGE URL INPUT ⭐ */}
+            <div>
+              <label className="block text-sm mb-1 text-white/80">
+                Profile Image URL
+              </label>
+              <input
+                type="text"
+                value={formData.image}
+                onChange={(e) =>
+                  setFormData({ ...formData, image: e.target.value })
+                }
+                placeholder="https://example.com/photo.jpg"
+                className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg"
+              />
+            </div>
+
+            {/* LIVE PREVIEW ⭐ */}
+            {formData.image && (
+              <div className="mt-3 flex justify-center">
+                <img
+                  src={formData.image}
+                  alt="Preview"
+                  className="w-32 h-32 object-cover rounded-full border border-white/20"
+                />
+              </div>
+            )}
+
+            {/* BIO */}
             <div>
               <label className="block text-sm mb-1 text-white/80">Bio</label>
               <textarea
@@ -255,41 +282,34 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, bio: e.target.value })
                 }
-                className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white focus:ring-[#1f8fff]"
+                className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg"
               />
             </div>
 
-            {/* Active Member */}
+            {/* ACTIVE */}
             <div className="flex items-center">
               <input
                 type="checkbox"
-                id="isActive"
                 checked={formData.isActive}
                 onChange={(e) =>
                   setFormData({ ...formData, isActive: e.target.checked })
                 }
-                className="w-4 h-4 accent-[#1f8fff]"
+                className="w-4 h-4 accent-cyan-400"
               />
-              <label htmlFor="isActive" className="ml-2 text-sm text-white/80">
+              <label className="ml-2 text-sm text-white/80">
                 Active Member
               </label>
             </div>
 
-            {/* Buttons */}
-            <div className="flex justify-end space-x-4 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                className="border-white/30 text-white hover:bg-white/10"
-              >
+            {/* BUTTONS */}
+            <div className="flex justify-end gap-4 pt-4">
+              <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
-
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-[#1f8fff] hover:bg-[#0e6fd8]"
+                className="bg-cyan-600 hover:bg-cyan-700"
               >
                 {loading ? "Saving..." : member ? "Update" : "Create"}
               </Button>

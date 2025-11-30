@@ -21,9 +21,7 @@ export interface IMemberRegistration extends Document {
   paymentMethod: "bkash" | "nagad" | "rocket";
   transactionId: string;
   paymentStatus: "pending" | "verified" | "rejected";
-
   status: "pending" | "approved" | "rejected";
-  reviewedBy?: mongoose.Types.ObjectId;
 }
 
 const MemberRegistrationSchema = new Schema<IMemberRegistration>(
@@ -66,7 +64,6 @@ const MemberRegistrationSchema = new Schema<IMemberRegistration>(
       default: "pending",
     },
 
-    reviewedBy: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

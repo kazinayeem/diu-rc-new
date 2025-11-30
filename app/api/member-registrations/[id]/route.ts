@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
-import MemberRegistration from '@/lib/models/MemberRegistration';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { NextRequest, NextResponse } from "next/server";
+import connectDB from "@/lib/db";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import MemberRegistration from "@/lib/models/MemberRegistration";
 
 // GET - Get single registration (admin only)
 export async function GET(
@@ -12,17 +12,15 @@ export async function GET(
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await connectDB();
-    const registration = await MemberRegistration.findById(params.id)
-      .populate('reviewedBy', 'name email')
-      .lean();
+    const registration = await MemberRegistration.findById(params.id).lean();
 
     if (!registration) {
       return NextResponse.json(
-        { success: false, error: 'Registration not found' },
+        { success: false, error: "Registration not found" },
         { status: 404 }
       );
     }
@@ -44,7 +42,7 @@ export async function PUT(
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await connectDB();
@@ -52,7 +50,6 @@ export async function PUT(
     const body = await request.json();
     const updateData: any = {
       ...body,
-      reviewedBy: (session.user as any).id,
       reviewedAt: new Date(),
     };
 
@@ -60,11 +57,11 @@ export async function PUT(
       params.id,
       updateData,
       { new: true, runValidators: true }
-    ).populate('reviewedBy', 'name email');
+    ).lean();
 
     if (!registration) {
       return NextResponse.json(
-        { success: false, error: 'Registration not found' },
+        { success: false, error: "Registration not found" },
         { status: 404 }
       );
     }
@@ -86,7 +83,7 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await connectDB();
@@ -95,12 +92,15 @@ export async function DELETE(
 
     if (!registration) {
       return NextResponse.json(
-        { success: false, error: 'Registration not found' },
+        { success: false, error: "Registration not found" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json({ success: true, message: 'Registration deleted successfully' });
+    return NextResponse.json({
+      success: true,
+      message: "Registration deleted successfully",
+    });
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message },
@@ -108,4 +108,3 @@ export async function DELETE(
     );
   }
 }
-

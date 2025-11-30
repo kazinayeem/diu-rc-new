@@ -1,12 +1,60 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* Quill Editor – Dark Mode Styling */
+.ql-container {
+  min-height: 200px !important;
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  border-radius: 8px;
+}
+
+.ql-editor {
+  min-height: 180px;
+  color: white;
+}
+
+.ql-toolbar {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.ql-toolbar {
+  background: #111827;
+  border-color: #374151 !important;
+}
+
+.ql-container {
+  background: #0f192d !important;
+  color: white !important;
+  border-color: #374151 !important;
+}
+
+.ql-editor {
+  min-height: 200px;
+  color: white !important;
+}
+
+.ql-stroke {
+  stroke: #ddd !important;
+}
+
+.ql-fill {
+  fill: #ddd !important;
+}
+
+.ql-picker {
+  color: white !important;
+}
+
+.ql-picker-options {
+  background: #111 !important;
+}
 
 @layer base {
   * {
     @apply border-dark-200;
   }
-  
+
   body {
     @apply bg-white text-dark-900 antialiased;
   }
@@ -19,7 +67,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  
+
   .line-clamp-3 {
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -27,4 +75,3 @@
     overflow: hidden;
   }
 }
-

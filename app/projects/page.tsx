@@ -1,8 +1,8 @@
 import React from "react";
 
 async function getProjects() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/api/projects`, { cache: "no-store" });
+ 
+  const res = await fetch(`/api/projects`);
   const data = await res.json();
   return data?.data || [];
 }

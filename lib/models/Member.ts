@@ -5,7 +5,7 @@ export interface IMember extends Document {
   studentId: string;
   email: string;
   phone: string;
-  role: 'main' | 'executive' | 'deputy' | 'general';
+  role: 'president' | 'executive' | 'deputy' | 'general';
   position?: string;
   department: string;
   batch: string;
@@ -52,7 +52,7 @@ const MemberSchema: Schema = new Schema(
     },
     role: {
       type: String,
-      enum: ['main', 'executive', 'deputy', 'general'],
+      enum: ['president', 'executive', 'deputy', 'general'],
       required: [true, 'Role is required'],
       default: 'general',
     },

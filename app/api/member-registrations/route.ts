@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     const registrations = await MemberRegistration.find(query)
       .sort({ createdAt: -1 })
       .select(
-        "name studentId email phone department batch currentYear cgpa previousExperience whyJoin skills portfolio linkedin github status paymentMethod paymentNumber transactionId paymentStatus createdAt reviewedBy"
+        "name studentId email phone department batch currentYear cgpa previousExperience whyJoin skills portfolio linkedin github status paymentMethod paymentNumber transactionId paymentStatus createdAt"
       )
       .skip(skip)
       .limit(limit)

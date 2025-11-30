@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import DataTable from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/Button";
-import { CheckCircle, XCircle, Eye, Trash2 } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 
 export default function MemberRegistrationsPage() {
   const [registrations, setRegistrations] = useState<any[]>([]);
@@ -17,11 +17,7 @@ export default function MemberRegistrationsPage() {
 
   const [selectedRegistration, setSelectedRegistration] = useState<any>(null);
 
-  useEffect(() => {
-    fetchRegistrations();
-  }, [selectedStatus, search, page]);
-
-  const fetchRegistrations = async () => {
+  const fetchRegistrations = React.useCallback(async () => {
     try {
       setLoading(true);
 
@@ -44,7 +40,10 @@ export default function MemberRegistrationsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, limit, selectedStatus, search]);
+  useEffect(() => {
+    fetchRegistrations();
+  }, [fetchRegistrations]);
 
   const handleStatusUpdate = async (id: string, status: string) => {
     try {
@@ -132,7 +131,7 @@ export default function MemberRegistrationsPage() {
         <span
           className={`px-2 py-1 rounded-full text-xs font-semibold capitalize border 
             ${
-              value === "accepted"
+              value === "approved"
                 ? "bg-green-500/20 text-green-300 border-green-500/30"
                 : value === "rejected"
                 ? "bg-red-500/20 text-red-300 border-red-500/30"
@@ -210,8 +209,8 @@ export default function MemberRegistrationsPage() {
             <option className="text-black" value="reviewed">
               Reviewed
             </option>
-            <option className="text-black" value="accepted">
-              Accepted
+            <option className="text-black" value="approved">
+              approved
             </option>
             <option className="text-black" value="rejected">
               Rejected
@@ -308,7 +307,7 @@ export default function MemberRegistrationsPage() {
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold border mt-1 inline-block
                         ${
-                          selectedRegistration.paymentStatus === "verified"
+                          selectedRegistration.paymentStatus === "approved"
                             ? "bg-green-500/20 text-green-300 border-green-400/30"
                             : selectedRegistration.paymentStatus === "rejected"
                             ? "bg-red-500/20 text-red-300 border-red-400/30"
@@ -356,7 +355,7 @@ export default function MemberRegistrationsPage() {
               <div className="flex gap-3 mt-6 border-t border-white/10 pt-4">
                 <Button
                   onClick={() =>
-                    handleStatusUpdate(selectedRegistration._id, "accepted")
+                    handleStatusUpdate(selectedRegistration._id, "approved")
                   }
                   className="flex-1 bg-blue-600 hover:bg-blue-700"
                 >

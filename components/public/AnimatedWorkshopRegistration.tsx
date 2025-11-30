@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import WorkshopRegistrationForm from '@/components/public/WorkshopRegistrationForm';
+import { motion } from "framer-motion";
+import WorkshopRegistrationForm from "@/components/public/WorkshopRegistrationForm";
 
 interface AnimatedWorkshopRegistrationProps {
   workshopId: string;
@@ -9,10 +9,10 @@ interface AnimatedWorkshopRegistrationProps {
   workshop?: any;
 }
 
-export default function AnimatedWorkshopRegistration({ 
-  workshopId, 
+export default function AnimatedWorkshopRegistration({
+  workshopId,
   isRegistrationOpen,
-  workshop
+  workshop,
 }: AnimatedWorkshopRegistrationProps) {
   if (!workshopId) {
     return (
@@ -24,25 +24,30 @@ export default function AnimatedWorkshopRegistration({
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      whileInView={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay: 0.3 }}
-      className="sticky top-24"
+      transition={{ delay: 0.2 }}
     >
       {isRegistrationOpen ? (
         <WorkshopRegistrationForm workshopId={workshopId} />
       ) : (
         <div className="bg-red-50 border-2 border-red-200 rounded-xl p-6 text-center">
-          <h3 className="text-xl font-bold text-red-900 mb-2">Registration Closed</h3>
+          <h3 className="text-xl font-bold text-red-900 mb-2">
+            Registration Closed
+          </h3>
           <p className="text-red-700 mb-4">
-            {workshop?.registrationLimit && (workshop?.spotsRemaining === 0 || workshop?.registrationCount >= workshop?.registrationLimit)
-              ? 'All spots have been filled.'
-              : 'Registration is currently closed for this workshop.'}
+            {workshop?.registrationLimit &&
+            (workshop?.spotsRemaining === 0 ||
+              workshop?.registrationCount >= workshop?.registrationLimit)
+              ? "All spots have been filled."
+              : "Registration is currently closed for this workshop."}
           </p>
+
           {workshop?.registrationLimit && (
             <p className="text-sm text-red-600">
-              {workshop.registrationCount || 0} / {workshop.registrationLimit} spots filled
+              {workshop.registrationCount || 0} / {workshop.registrationLimit}{" "}
+              spots filled
             </p>
           )}
         </div>
@@ -50,4 +55,3 @@ export default function AnimatedWorkshopRegistration({
     </motion.div>
   );
 }
-

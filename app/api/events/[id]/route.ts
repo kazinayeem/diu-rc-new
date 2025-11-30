@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
-import Event from '@/lib/models/Event';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { NextRequest, NextResponse } from "next/server";
+import connectDB from "@/lib/db";
+import Event from "@/lib/models/Event";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 // GET - Fetch single event
 export async function GET(
@@ -11,35 +11,40 @@ export async function GET(
 ) {
   try {
     await connectDB();
-    const event = await Event.findById(params.id).populate('createdBy', 'name email');
+    const event = await Event.findById(params.id).populate(
+      "createdBy",
+      "name email"
+    );
 
     if (!event) {
       return NextResponse.json(
-        { success: false, error: 'Event not found' },
+        { success: false, error: "Event not found" },
         { status: 404 }
       );
     }
 
     // Get registration count if it's a workshop
     let registrationCount = 0;
-    if (event.type === 'workshop') {
-      const WorkshopRegistration = (await import('@/lib/models/WorkshopRegistration')).default;
+    if (event.type === "workshop") {
+      const WorkshopRegistration = (
+        await import("@/lib/models/WorkshopRegistration")
+      ).default;
       registrationCount = await WorkshopRegistration.countDocuments({
         workshopId: params.id,
-        status: { $in: ['pending', 'confirmed'] },
+        status: { $in: ["pending", "confirmed"] },
       });
     }
 
     const eventData = event.toObject();
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: {
         ...eventData,
         registrationCount,
-        spotsRemaining: event.registrationLimit 
+        spotsRemaining: event.registrationLimit
           ? Math.max(0, event.registrationLimit - registrationCount)
           : null,
-      }
+      },
     });
   } catch (error: any) {
     return NextResponse.json(
@@ -50,6 +55,7 @@ export async function GET(
 }
 
 // PUT - Update event (admin only)
+// PUT - Update event (admin only)
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -57,20 +63,51 @@ export async function PUT(
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await connectDB();
 
     const body = await request.json();
+
+    // Validate "online" event must include link
+    if (body.type !== "workshop" && body.mode === "online" && !body.eventLink) {
+      return NextResponse.json(
+        { success: false, error: "Online events must include an event link" },
+        { status: 400 }
+      );
+    }
+
+    // Auto-update slug if title changed
+    if (body.title) {
+      const { slugify } = await import("@/lib/utils");
+      body.slug = slugify(body.title);
+    }
+
+    // EVENT or SEMINAR → remove workshop fields
+    if (body.type !== "workshop") {
+      delete body.isPaid;
+      delete body.registrationFee;
+      delete body.paymentMethod;
+      delete body.paymentNumber;
+      delete body.registrationLimit;
+      delete body.registrationOpen;
+    }
+
+    // WORKSHOP → remove event-only fields
+    if (body.type === "workshop") {
+      delete body.eventLink;
+      delete body.mode;
+    }
+
     const event = await Event.findByIdAndUpdate(params.id, body, {
       new: true,
       runValidators: true,
-    }).populate('createdBy', 'name email');
+    }).populate("createdBy", "name email");
 
     if (!event) {
       return NextResponse.json(
-        { success: false, error: 'Event not found' },
+        { success: false, error: "Event not found" },
         { status: 404 }
       );
     }
@@ -92,7 +129,7 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await connectDB();
@@ -101,12 +138,15 @@ export async function DELETE(
 
     if (!event) {
       return NextResponse.json(
-        { success: false, error: 'Event not found' },
+        { success: false, error: "Event not found" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json({ success: true, message: 'Event deleted successfully' });
+    return NextResponse.json({
+      success: true,
+      message: "Event deleted successfully",
+    });
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message },
@@ -114,4 +154,3 @@ export async function DELETE(
     );
   }
 }
-

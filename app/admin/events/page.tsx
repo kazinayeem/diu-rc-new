@@ -5,6 +5,7 @@ import DataTable from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/Button";
 import { Plus } from "lucide-react";
 import EventForm from "@/components/admin/forms/EventForm";
+import Link from "next/link";
 
 export default function EventsPage() {
   const [events, setEvents] = useState<any[]>([]);
@@ -20,12 +21,7 @@ export default function EventsPage() {
   const [status, setStatus] = useState("");
   const [type, setType] = useState("");
   const [featured, setFeatured] = useState("");
-
-  useEffect(() => {
-    fetchEvents();
-  }, [page, search, status, type, featured]);
-
-  const fetchEvents = async () => {
+  const fetchEvents = React.useCallback(async () => {
     try {
       setLoading(true);
 
@@ -50,12 +46,11 @@ export default function EventsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, limit, search, status, type, featured]);
 
-  const handleEdit = (event: any) => {
-    setEditingEvent(event);
-    setShowForm(true);
-  };
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   const handleDelete = async (event: any) => {
     if (!confirm(`Are you sure you want to delete "${event.title}"?`)) return;
@@ -63,7 +58,7 @@ export default function EventsPage() {
     try {
       const res = await fetch(`/api/events/${event._id}`, { method: "DELETE" });
       if (res.ok) fetchEvents();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting event:", error);
     }
   };
@@ -126,7 +121,7 @@ export default function EventsPage() {
       render: (value: boolean, row: any) =>
         value ? (
           <span className="px-2 py-1 bg-yellow-500/20 border border-yellow-400/30 text-yellow-300 rounded-full text-xs font-semibold">
-            ৳{row.registrationFee}
+            BDT {row.registrationFee}
           </span>
         ) : (
           <span className="text-white/50 text-xs">Free</span>
@@ -147,12 +142,12 @@ export default function EventsPage() {
             </a>
           )}
 
-          <button
-            onClick={() => handleEdit(row)}
+          <Link
+            href={`/admin/events/${row._id}/edit`}
             className="text-green-400 hover:text-green-300"
           >
             Edit
-          </button>
+          </Link>
 
           <button
             onClick={() => handleDelete(row)}
@@ -173,14 +168,15 @@ export default function EventsPage() {
           <h1 className="text-3xl font-bold text-white mb-1">Events</h1>
           <p className="text-white/60">Manage club events</p>
         </div>
-
-        <Button
-          onClick={() => setShowForm(true)}
-          className="bg-[#1f8fff] hover:bg-[#0e6fd8]"
-        >
-          <Plus size={20} className="mr-2" />
-          Add Event
-        </Button>
+        <Link href={"/admin/events/add"}>
+          <Button
+            // onClick={() => setShowForm(true)}
+            className="bg-[#1f8fff] hover:bg-[#0e6fd8]"
+          >
+            <Plus size={20} className="mr-2" />
+            Add Event
+          </Button>
+        </Link>
       </div>
 
       {/* FILTERS */}

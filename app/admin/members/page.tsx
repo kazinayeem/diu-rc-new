@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import DataTable from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/Button";
 import { Plus, Pencil, Trash2 } from "lucide-react";
@@ -24,12 +24,8 @@ export default function MembersPage() {
     pages: 0,
   });
 
-  useEffect(() => {
-    fetchMembers();
-  }, [pagination.page, search, role, isActive]);
-
   // FETCH MEMBERS
-  const fetchMembers = async () => {
+  const fetchMembers = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -57,7 +53,10 @@ export default function MembersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page, pagination.limit, search, role, isActive]);
+  useEffect(() => {
+    fetchMembers();
+  }, [fetchMembers]);
 
   const handleEdit = (member: any) => {
     setEditingMember(member);

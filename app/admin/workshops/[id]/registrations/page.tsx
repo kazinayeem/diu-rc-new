@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import DataTable from "@/components/admin/DataTable";
-import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { CheckCircle, XCircle, Clock } from "lucide-react";
 
@@ -21,11 +20,7 @@ export default function WorkshopRegistrationsPage() {
     confirmed: 0,
   });
 
-  useEffect(() => {
-    fetchData();
-  }, [workshopId]);
-
-  const fetchData = async () => {
+  const fetchData = React.useCallback(async () => {
     try {
       setLoading(true);
 
@@ -55,7 +50,10 @@ export default function WorkshopRegistrationsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [workshopId]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handlePaymentApproval = async (
     registrationId: string,

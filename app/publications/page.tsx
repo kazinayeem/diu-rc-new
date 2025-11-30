@@ -1,10 +1,8 @@
 import React from "react";
 
 async function getPapers() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/api/research-papers`, {
-    cache: "no-store",
-  });
+ 
+  const res = await fetch(`/api/research-papers`);
 
   const data = await res.json();
   return data?.data || [];
