@@ -1,17 +1,21 @@
+
 import React from 'react';
 import Footer from '@/components/public/Footer';
 import AnimatedResearchCard from '@/components/public/AnimatedResearchCard';
+import connectDB from '@/lib/db';
+import Post from '@/lib/models/Post';
 
 async function getResearchPosts() {
   try {
-    const res = await fetch(`/api/posts?category=research&status=published&limit=12`);
-    if (res.ok) {
-      const data = await res.json();
-      return data.data || [];
-    }
-    return [];
+    // Use direct DB query on the server to avoid relative URL fetch issues
+    await connectDB();
+    const posts = await Post.find({ category: 'research', status: 'published' })
+      .sort({ createdAt: -1 })
+      .limit(12)
+      .lean();
+    return posts || [];
   } catch (error) {
-    console.error('Error fetching research posts:', error);
+    console.error('Error fetching research posts from DB:', error);
     return [];
   }
 }

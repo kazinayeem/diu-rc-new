@@ -29,7 +29,7 @@ export default function TeamPage() {
   const filtered = useMemo(
     () =>
       members.filter((m) =>
-        m.name.toLowerCase().includes(search.toLowerCase())
+        (m?.name || "").toLowerCase().includes(search.toLowerCase())
       ),
     [search, members]
   );
@@ -187,14 +187,14 @@ export default function TeamPage() {
                   className="w-36 h-36 rounded-full border-4 border-white/30 
                           overflow-hidden bg-black relative -mt-20 z-20 shadow-xl"
                 >
-                  {selected.image ? (
+                  {selected?.image ? (
                     <img
                       src={selected.image}
                       className="w-full h-full object-cover"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-4xl text-white">
-                      {selected.name.charAt(0)}
+                      {selected?.name?.charAt ? selected.name.charAt(0) : "?"}
                     </div>
                   )}
                 </div>
@@ -202,21 +202,21 @@ export default function TeamPage() {
 
               {/* DETAILS */}
               <div className="p-8 text-center space-y-3 relative z-10">
-                <h2 className="text-3xl font-bold">{selected.name}</h2>
+                <h2 className="text-3xl font-bold">{selected?.name || "Member"}</h2>
 
                 <span className="px-4 py-1 bg-white/10 border border-white/20 rounded-full capitalize">
-                  {selected.role}
+                  {selected?.role || "-"}
                 </span>
 
                 <p className="text-white/60">
-                  {selected.department} • Batch {selected.batch}
+                  {selected?.department || "-"} • Batch {selected?.batch || "-"}
                 </p>
 
-                <p className="text-white/50">{selected.email}</p>
-                <p className="text-white/50">{selected.phone}</p>
+                <p className="text-white/50">{selected?.email || "-"}</p>
+                <p className="text-white/50">{selected?.phone || "-"}</p>
 
                 <p className="text-white/30 text-sm border-t border-white/10 pt-3">
-                  Joined on {new Date(selected.createdAt).toLocaleDateString()}
+                  Joined on {selected?.createdAt ? new Date(selected.createdAt).toLocaleDateString() : "-"}
                 </p>
               </div>
             </motion.div>

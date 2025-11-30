@@ -175,20 +175,25 @@ export const api = createApi({
     getWorkshopRegistrations: builder.query<any, string>({
       // pass workshopId as param
       query: (workshopId) => `workshops/${workshopId}/registrations`,
-      providesTags: ["Workshops"],
+      providesTags: (result, error, workshopId) => [{ type: "Workshops", id: workshopId }],
     }),
     deleteWorkshopRegistration: builder.mutation<any, string>({
       query: (registrationId) => ({ url: `workshops/registrations/${registrationId}`, method: "DELETE" }),
-      invalidatesTags: ["Workshops"],
+      // Invalidate workshop & event caches so detail pages will refresh
+      invalidatesTags: ["Workshops", "Events"],
     }),
     updateWorkshopRegistration: builder.mutation<any, { id: string; body: any }>({
       query: ({ id, body }) => ({ url: `workshops/registrations/${id}`, method: "PUT", body }),
-      invalidatesTags: ["Workshops"],
+      invalidatesTags: ["Workshops", "Events"],
     }),
     // register user for a workshop
     createWorkshopRegistration: builder.mutation<any, { workshopId: string; body: any }>({
       query: ({ workshopId, body }) => ({ url: `workshops/${workshopId}/register`, method: "POST", body }),
-      invalidatesTags: ["Workshops"],
+      // Invalidate both workshop registration queries and the event/workshop detail so pages show updated counts
+      invalidatesTags: (result, error, { workshopId }) => [
+        { type: "Workshops", id: workshopId },
+        { type: "Events", id: workshopId },
+      ],
     }),
 
     // UPLOAD (Cloudinary)

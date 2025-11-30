@@ -21,6 +21,8 @@ const HeroWithRobot = dynamic(() => import("@/components/public/With3drobot"), {
 
 async function getFeaturedContent() {
   try {
+  
+
     const [eventsRes, seminarsRes, membersRes] = await Promise.all([
       fetch(`/api/events?featured=true&limit=3`),
       fetch(`/api/seminars?featured=true&limit=3`),

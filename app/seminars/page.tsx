@@ -1,18 +1,20 @@
 import React from 'react';
 import Footer from '@/components/public/Footer';
 import SeminarCard from '@/components/public/SeminarCard';
+import connectDB from '@/lib/db';
+import Seminar from '@/lib/models/Seminar';
 
 async function getSeminars() {
   try {
-
-    const res = await fetch(`/api/seminars?limit=12`);
-    if (res.ok) {
-      const data = await res.json();
-      return data.data || [];
-    }
-    return [];
+    // Query database directly on server
+    await connectDB();
+    const seminars = await Seminar.find({})
+      .sort({ seminarDate: -1 })
+      .limit(12)
+      .lean();
+    return seminars || [];
   } catch (error) {
-    console.error('Error fetching seminars:', error);
+    console.error('Error fetching seminars from DB:', error);
     return [];
   }
 }

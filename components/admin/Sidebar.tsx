@@ -30,10 +30,8 @@ const menuItems = [
     icon: Users,
   },
   { href: "/admin/events", label: "Events", icon: Calendar },
-  { href: "/admin/notices", label: "Notices", icon: Bell },
   { href: "/admin/research", label: "research", icon: Paperclip },
-  { href: "/admin/posts", label: "Posts", icon: FileText },
-  { href: "/admin/gallery", label: "Gallery", icon: ImageIcon },
+  // notices, posts and gallery removed per request
   { href: "/admin/projects", label: "Projects", icon: Layers },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];

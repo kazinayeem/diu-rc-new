@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { CheckCircle, AlertCircle } from "lucide-react";
-import { useGetEventQuery, useCreateWorkshopRegistrationMutation } from "@/lib/api/api";
+import { useGetEventQuery, useCreateWorkshopRegistrationMutation, useGetWorkshopRegistrationsQuery } from "@/lib/api/api";
 
 interface WorkshopRegistrationFormProps {
   workshopId: string;
@@ -41,6 +41,10 @@ export default function WorkshopRegistrationForm({
     if (eventData?.success) setWorkshop(eventData.data);
   }, [eventData, loadingEvent]);
 
+  // fetch current workshop registrations so we can display live counts and prevent overbooking
+  const { data: regsData, isFetching: regsLoading } = useGetWorkshopRegistrationsQuery(workshopId, { pollingInterval: 10000 });
+  const currentRegistrations = regsData?.data?.length || 0;
+
   // Handle form submission
   const [createWorkshopRegistration] = useCreateWorkshopRegistrationMutation();
 
@@ -50,6 +54,13 @@ export default function WorkshopRegistrationForm({
     setLoading(true);
 
     try {
+      // Re-check capacity before attempting to register (race conditions handled server-side too)
+      const limit = workshop?.registrationLimit;
+      if (limit && currentRegistrations >= limit) {
+        setError("Registration is full — no spots available.");
+        setLoading(false);
+        return;
+      }
       await createWorkshopRegistration({ workshopId, body: formData }).unwrap();
       setSuccess(true);
       setFormData({
@@ -282,6 +293,19 @@ export default function WorkshopRegistrationForm({
                     className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg"
                   />
                 </div>
+              </div>
+            )}
+
+            {/* QUICK STATUS */}
+            {workshop?.registrationLimit && (
+              <div className="text-sm text-white/60 mb-2">
+                {regsLoading ? (
+                  <span>Checking spots... </span>
+                ) : (
+                  <span>
+                    {currentRegistrations} / {workshop.registrationLimit} spots taken
+                  </span>
+                )}
               </div>
             )}
 

@@ -27,7 +27,7 @@ export default function MembersPage() {
   // Filter search
   const filteredMembers = useMemo(() => {
     return members.filter((m) =>
-      m.name.toLowerCase().includes(search.toLowerCase())
+      (m?.name || "").toLowerCase().includes(search.toLowerCase())
     );
   }, [search, members]);
 
@@ -157,25 +157,25 @@ export default function MembersPage() {
 
               {/* Avatar */}
               <div className="w-28 h-28 mx-auto rounded-full overflow-hidden bg-white/20 mb-4">
-                {selected.image ? (
+                {selected?.image ? (
                   <img
                     src={selected.image}
                     className="w-full h-full object-cover"
                   />
                 ) : (
                   <div className="flex items-center justify-center w-full h-full text-4xl">
-                    {selected.name.charAt(0)}
+                    {selected?.name?.charAt ? selected.name.charAt(0) : "?"}
                   </div>
                 )}
               </div>
 
-              <h2 className="text-3xl font-bold">{selected.name}</h2>
-              <p className="text-gray-300 mt-2">{selected.department}</p>
-              <p className="text-gray-300">{selected.email}</p>
-              <p className="text-gray-300">{selected.phone}</p>
+              <h2 className="text-3xl font-bold">{selected?.name || "Member"}</h2>
+              <p className="text-gray-300 mt-2">{selected?.department || "-"}</p>
+              <p className="text-gray-300">{selected?.email || "-"}</p>
+              <p className="text-gray-300">{selected?.phone || "-"}</p>
 
               <div className="mt-6 text-sm text-gray-400">
-                Joined: {new Date(selected.createdAt).toLocaleDateString()}
+                Joined: {selected?.createdAt ? new Date(selected.createdAt).toLocaleDateString() : "-"}
               </div>
             </motion.div>
           </motion.div>
