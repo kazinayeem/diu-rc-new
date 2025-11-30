@@ -17,19 +17,29 @@ export default function MembersPage() {
   const ITEMS_PER_PAGE = 12;
 
   // use registrations data (public-facing members list is built from member registrations)
-  const { data, isLoading: isFetching } = useGetMemberRegistrationsQuery({ query: "limit=50" });
+  const { data, isLoading: isFetching } = useGetMemberRegistrationsQuery({
+    query: "limit=50",
+  });
 
   useEffect(() => {
     setLoading(isFetching);
-    if (data?.success) setMembers(data.data || []);
+
+    if (data?.success && Array.isArray(data.data)) {
+      setMembers(data.data);
+    } else {
+      console.warn("Invalid member data:", data);
+      setMembers([]);
+    }
   }, [data, isFetching]);
 
   // Filter search
+  const safeMembers = Array.isArray(members) ? members : [];
+
   const filteredMembers = useMemo(() => {
-    return members.filter((m) =>
+    return safeMembers.filter((m) =>
       (m?.name || "").toLowerCase().includes(search.toLowerCase())
     );
-  }, [search, members]);
+  }, [safeMembers, search]);
 
   const totalPages = Math.ceil(filteredMembers.length / ITEMS_PER_PAGE);
   const paginated = filteredMembers.slice(
@@ -169,13 +179,20 @@ export default function MembersPage() {
                 )}
               </div>
 
-              <h2 className="text-3xl font-bold">{selected?.name || "Member"}</h2>
-              <p className="text-gray-300 mt-2">{selected?.department || "-"}</p>
+              <h2 className="text-3xl font-bold">
+                {selected?.name || "Member"}
+              </h2>
+              <p className="text-gray-300 mt-2">
+                {selected?.department || "-"}
+              </p>
               <p className="text-gray-300">{selected?.email || "-"}</p>
               <p className="text-gray-300">{selected?.phone || "-"}</p>
 
               <div className="mt-6 text-sm text-gray-400">
-                Joined: {selected?.createdAt ? new Date(selected.createdAt).toLocaleDateString() : "-"}
+                Joined:{" "}
+                {selected?.createdAt
+                  ? new Date(selected.createdAt).toLocaleDateString()
+                  : "-"}
               </div>
             </motion.div>
           </motion.div>
