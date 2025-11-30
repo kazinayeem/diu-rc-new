@@ -40,6 +40,9 @@ export default function EventFormPage({ eventId }: { eventId?: string }) {
 
   // Fetch event if editing (RTK Query)
   const { data: eventData, isFetching: loadingEvent } = useGetEventQuery(eventId || "");
+  // RTK Query mutations (hooks must be at top level)
+  const [createEvent, { isLoading: creating }] = useCreateEventMutation();
+  const [updateEvent, { isLoading: updating }] = useUpdateEventMutation();
   useEffect(() => {
     if (!eventId) return;
     if (eventData?.success) {
@@ -75,8 +78,7 @@ export default function EventFormPage({ eventId }: { eventId?: string }) {
     setLoading(true);
     setError("");
 
-    const [createEvent] = useCreateEventMutation();
-    const [updateEvent] = useUpdateEventMutation();
+    // use the hooks declared at the top level
 
     try {
       const method = eventId ? "PUT" : "POST";
