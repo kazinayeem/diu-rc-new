@@ -48,7 +48,7 @@ export default function MembersPage() {
   );
 
   const Skeleton = () => (
-    <div className="animate-pulse bg-white/10 rounded-xl h-56 w-full"></div>
+    <div className="animate-pulse bg-white/10 dark:bg-white/10 rounded-xl h-56 w-full"></div>
   );
 
   return (

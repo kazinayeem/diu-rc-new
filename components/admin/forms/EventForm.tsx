@@ -179,7 +179,7 @@ export default function EventForm({ event, onClose }: EventFormProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, image: e.target.value })
                 }
-                placeholder="https:
+                placeholder="https://example.com/image.jpg"
                 className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
               />
             </div>
@@ -292,7 +292,7 @@ export default function EventForm({ event, onClose }: EventFormProps) {
                       onChange={(e) =>
                         setFormData({ ...formData, eventLink: e.target.value })
                       }
-                      placeholder="https:
+                      placeholder="https://meet.google.com/xxx-xxxx-xxx"
                       className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
                     />
                   </div>

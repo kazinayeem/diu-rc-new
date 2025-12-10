@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/providers/SessionProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import StoreProvider from "./StoreProvider";
 import HideNavbarWrapper from "@/components/HideNavbarWrapper";
 import Footer from "@/components/public/Footer";
@@ -22,15 +23,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.className}>
-      <body className="bg-[#071024] bg-gradient-to-br from-[#071024] via-[#082135] to-[#0e2840] text-white">
-        <SessionProvider>
-          <StoreProvider>
-            <HideNavbarWrapper>
-              {children}
-              <Footer />
-            </HideNavbarWrapper>
-          </StoreProvider>
-        </SessionProvider>
+      <body className="bg-white dark:bg-[#071024] text-black dark:text-white">
+        <ThemeProvider>
+          <SessionProvider>
+            <StoreProvider>
+              <HideNavbarWrapper>
+                {children}
+                <Footer />
+              </HideNavbarWrapper>
+            </StoreProvider>
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

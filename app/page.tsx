@@ -8,6 +8,7 @@ import {
   AnimatedSection,
   AnimatedCTA,
 } from "@/components/public/AnimatedSections";
+import DataPrefetcher from "@/components/DataPrefetcher";
 
 import dynamic from "next/dynamic";
 
@@ -44,6 +45,9 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#071024] text-white">
+      {/* Prefetch all page data on load */}
+      <DataPrefetcher />
+
       <main className="flex-grow relative">
         {/* Background Grid */}
         <div

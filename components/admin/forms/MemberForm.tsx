@@ -258,7 +258,7 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, image: e.target.value })
                 }
-                placeholder="https:
+                placeholder="https://example.com/image.jpg"
                 className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg"
               />
             </div>
