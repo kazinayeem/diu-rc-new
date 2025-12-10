@@ -4,7 +4,7 @@ import WorkshopRegistration from '@/lib/models/WorkshopRegistration';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-// PUT - Update registration payment status (admin only)
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -27,7 +27,7 @@ export async function PUT(
       if (paymentStatus === 'paid') {
         updateData.paymentApprovedBy = (session.user as any).id;
         updateData.paymentApprovedAt = new Date();
-        // Auto-confirm registration when payment is approved
+        
         updateData.status = 'confirmed';
       }
     }
@@ -60,7 +60,7 @@ export async function PUT(
   }
 }
 
-// DELETE - Delete registration (admin only)
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }

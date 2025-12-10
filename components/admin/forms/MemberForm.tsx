@@ -22,7 +22,7 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
     department: "",
     batch: "",
     bio: "",
-    image: "", // ⭐ IMAGE URL
+    image: "", 
     isActive: true,
   });
 
@@ -41,7 +41,7 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
         department: member.department || "",
         batch: member.batch || "",
         bio: member.bio || "",
-        image: member.image || "", // ⭐ Load existing image
+        image: member.image || "", 
         isActive: member.isActive ?? true,
       });
     }
@@ -258,7 +258,7 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, image: e.target.value })
                 }
-                placeholder="https://example.com/photo.jpg"
+                placeholder="https:
                 className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg"
               />
             </div>

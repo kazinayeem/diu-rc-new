@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { useCreateEventMutation } from "@/lib/api/api";
 import { useRouter } from "next/navigation";
 
-// Load ReactQuill (client only)
+
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
 
@@ -40,7 +40,7 @@ export default function AddEventPage() {
 
   const [createEvent] = useCreateEventMutation();
 
-  // SUBMIT FORM
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -252,7 +252,7 @@ export default function AddEventPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, eventLink: e.target.value })
                     }
-                    placeholder="https://meet.google.com/..."
+                    placeholder="https:
                     className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg"
                   />
                 </div>

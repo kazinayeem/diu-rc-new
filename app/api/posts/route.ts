@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { slugify } from '@/lib/utils';
 
-// GET - Fetch all published posts
+
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create new post (admin only)
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

@@ -3,7 +3,7 @@ import connectDB from '@/lib/db';
 import Event from '@/lib/models/Event';
 import WorkshopRegistration from '@/lib/models/WorkshopRegistration';
 
-// POST - Register for a workshop
+
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -25,7 +25,7 @@ export async function POST(
       transactionId
     } = body;
 
-    // Validate required fields
+    
     if (!name || !email || !phone) {
       return NextResponse.json(
         { success: false, error: 'Name, email, and phone are required' },
@@ -33,7 +33,7 @@ export async function POST(
       );
     }
 
-    // Check if workshop exists
+    
     const workshop = await Event.findById(params.id);
     if (!workshop) {
       return NextResponse.json(
@@ -42,7 +42,7 @@ export async function POST(
       );
     }
 
-    // Check if registration is open
+    
     if (!workshop.registrationOpen) {
       return NextResponse.json(
         { success: false, error: 'Registration is closed for this workshop' },
@@ -50,7 +50,7 @@ export async function POST(
       );
     }
 
-    // Validate payment if workshop is paid
+    
     if (workshop.isPaid) {
       if (!paymentMethod || !paymentNumber || !transactionId) {
         return NextResponse.json(
@@ -66,14 +66,14 @@ export async function POST(
       }
     }
 
-    // Check if registration limit is reached
+    
     const currentRegistrations = await WorkshopRegistration.countDocuments({
       workshopId: params.id,
       status: { $in: ['pending', 'confirmed'] },
     });
 
     if (workshop.registrationLimit && currentRegistrations >= workshop.registrationLimit) {
-      // Auto-close registration if limit reached
+      
       await Event.findByIdAndUpdate(params.id, { registrationOpen: false });
       return NextResponse.json(
         { success: false, error: 'Registration limit reached. Registration is now closed.' },
@@ -81,7 +81,7 @@ export async function POST(
       );
     }
 
-    // Check for duplicate registration
+    
     const existingRegistration = await WorkshopRegistration.findOne({
       workshopId: params.id,
       email: email.toLowerCase(),
@@ -94,7 +94,7 @@ export async function POST(
       );
     }
 
-    // Create registration
+    
     const registration = await WorkshopRegistration.create({
       workshopId: params.id,
       name,
@@ -109,15 +109,15 @@ export async function POST(
       paymentMethod: workshop.isPaid ? paymentMethod : undefined,
       paymentNumber: workshop.isPaid ? paymentNumber : undefined,
       transactionId: workshop.isPaid ? transactionId : undefined,
-      status: workshop.isPaid ? 'pending' : 'pending', // Will be confirmed after payment approval
+      status: workshop.isPaid ? 'pending' : 'pending', 
     });
 
-    // Update workshop attendees count
+    
     await Event.findByIdAndUpdate(params.id, {
       $inc: { attendees: 1 },
     });
 
-    // Check if limit reached after this registration
+    
     const newCount = currentRegistrations + 1;
     if (workshop.registrationLimit && newCount >= workshop.registrationLimit) {
       await Event.findByIdAndUpdate(params.id, { registrationOpen: false });
@@ -141,7 +141,7 @@ export async function POST(
   }
 }
 
-// GET - Get registrations for a workshop (admin only)
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }

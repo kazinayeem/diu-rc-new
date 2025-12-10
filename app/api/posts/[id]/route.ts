@@ -4,7 +4,7 @@ import Post from '@/lib/models/Post';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-// GET - Fetch single post
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -20,7 +20,7 @@ export async function GET(
       );
     }
 
-    // Increment views
+    
     await Post.findByIdAndUpdate(params.id, { $inc: { views: 1 } });
 
     return NextResponse.json({ success: true, data: post });
@@ -32,7 +32,7 @@ export async function GET(
   }
 }
 
-// PUT - Update post (admin only)
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -67,7 +67,7 @@ export async function PUT(
   }
 }
 
-// DELETE - Delete post (admin only)
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }

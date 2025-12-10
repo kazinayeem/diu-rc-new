@@ -91,7 +91,7 @@ const PostSchema: Schema = new Schema(
   }
 );
 
-// Indexes
+
 PostSchema.index({ status: 1, category: 1 });
 PostSchema.index({ featured: 1 });
 PostSchema.index({ slug: 1 });

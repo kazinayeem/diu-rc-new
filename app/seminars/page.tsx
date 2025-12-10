@@ -6,7 +6,7 @@ import Seminar from '@/lib/models/Seminar';
 
 async function getSeminars() {
   try {
-    // Query database directly on server
+    
     await connectDB();
     const seminars = await Seminar.find({})
       .sort({ seminarDate: -1 })

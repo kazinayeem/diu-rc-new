@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import DataTable from '@/components/admin/DataTable';
 import { Button } from '@/components/ui/Button';
 import { Plus } from 'lucide-react';
-import EventForm from '@/components/admin/forms/EventForm'; // Reusing EventForm for now - can create SeminarForm later
+import EventForm from '@/components/admin/forms/EventForm'; 
 import { useGetSeminarsQuery, useDeleteSeminarMutation } from '@/lib/api/api';
 
 export default function SeminarsPage() {

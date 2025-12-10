@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    // Required fields including payment
+    
     const requiredFields = [
       "name",
       "studentId",
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Default statuses
+    
     body.status = "pending";
     body.paymentStatus = "pending";
 

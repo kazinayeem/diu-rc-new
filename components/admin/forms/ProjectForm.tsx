@@ -45,7 +45,7 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
       }
       onClose();
     } catch {
-      // keep existing behaviour: silent fail for now
+      
     }
   };
 

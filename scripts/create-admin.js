@@ -10,7 +10,7 @@ require('dotenv').config({ path: '.env.local' });
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-// Admin Schema (simplified for script)
+
 const AdminSchema = new mongoose.Schema({
   name: String,
   email: { type: String, unique: true },
@@ -23,7 +23,7 @@ const Admin = mongoose.models.Admin || mongoose.model('Admin', AdminSchema);
 
 async function createAdmin() {
   try {
-    // Connect to MongoDB
+    
     const mongoUri = process.env.MONGODB_URI;
     if (!mongoUri) {
       console.error('❌ MONGODB_URI is not set in .env.local');
@@ -33,7 +33,7 @@ async function createAdmin() {
     await mongoose.connect(mongoUri);
     console.log('✅ Connected to MongoDB');
 
-    // Check if admin already exists
+    
     const existingAdmin = await Admin.findOne({ email: 'admin@example.com' });
     if (existingAdmin) {
       console.log('⚠️  Admin with email admin@example.com already exists');
@@ -41,11 +41,11 @@ async function createAdmin() {
       process.exit(0);
     }
 
-    // Hash password
+    
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash('admin123', salt);
 
-    // Create admin
+    
     const admin = new Admin({
       name: 'Admin User',
       email: 'admin@example.com',

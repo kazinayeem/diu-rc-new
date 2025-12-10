@@ -53,7 +53,7 @@ export default function MemberRegistrationForm() {
     linkedin: "",
     github: "",
 
-    paymentNumber: "0194312421", // editable default number
+    paymentNumber: "0194312421", 
     paymentMethod: "",
     transactionId: "",
   });
@@ -96,7 +96,7 @@ export default function MemberRegistrationForm() {
       await createMemberRegistration(formData).unwrap();
       setSuccess(true);
 
-      // reset form
+      
       setFormData({
         name: "",
         studentId: "",

@@ -4,7 +4,7 @@ import WorkshopRegistration from '@/lib/models/WorkshopRegistration';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-// GET - Get all registrations for a workshop (admin only)
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }

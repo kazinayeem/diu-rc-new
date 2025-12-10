@@ -40,7 +40,7 @@ export default function EventsPage() {
     try {
       setLoading(true);
 
-      // We still support the flow of fetching server style but prefer RTK Query data when available
+      
       if (data?.success) {
         setEvents(data.data);
         setTotalPages(data.pagination?.pages || 1);
@@ -53,7 +53,7 @@ export default function EventsPage() {
   }, [page, limit, search, status, type, featured]);
 
   useEffect(() => {
-    // update local state when RTK Query result changes
+    
     setLoading(isFetching);
     if (data?.success) {
       setEvents(data.data || []);
@@ -66,7 +66,7 @@ export default function EventsPage() {
 
     try {
       await deleteEvent(event._id).unwrap();
-      // deleting invalidates 'Events' so useGetEventsQuery will refetch
+      
     } catch (error: any) {
       console.error("Error deleting event:", error);
     }
@@ -78,7 +78,7 @@ export default function EventsPage() {
     fetchEvents();
   };
 
-  // 🌙 DARK MODE COLUMNS
+  
   const columns = [
     { key: "title", label: "Title" },
 
@@ -179,7 +179,7 @@ export default function EventsPage() {
         </div>
         <Link href={"/admin/events/add"}>
           <Button
-            // onClick={() => setShowForm(true)}
+            
             className="bg-[#1f8fff] hover:bg-[#0e6fd8]"
           >
             <Plus size={20} className="mr-2" />

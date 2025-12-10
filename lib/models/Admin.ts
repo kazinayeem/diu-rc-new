@@ -56,9 +56,9 @@ const AdminSchema: Schema<IAdmin> = new Schema(
   }
 );
 
-// ======================================================
-// 🔐 HASH PASSWORD BEFORE SAVE
-// ======================================================
+
+
+
 AdminSchema.pre<IAdmin>("save", async function (next) {
   if (!this.isModified("password") || !this.password) {
     return next();
@@ -70,24 +70,24 @@ AdminSchema.pre<IAdmin>("save", async function (next) {
   next();
 });
 
-// ======================================================
-// 🔐 PASSWORD COMPARE METHOD
-// ======================================================
+
+
+
 AdminSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password as string);
 };
 
-// ======================================================
-// INDEXES
-// ======================================================
+
+
+
 AdminSchema.index({ email: 1 });
 AdminSchema.index({ role: 1, isActive: 1 });
 
-// ======================================================
-// MODEL EXPORT
-// ======================================================
+
+
+
 const Admin: Model<IAdmin> =
   mongoose.models.Admin || mongoose.model<IAdmin>("Admin", AdminSchema);
 

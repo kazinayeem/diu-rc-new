@@ -9,7 +9,7 @@ const ProjectSchema = new Schema(
       enum: ["completed", "ongoing", "under-development"],
       default: "under-development",
     },
-    image: { type: String, required: false }, // thumbnail URL
+    image: { type: String, required: false }, 
     github: { type: String, required: false },
     demo: { type: String, required: false },
     featured: { type: Boolean, default: false },

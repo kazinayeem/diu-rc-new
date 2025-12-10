@@ -7,7 +7,7 @@ import MemberRegistration from "@/lib/models/MemberRegistration";
 import { Users, Calendar, BookOpen, Image as ImageIcon } from "lucide-react";
 
 export default async function AdminDashboard() {
-  // Use direct DB aggregation to render admin stats on the server
+  
   let stats: any = null;
   try {
     await connectDB();

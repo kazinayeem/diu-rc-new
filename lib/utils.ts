@@ -10,7 +10,7 @@ export function slugify(text: string): string {
     .toLowerCase()
     .trim()
     .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-_]+/g, "") // fixed rule
+    .replace(/[^a-z0-9-_]+/g, "") 
     .replace(/--+/g, "-")
     .replace(/^-+/, "")
     .replace(/-+$/, "");

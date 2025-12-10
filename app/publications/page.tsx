@@ -87,7 +87,7 @@ export default function ResearchPublicationsPage() {
                 className="inline-flex items-center gap-2 mt-5 px-4 py-2 bg-blue-700 text-white text-sm font-semibold rounded-lg hover:bg-blue-600 transition"
               >
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="http:
                   className="h-4 w-4"
                   fill="none"
                   viewBox="0 0 24 24"

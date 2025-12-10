@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { uploadImage } from '@/lib/cloudinary';
 
-// POST - Upload image to Cloudinary (admin only)
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

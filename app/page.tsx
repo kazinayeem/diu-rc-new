@@ -11,7 +11,7 @@ import {
 
 import dynamic from "next/dynamic";
 
-// Client Components
+
 import LatestEvents from "@/components/public/LatestEvents";
 import LatestWorkshops from "@/components/public/LatestWorkshops";
 

@@ -16,7 +16,7 @@ export default function MembersPage() {
 
   const ITEMS_PER_PAGE = 12;
 
-  // use registrations data (public-facing members list is built from member registrations)
+  
   const { data, isLoading: isFetching } = useGetMemberRegistrationsQuery({
     query: "limit=50",
   });
@@ -32,7 +32,7 @@ export default function MembersPage() {
     }
   }, [data, isFetching]);
 
-  // Filter search
+  
   const safeMembers = Array.isArray(members) ? members : [];
 
   const filteredMembers = useMemo(() => {

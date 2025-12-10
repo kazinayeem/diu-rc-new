@@ -98,7 +98,7 @@ const MemberSchema: Schema = new Schema(
   }
 );
 
-// Indexes for better query performance
+
 MemberSchema.index({ role: 1, isActive: 1 });
 MemberSchema.index({ studentId: 1 });
 MemberSchema.index({ email: 1 });

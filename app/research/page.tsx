@@ -7,7 +7,7 @@ import Post from '@/lib/models/Post';
 
 async function getResearchPosts() {
   try {
-    // Use direct DB query on the server to avoid relative URL fetch issues
+    
     await connectDB();
     const posts = await Post.find({ category: 'research', status: 'published' })
       .sort({ createdAt: -1 })

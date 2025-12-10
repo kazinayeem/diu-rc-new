@@ -12,7 +12,7 @@ export default function HideNavbarWrapper({
   usePrefetchInit();
   const pathname = usePathname();
 
-  // Hide navbar for ALL admin routes
+  
   const hideNavbar = pathname.startsWith("/admin");
 
   return (

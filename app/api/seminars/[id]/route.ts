@@ -4,7 +4,7 @@ import Seminar from '@/lib/models/Seminar';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-// GET - Fetch single seminar
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -29,7 +29,7 @@ export async function GET(
   }
 }
 
-// PUT - Update seminar (admin only)
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -64,7 +64,7 @@ export async function PUT(
   }
 }
 
-// DELETE - Delete seminar (admin only)
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }

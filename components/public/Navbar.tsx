@@ -31,10 +31,10 @@ const Navbar = () => {
       className={cn(
         "sticky top-0 z-[100] w-full transition-all duration-500 border-b backdrop-blur-xl",
 
-        // ⭐ TOP — fully transparent (NO background)
+        
         !scrolled && "bg-transparent border-white/5 shadow-none",
 
-        // ⭐ SCROLLED — glass gradient + glow
+        
         scrolled &&
           "bg-gradient-to-br from-[#071024]/90 via-[#082135]/90 to-[#0e2840]/90 border-white/20 shadow-[0_0_35px_rgba(0,255,255,0.15)]"
       )}

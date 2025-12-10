@@ -114,7 +114,7 @@ export default function ResearchPaperForm({
       }
       onClose();
     } catch {
-      // noop for now - preserve existing behaviour
+      
     }
   };
 

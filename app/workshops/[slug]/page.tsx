@@ -38,7 +38,7 @@ export default function WorkshopDetailPage({
   const getWorkshop = useCallback(async () => {
     try {
      
-      // prefer RTK Query data when available
+      
       const found = listData?.success ? listData.data?.[0] : undefined;
 
       if (!found) {
@@ -55,15 +55,15 @@ export default function WorkshopDetailPage({
     }
 
     setLoading(false);
-  }, [params.slug, listData, detailData]); // <-- dependency
+  }, [params.slug, listData, detailData]); 
 
-  // --- FIX: add "getWorkshop" ---
+  
   useEffect(() => {
     setLoading(fetchingList || fetchingDetail);
     getWorkshop();
   }, [getWorkshop, fetchingList, fetchingDetail]);
 
-  // === Loading State ===
+  
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-white text-xl">
@@ -72,7 +72,7 @@ export default function WorkshopDetailPage({
     );
   }
 
-  // === Not Found ===
+  
   if (!workshop) {
     return (
       <div className="min-h-screen flex flex-col text-white">

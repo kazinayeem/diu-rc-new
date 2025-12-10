@@ -11,7 +11,7 @@ export default cloudinary;
 export async function uploadImage(file: File | string): Promise<string> {
   try {
     if (typeof file === 'string') {
-      // If it's already a URL, return it
+      
       if (file.startsWith('http')) {
         return file;
       }

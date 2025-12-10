@@ -33,7 +33,7 @@ export default function EventsPage() {
 
   const limit = 6;
 
-  // === Fetch Events ===
+  
   const query = `type=event&page=${page}&limit=${limit}`;
   const { data, isFetching } = useGetEventsQuery({ query });
 
@@ -45,14 +45,14 @@ export default function EventsPage() {
     }
   }, [data, isFetching]);
 
-  // Search
+  
   const filteredEvents = useMemo(() => {
     return events.filter((e) =>
       e.title.toLowerCase().includes(search.toLowerCase())
     );
   }, [search, events]);
 
-  // Skeleton
+  
   const SkeletonCard = () => (
     <div className="animate-pulse bg-white/10 rounded-xl h-72 w-full"></div>
   );

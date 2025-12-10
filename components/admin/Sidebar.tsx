@@ -31,7 +31,7 @@ const menuItems = [
   },
   { href: "/admin/events", label: "Events", icon: Calendar },
   { href: "/admin/research", label: "research", icon: Paperclip },
-  // notices, posts and gallery removed per request
+  
   { href: "/admin/projects", label: "Projects", icon: Layers },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];

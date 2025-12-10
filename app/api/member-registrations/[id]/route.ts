@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import MemberRegistration from "@/lib/models/MemberRegistration";
 
-// GET - Get single registration (admin only)
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -34,7 +34,7 @@ export async function GET(
   }
 }
 
-// PUT - Update registration status (admin only)
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -75,7 +75,7 @@ export async function PUT(
   }
 }
 
-// DELETE - Delete registration (admin only)
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }

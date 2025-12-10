@@ -34,18 +34,18 @@ export default function WorkshopRegistrationForm({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  // Fetch workshop details (RTK Query)
+  
   const { data: eventData, isFetching: loadingEvent } = useGetEventQuery(workshopId);
   useEffect(() => {
     setLoadingWorkshop(loadingEvent);
     if (eventData?.success) setWorkshop(eventData.data);
   }, [eventData, loadingEvent]);
 
-  // fetch current workshop registrations so we can display live counts and prevent overbooking
+  
   const { data: regsData, isFetching: regsLoading } = useGetWorkshopRegistrationsQuery(workshopId, { pollingInterval: 10000 });
   const currentRegistrations = regsData?.data?.length || 0;
 
-  // Handle form submission
+  
   const [createWorkshopRegistration] = useCreateWorkshopRegistrationMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,7 +54,7 @@ export default function WorkshopRegistrationForm({
     setLoading(true);
 
     try {
-      // Re-check capacity before attempting to register (race conditions handled server-side too)
+      
       const limit = workshop?.registrationLimit;
       if (limit && currentRegistrations >= limit) {
         setError("Registration is full — no spots available.");
@@ -82,7 +82,7 @@ export default function WorkshopRegistrationForm({
     }
   };
 
-  // Success Screen
+  
   if (success) {
     return (
       <motion.div
@@ -112,7 +112,7 @@ export default function WorkshopRegistrationForm({
     );
   }
 
-  // Loading workshop
+  
   if (loadingWorkshop) {
     return (
       <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 text-center text-white rounded-xl">
@@ -121,7 +121,7 @@ export default function WorkshopRegistrationForm({
     );
   }
 
-  // MAIN FORM
+  
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
       <Card className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl text-white">

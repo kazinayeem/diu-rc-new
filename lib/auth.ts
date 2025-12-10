@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Invalid credentials');
         }
 
-        // Update last login
+        
         admin.lastLogin = new Date();
         await admin.save();
 
@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60, 
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

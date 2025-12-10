@@ -58,7 +58,7 @@ const NoticeSchema: Schema = new Schema(
   }
 );
 
-// Indexes
+
 NoticeSchema.index({ isActive: 1, type: 1, priority: -1 });
 NoticeSchema.index({ expiresAt: 1 });
 

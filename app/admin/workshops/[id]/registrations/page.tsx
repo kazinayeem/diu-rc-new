@@ -25,7 +25,7 @@ export default function WorkshopRegistrationsPage() {
   const { data: workshopData, isFetching: fetchingWorkshop } = useGetEventQuery(workshopId);
   const [updateWorkshopRegistration] = useUpdateWorkshopRegistrationMutation();
 
-  // Data comes from RTK Query; keep a loading flag and mirror data when it arrives
+  
 
   const handlePaymentApproval = async (
     registrationId: string,
@@ -39,7 +39,7 @@ export default function WorkshopRegistrationsPage() {
     }
   };
 
-  // 🌙 DARK MODE TABLE COLUMNS
+  
   const columns = [
     { key: "name", label: "Name" },
     { key: "email", label: "Email" },
@@ -134,7 +134,7 @@ export default function WorkshopRegistrationsPage() {
 
   useEffect(() => {
     setLoading(fetchingRegs || fetchingWorkshop);
-    // update state when rtk data changes
+    
     if (regData?.success) {
       setRegistrations(regData.data);
       setStats({

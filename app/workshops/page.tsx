@@ -43,14 +43,14 @@ export default function WorkshopsPage() {
     }
   }, [data, isFetching]);
 
-  // === Search Filter ===
+  
   const filteredWorkshops = useMemo(() => {
     return workshops.filter((item) =>
       item.title.toLowerCase().includes(search.toLowerCase())
     );
   }, [search, workshops]);
 
-  // Convert time to AM/PM
+  
   const formatTime = (time: string) => {
     if (!time) return "";
     return new Date("1970-01-01T" + time + ":00")

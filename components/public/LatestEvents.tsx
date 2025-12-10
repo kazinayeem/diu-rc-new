@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 
 export default function LatestEvents() {
-  // use RTK Query to load latest events
+  
   const { data, isLoading } = useGetEventsQuery({ query: "limit=3&sort=latest" });
   const events = data?.data || [];
 

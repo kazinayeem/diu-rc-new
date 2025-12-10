@@ -4,7 +4,7 @@ import Member from '@/lib/models/Member';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-// GET - Fetch all members (public) or with filters (admin)
+
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create new member (admin only)
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

@@ -35,7 +35,7 @@ export default function MembersPage() {
     }).toString(),
   [pagination.page, pagination.limit, search, role, isActive]);
 
-  // fetch via RTK Query
+  
   const { data, isFetching } = useGetMembersQuery({ query: queryStr });
   const [deleteMember] = useDeleteMemberMutation();
 
@@ -64,7 +64,7 @@ export default function MembersPage() {
 
     try {
       await deleteMember(member._id).unwrap();
-      // RTK Query invalidation will refetch members for us
+      
     } catch (error) {
       console.error("Error deleting member:", error);
     }
@@ -73,10 +73,10 @@ export default function MembersPage() {
   const handleFormClose = () => {
     setShowForm(false);
     setEditingMember(null);
-    // RTK Query will keep lists up to date via invalidation
+    
   };
 
-  // TABLE COLUMNS
+  
   const columns = [
     { key: "name", label: "Name" },
     { key: "studentId", label: "Student ID" },

@@ -105,7 +105,7 @@ const SeminarSchema: Schema = new Schema(
   }
 );
 
-// Indexes
+
 SeminarSchema.index({ status: 1, seminarDate: 1 });
 SeminarSchema.index({ featured: 1 });
 SeminarSchema.index({ slug: 1 });

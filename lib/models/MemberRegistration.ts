@@ -16,7 +16,7 @@ export interface IMemberRegistration extends Document {
   linkedin?: string;
   github?: string;
 
-  // New Payment Fields
+  
   paymentNumber: string;
   paymentMethod: "bkash" | "nagad" | "rocket";
   transactionId: string;

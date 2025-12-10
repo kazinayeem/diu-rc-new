@@ -9,7 +9,7 @@ import Gallery from '@/lib/models/Gallery';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-// GET - Get dashboard statistics (admin only)
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

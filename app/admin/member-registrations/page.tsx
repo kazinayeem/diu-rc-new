@@ -70,7 +70,7 @@ export default function MemberRegistrationsPage() {
     }
   };
 
-  // TABLE COLUMNS ======================
+  
   const columns = [
     { key: "name", label: "Name" },
     { key: "studentId", label: "Student ID" },

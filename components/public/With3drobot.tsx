@@ -90,7 +90,7 @@ const HeroWithRobot: React.FC = () => {
 
       {/* FIXED WAVE — moved DOWN and Z-index FIXED */}
       <div className="absolute -bottom-2 left-0 right-0 z-20">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+        <svg xmlns="http:
           <defs>
             <linearGradient id="waveGradient" gradientTransform="rotate(90)">
               <stop offset="0%" stopColor="#0e2840" />

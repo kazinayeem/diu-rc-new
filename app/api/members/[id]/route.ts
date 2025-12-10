@@ -4,7 +4,7 @@ import Member from '@/lib/models/Member';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-// GET - Fetch single member
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -29,7 +29,7 @@ export async function GET(
   }
 }
 
-// PUT - Update member (admin only)
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -64,7 +64,7 @@ export async function PUT(
   }
 }
 
-// DELETE - Delete member (admin only)
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }

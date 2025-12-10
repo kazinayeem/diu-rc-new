@@ -4,7 +4,7 @@ import Event from "@/lib/models/Event";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-// GET - Fetch single event
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -23,7 +23,7 @@ export async function GET(
       );
     }
 
-    // Get registration count if it's a workshop
+    
     let registrationCount = 0;
     if (event.type === "workshop") {
       const WorkshopRegistration = (
@@ -54,8 +54,8 @@ export async function GET(
   }
 }
 
-// PUT - Update event (admin only)
-// PUT - Update event (admin only)
+
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -70,7 +70,7 @@ export async function PUT(
 
     const body = await request.json();
 
-    // Validate "online" event must include link
+    
     if (body.type !== "workshop" && body.mode === "online" && !body.eventLink) {
       return NextResponse.json(
         { success: false, error: "Online events must include an event link" },
@@ -78,13 +78,13 @@ export async function PUT(
       );
     }
 
-    // Auto-update slug if title changed
+    
     if (body.title) {
       const { slugify } = await import("@/lib/utils");
       body.slug = slugify(body.title);
     }
 
-    // EVENT or SEMINAR → remove workshop fields
+    
     if (body.type !== "workshop") {
       delete body.isPaid;
       delete body.registrationFee;
@@ -94,7 +94,7 @@ export async function PUT(
       delete body.registrationOpen;
     }
 
-    // WORKSHOP → remove event-only fields
+    
     if (body.type === "workshop") {
       delete body.eventLink;
       delete body.mode;
@@ -121,7 +121,7 @@ export async function PUT(
   }
 }
 
-// DELETE - Delete event (admin only)
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }

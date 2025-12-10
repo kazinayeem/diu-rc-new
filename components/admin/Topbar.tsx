@@ -8,7 +8,7 @@ export default function Topbar() {
   const { data: session } = useSession();
 
   return (
-    // hidden on mobile → only visible on md and above
+    
     <header className="hidden md:block sticky top-0 z-40 bg-white/5 backdrop-blur-xl border-b border-white/10 shadow-lg">
       <div className="ml-64 px-6 py-4">
         <div className="flex items-center justify-between">

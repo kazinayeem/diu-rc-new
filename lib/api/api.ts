@@ -26,7 +26,7 @@ export const api = createApi({
     "Uploads",
   ],
   endpoints: (builder) => ({
-    // MEMBERS
+    
     getMembers: builder.query<any, { query?: string | undefined }>({
       query: (opts) => `members${opts?.query ? `?${opts.query}` : ""}`,
       providesTags: ["Members"],
@@ -48,7 +48,7 @@ export const api = createApi({
       invalidatesTags: ["Members"],
     }),
 
-    // EVENTS (also used for workshops in this project)
+    
     getEvents: builder.query<any, { query?: string | undefined }>({
       query: (opts) => `events${opts?.query ? `?${opts.query}` : ""}`,
       providesTags: ["Events"],
@@ -70,7 +70,7 @@ export const api = createApi({
       invalidatesTags: ["Events"],
     }),
 
-    // SEMINARS
+    
     getSeminars: builder.query<any, { query?: string | undefined }>({
       query: (opts) => `seminars${opts?.query ? `?${opts.query}` : ""}`,
       providesTags: ["Seminars"],
@@ -89,7 +89,7 @@ export const api = createApi({
       invalidatesTags: ["Seminars"],
     }),
 
-    // NOTICES
+    
     getNotices: builder.query<any, { query?: string | undefined }>({
       query: (opts) => `notices${opts?.query ? `?${opts.query}` : ""}`,
       providesTags: ["Notices"],
@@ -103,7 +103,7 @@ export const api = createApi({
       invalidatesTags: ["Notices"],
     }),
 
-    // POSTS
+    
     getPosts: builder.query<any, { query?: string | undefined }>({
       query: (opts) => `posts${opts?.query ? `?${opts.query}` : ""}`,
       providesTags: ["Posts"],
@@ -114,7 +114,7 @@ export const api = createApi({
       invalidatesTags: ["Posts"],
     }),
 
-    // PROJECTS
+    
     getProjects: builder.query<any, { query?: string | undefined }>({
       query: (opts) => `projects${opts?.query ? `?${opts.query}` : ""}`,
       providesTags: ["Projects"],
@@ -132,7 +132,7 @@ export const api = createApi({
       invalidatesTags: ["Projects"],
     }),
 
-    // RESEARCH PAPERS
+    
     getResearchPapers: builder.query<any, { query?: string | undefined }>({
       query: (opts) => `research-papers${opts?.query ? `?${opts.query}` : ""}`,
       providesTags: ["ResearchPapers"],
@@ -150,7 +150,7 @@ export const api = createApi({
       invalidatesTags: ["ResearchPapers"],
     }),
 
-    // MEMBER REGISTRATIONS
+    
     getMemberRegistrations: builder.query<any, { query?: string | undefined }>({
       query: (opts) => `member-registrations${opts?.query ? `?${opts.query}` : ""}`,
       providesTags: ["MemberRegistrations"],
@@ -171,38 +171,38 @@ export const api = createApi({
       invalidatesTags: ["MemberRegistrations"],
     }),
 
-    // WORKSHOP REGISTRATIONS
+    
     getWorkshopRegistrations: builder.query<any, string>({
-      // pass workshopId as param
+      
       query: (workshopId) => `workshops/${workshopId}/registrations`,
       providesTags: (result, error, workshopId) => [{ type: "Workshops", id: workshopId }],
     }),
     deleteWorkshopRegistration: builder.mutation<any, string>({
       query: (registrationId) => ({ url: `workshops/registrations/${registrationId}`, method: "DELETE" }),
-      // Invalidate workshop & event caches so detail pages will refresh
+      
       invalidatesTags: ["Workshops", "Events"],
     }),
     updateWorkshopRegistration: builder.mutation<any, { id: string; body: any }>({
       query: ({ id, body }) => ({ url: `workshops/registrations/${id}`, method: "PUT", body }),
       invalidatesTags: ["Workshops", "Events"],
     }),
-    // register user for a workshop
+    
     createWorkshopRegistration: builder.mutation<any, { workshopId: string; body: any }>({
       query: ({ workshopId, body }) => ({ url: `workshops/${workshopId}/register`, method: "POST", body }),
-      // Invalidate both workshop registration queries and the event/workshop detail so pages show updated counts
+      
       invalidatesTags: (result, error, { workshopId }) => [
         { type: "Workshops", id: workshopId },
         { type: "Events", id: workshopId },
       ],
     }),
 
-    // UPLOAD (Cloudinary)
+    
     uploadFile: builder.mutation<any, FormData>({
       query: (body) => ({ url: "upload", method: "POST", body }),
-      // file uploads don't map to a single tag — keep client in charge of cache invalidation
+      
     }),
 
-    // ADMIN STATS
+    
     getAdminStats: builder.query<any, void>({
       query: () => "admin/stats",
       providesTags: ["AdminStats"],
@@ -210,7 +210,7 @@ export const api = createApi({
   }),
 });
 
-// Export hooks for usage in functional components
+
 export const {
   useGetMembersQuery,
   useGetMemberQuery,

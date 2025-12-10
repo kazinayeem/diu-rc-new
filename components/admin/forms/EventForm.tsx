@@ -19,9 +19,9 @@ export default function EventForm({ event, onClose }: EventFormProps) {
     eventDate: "",
     eventTime: "",
     location: "",
-    mode: "offline", // NEW
-    eventLink: "", // NEW
-    image: "", // NEW
+    mode: "offline", 
+    eventLink: "", 
+    image: "", 
     registrationLink: "",
     type: "event",
     status: "upcoming",
@@ -37,7 +37,7 @@ export default function EventForm({ event, onClose }: EventFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // LOAD EVENT FOR EDITING
+  
   useEffect(() => {
     if (event) {
       setFormData({
@@ -70,7 +70,7 @@ export default function EventForm({ event, onClose }: EventFormProps) {
   const [createEvent] = useCreateEventMutation();
   const [updateEvent] = useUpdateEventMutation();
 
-  // SUBMIT FORM
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -91,7 +91,7 @@ export default function EventForm({ event, onClose }: EventFormProps) {
             : undefined,
         paymentMethod: formData.isPaid ? formData.paymentMethod : undefined,
         paymentNumber: formData.isPaid ? formData.paymentNumber : undefined,
-        eventLink: formData.mode === "online" ? formData.eventLink : undefined, // only for online
+        eventLink: formData.mode === "online" ? formData.eventLink : undefined, 
       };
 
       try {
@@ -179,7 +179,7 @@ export default function EventForm({ event, onClose }: EventFormProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, image: e.target.value })
                 }
-                placeholder="https://example.com/image.jpg"
+                placeholder="https:
                 className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
               />
             </div>
@@ -292,7 +292,7 @@ export default function EventForm({ event, onClose }: EventFormProps) {
                       onChange={(e) =>
                         setFormData({ ...formData, eventLink: e.target.value })
                       }
-                      placeholder="https://meet.google.com/..."
+                      placeholder="https:
                       className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
                     />
                   </div>

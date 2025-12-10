@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { slugify } from "@/lib/utils";
 
-// GET - Fetch all events
+
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create new event (admin only)
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -63,12 +63,12 @@ export async function POST(request: NextRequest) {
     await connectDB();
     const body = await request.json();
 
-    // Auto-generate slug
+    
     if (!body.slug) {
       body.slug = slugify(body.title);
     }
 
-    // Validate online event
+    
     if (body.type !== "workshop" && body.mode === "online" && !body.eventLink) {
       return NextResponse.json(
         { success: false, error: "Online events must include an event link" },
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // EVENT/SEMINAR — remove workshop properties
+    
     if (body.type !== "workshop") {
       delete body.isPaid;
       delete body.registrationFee;
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
       delete body.registrationOpen;
     }
 
-    // WORKSHOP — remove event-specific properties
+    
     if (body.type === "workshop") {
       delete body.eventLink;
       delete body.mode;

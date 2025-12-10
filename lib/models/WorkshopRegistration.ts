@@ -108,12 +108,12 @@ const WorkshopRegistrationSchema: Schema = new Schema(
   }
 );
 
-// Indexes for better query performance
+
 WorkshopRegistrationSchema.index({ workshopId: 1, email: 1 });
 WorkshopRegistrationSchema.index({ email: 1 });
 WorkshopRegistrationSchema.index({ status: 1 });
 
-// Prevent duplicate registrations for same workshop
+
 WorkshopRegistrationSchema.index({ workshopId: 1, email: 1 }, { unique: true });
 
 const WorkshopRegistration: Model<IWorkshopRegistration> = 

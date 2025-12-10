@@ -9,8 +9,8 @@ export interface IEvent extends Document {
   eventDate: Date;
   eventTime: string;
   location: string;
-  mode: "online" | "offline"; // NEW
-  eventLink?: string; // NEW
+  mode: "online" | "offline"; 
+  eventLink?: string; 
   registrationLink?: string;
   registrationLimit?: number;
   registrationOpen: boolean;
@@ -77,14 +77,14 @@ const EventSchema: Schema = new Schema(
       trim: true,
     },
 
-    // NEW
+    
     mode: {
       type: String,
       enum: ["online", "offline"],
       default: "offline",
     },
 
-    // NEW
+    
     eventLink: {
       type: String,
       trim: true,
@@ -158,7 +158,7 @@ const EventSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-// Indexes
+
 EventSchema.index({ status: 1, eventDate: 1 });
 EventSchema.index({ featured: 1 });
 EventSchema.index({ slug: 1 });

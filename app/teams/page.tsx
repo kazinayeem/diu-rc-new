@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// UI Components
+
 import MemberCard from "@/components/public/MemberCard";
 
 import { useGetMembersQuery } from "@/lib/api/api";
@@ -25,7 +25,7 @@ export default function TeamPage() {
     if (data?.success) setMembers(data.data || []);
   }, [data, isFetching]);
 
-  // SEARCH FILTER
+  
   const filtered = useMemo(
     () =>
       members.filter((m) =>
@@ -37,7 +37,7 @@ export default function TeamPage() {
   const totalPages = Math.ceil(filtered.length / ITEMS);
   const paginated = filtered.slice((page - 1) * ITEMS, page * ITEMS);
 
-  // ROLE GROUPING
+  
   const team = {
     president: paginated.filter((m) => m.role === "president"),
     vice: paginated.filter((m) => m.role === "vice"),
@@ -45,12 +45,12 @@ export default function TeamPage() {
     general: paginated.filter((m) => m.role === "general"),
   };
 
-  // Skeleton
+  
   const Skeleton = () => (
     <div className="animate-pulse bg-white/10 rounded-xl h-56 w-full" />
   );
 
-  // Section Component
+  
   const Section = ({ title, list }: any) =>
     (loading || list.length > 0) && (
       <motion.section

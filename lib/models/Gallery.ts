@@ -47,7 +47,7 @@ const GallerySchema: Schema = new Schema(
   }
 );
 
-// Indexes
+
 GallerySchema.index({ category: 1, featured: 1 });
 GallerySchema.index({ createdAt: -1 });
 

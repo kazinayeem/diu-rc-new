@@ -4,7 +4,7 @@ import Notice from '@/lib/models/Notice';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-// GET - Fetch all active notices
+
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const query: any = { isActive: true };
     if (type) query.type = type;
 
-    // Filter out expired notices
+    
     query.$or = [
       { expiresAt: { $exists: false } },
       { expiresAt: null },
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create new notice (admin only)
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

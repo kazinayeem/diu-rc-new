@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { slugify } from '@/lib/utils';
 
-// GET - Fetch all seminars
+
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create new seminar (admin only)
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
