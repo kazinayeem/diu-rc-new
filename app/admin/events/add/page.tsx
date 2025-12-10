@@ -252,7 +252,7 @@ export default function AddEventPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, eventLink: e.target.value })
                     }
-                    placeholder="https:
+                    placeholder="https://meet.google.com/xxx-xxxx-xxx"
                     className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg"
                   />
                 </div>
