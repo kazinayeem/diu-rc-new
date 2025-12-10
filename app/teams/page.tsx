@@ -58,7 +58,7 @@ export default function TeamPage() {
         whileInView={{ opacity: 1, y: 0 }}
         className="mb-12"
       >
-        <h2 className="text-3xl font-bold text-white mb-6">{title}</h2>
+        <h2 className="text-3xl font-bold text-black dark:text-white mb-6">{title}</h2>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {loading &&
             Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} />)}
@@ -74,24 +74,24 @@ export default function TeamPage() {
     );
 
   return (
-    <div className="min-h-screen bg-transparent text-white">
+    <div className="min-h-screen bg-white dark:bg-transparent text-black dark:text-white">
       {/* HERO */}
-      <section className="py-20 text-center">
+      <section className="py-20 text-center bg-gray-50 dark:bg-transparent">
         <motion.h1
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-5xl font-extrabold"
+          className="text-5xl font-extrabold text-black dark:text-white"
         >
           Our Team
         </motion.h1>
 
-        <p className="text-gray-300 mt-3">Meet the people behind everything</p>
+        <p className="text-gray-600 dark:text-gray-300 mt-3">Meet the people behind everything</p>
 
         {/* SEARCH */}
         <div className="max-w-md mx-auto mt-6">
           <input
-            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl outline-none
-                       focus:ring-2 focus:ring-cyan-400 text-white placeholder-gray-300"
+            className="w-full px-4 py-3 bg-gray-100 dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-xl outline-none
+                       focus:ring-2 focus:ring-cyan-400 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-300"
             placeholder="Search team members..."
             value={search}
             onChange={(e) => {
@@ -118,7 +118,7 @@ export default function TeamPage() {
 
         {/* EMPTY */}
         {!loading && filtered.length === 0 && (
-          <div className="text-center py-20 text-gray-400">
+          <div className="text-center py-20 text-gray-500 dark:text-gray-400">
             No members found.
           </div>
         )}
@@ -129,19 +129,19 @@ export default function TeamPage() {
             <button
               disabled={page === 1}
               onClick={() => setPage((p) => p - 1)}
-              className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg disabled:opacity-40"
+              className="px-4 py-2 bg-gray-100 dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-lg text-black dark:text-white disabled:opacity-40"
             >
               Previous
             </button>
 
-            <span className="text-white/70 text-lg">
+            <span className="text-gray-600 dark:text-white/70 text-lg py-2 px-4">
               Page {page} / {totalPages}
             </span>
 
             <button
               disabled={page === totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg disabled:opacity-40"
+              className="px-4 py-2 bg-gray-100 dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-lg text-black dark:text-white disabled:opacity-40"
             >
               Next
             </button>

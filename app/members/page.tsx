@@ -52,18 +52,18 @@ export default function MembersPage() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col text-white">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-transparent text-black dark:text-white">
       {/* HERO */}
-      <section className="py-16 text-center">
+      <section className="py-16 text-center bg-gray-50 dark:bg-transparent">
         <motion.h1
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-5xl font-extrabold"
+          className="text-5xl font-extrabold text-black dark:text-white"
         >
           Our Members
         </motion.h1>
 
-        <p className="text-gray-300 mt-4">
+        <p className="text-gray-600 dark:text-gray-300 mt-4">
           Meet the innovators behind DIU Robotics Club
         </p>
 
@@ -76,7 +76,7 @@ export default function MembersPage() {
               setPage(1);
             }}
             placeholder="Search members by name..."
-            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white outline-none"
+            className="w-full px-4 py-3 bg-gray-100 dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-xl text-black dark:text-white outline-none placeholder-gray-500 dark:placeholder-gray-300"
           />
         </div>
       </section>
@@ -99,7 +99,7 @@ export default function MembersPage() {
           </div>
 
           {!loading && filteredMembers.length === 0 && (
-            <div className="text-center py-20 text-gray-400 text-lg">
+            <div className="text-center py-20 text-gray-500 dark:text-gray-400 text-lg">
               No members found
             </div>
           )}
@@ -110,19 +110,19 @@ export default function MembersPage() {
               <button
                 disabled={page === 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg"
+                className="px-4 py-2 bg-gray-100 dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-lg text-black dark:text-white"
               >
                 Previous
               </button>
 
-              <span className="text-gray-200">
+              <span className="text-gray-600 dark:text-gray-200">
                 Page {page} / {totalPages}
               </span>
 
               <button
                 disabled={page === totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg"
+                className="px-4 py-2 bg-gray-100 dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-lg text-black dark:text-white"
               >
                 Next
               </button>

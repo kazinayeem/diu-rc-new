@@ -67,12 +67,12 @@ export default function WorkshopsPage() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-transparent text-white">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-transparent text-black dark:text-white">
       {/* HERO SECTION */}
-      <section className="py-16 shadow-inner">
+      <section className="py-16 shadow-inner bg-gray-50 dark:bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold mb-3">Workshops</h1>
-          <p className="text-lg text-cyan-100">
+          <h1 className="text-4xl font-bold mb-3 text-black dark:text-white">Workshops</h1>
+          <p className="text-lg text-gray-600 dark:text-cyan-100">
             Learn, build & explore robotics with our hands-on workshops.
           </p>
 
@@ -82,7 +82,7 @@ export default function WorkshopsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search workshops..."
-              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl outline-none text-white placeholder-gray-300 focus:ring-2 focus:ring-cyan-400"
+              className="w-full px-4 py-3 bg-gray-100 dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-xl outline-none text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-300 focus:ring-2 focus:ring-cyan-400"
             />
           </div>
         </div>
@@ -101,7 +101,7 @@ export default function WorkshopsPage() {
                     initial={{ opacity: 0, y: 25 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: index * 0.07 }}
-                    className="bg-white/10 border border-white/20 rounded-xl overflow-hidden shadow-lg group"
+                    className="bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-lg dark:shadow-lg group"
                   >
                     <Link href={`/workshops/${workshop.slug}`}>
                       {/* IMAGE */}
@@ -116,27 +116,27 @@ export default function WorkshopsPage() {
 
                       {/* BODY */}
                       <div className="p-4">
-                        <h2 className="text-xl font-bold mb-2 group-hover:text-cyan-300 duration-300">
+                        <h2 className="text-xl font-bold mb-2 text-black dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 duration-300">
                           {workshop.title}
                         </h2>
 
-                        <p className="text-sm text-gray-300 line-clamp-3 mb-3">
+                        <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-3">
                           {workshop.description}
                         </p>
 
                         {/* Free/Paid Badge */}
                         {workshop.isPaid ? (
-                          <span className="px-3 py-1 text-sm rounded-full bg-red-500/20 text-red-300 border border-red-400/40">
+                          <span className="px-3 py-1 text-sm rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-400/40">
                             Paid — ৳{workshop.registrationFee}
                           </span>
                         ) : (
-                          <span className="px-3 py-1 text-sm rounded-full bg-green-500/20 text-green-300 border border-green-400/40">
+                          <span className="px-3 py-1 text-sm rounded-full bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-400/40">
                             Free Workshop
                           </span>
                         )}
 
                         {/* Date & Time */}
-                        <div className="mt-3 text-gray-300 text-sm space-y-1">
+                        <div className="mt-3 text-gray-600 dark:text-gray-300 text-sm space-y-1">
                           <p>
                             📅 {new Date(workshop.eventDate).toDateString()}
                           </p>

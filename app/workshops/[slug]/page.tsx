@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useGetEventsQuery, useGetEventQuery } from "@/lib/api/api";
 import AnimatedWorkshopHero from "@/components/public/AnimatedWorkshopHero";
 import AnimatedWorkshopContent from "@/components/public/AnimatedWorkshopContent";
@@ -29,57 +29,68 @@ export default function WorkshopDetailPage({
 }) {
   const [workshop, setWorkshop] = useState<Workshop | null>(null);
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   const { data: listData, isFetching: fetchingList } = useGetEventsQuery({ query: `slug=${params.slug}` });
 
   const foundId = listData?.success ? listData.data?.[0]?._id : "";
   const { data: detailData, isFetching: fetchingDetail } = useGetEventQuery(foundId || "");
 
-  const getWorkshop = useCallback(async () => {
+  useEffect(() => {
+    // Still loading if either query is fetching
+    if (fetchingList || fetchingDetail) {
+      setLoading(true);
+      return;
+    }
+
+    // Both queries are done loading
     try {
-     
-      
       const found = listData?.success ? listData.data?.[0] : undefined;
 
       if (!found) {
         setWorkshop(null);
+        setNotFound(true);
         setLoading(false);
         return;
       }
 
-      if (detailData?.success) setWorkshop(detailData.data);
-      else setWorkshop(found);
+      if (detailData?.success) {
+        setWorkshop(detailData.data);
+      } else {
+        setWorkshop(found);
+      }
+      
+      setNotFound(false);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching workshop:", error);
       setWorkshop(null);
+      setNotFound(true);
+      setLoading(false);
     }
-
-    setLoading(false);
-  }, [params.slug, listData, detailData]); 
-
-  
-  useEffect(() => {
-    setLoading(fetchingList || fetchingDetail);
-    getWorkshop();
-  }, [getWorkshop, fetchingList, fetchingDetail]);
+  }, [fetchingList, fetchingDetail, listData, detailData]);
 
   
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-white text-xl">
-        Loading workshop...
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-transparent text-black dark:text-white text-xl">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mb-4"></div>
+          <p>Loading workshop details...</p>
+        </div>
       </div>
     );
   }
 
   
-  if (!workshop) {
+  if (notFound || !workshop) {
     return (
-      <div className="min-h-screen flex flex-col text-white">
+      <div className="min-h-screen flex flex-col bg-white dark:bg-transparent text-black dark:text-white">
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Workshop not found</h1>
-            <a href="/workshops" className="text-cyan-400 underline">
+            <p className="text-gray-600 dark:text-gray-400 mb-6">The workshop you're looking for doesn't exist.</p>
+            <a href="/workshops" className="text-cyan-600 dark:text-cyan-400 underline hover:no-underline">
               ← Back to Workshops
             </a>
           </div>
@@ -96,7 +107,7 @@ export default function WorkshopDetailPage({
       registrationCount < workshop.registrationLimit);
 
   return (
-    <div className="min-h-screen flex flex-col bg-transparent text-white">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-transparent text-black dark:text-white">
       <main className="flex-grow">
         {/* HERO */}
         <AnimatedWorkshopHero workshop={workshop} />
@@ -106,13 +117,13 @@ export default function WorkshopDetailPage({
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid md:grid-cols-3 gap-8 items-start">
               {/* LEFT CONTENT */}
-              <div className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md">
+              <div className="md:col-span-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-2xl p-6 dark:backdrop-blur-md">
                 <AnimatedWorkshopContent workshop={workshop} />
               </div>
 
               {/* RIGHT SIDEBAR */}
               <div className="md:col-span-1 sticky top-24">
-                <div className="bg-white/5 border border-white/10 rounded-2xl  backdrop-blur-md">
+                <div className="bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-2xl dark:backdrop-blur-md">
                   <AnimatedWorkshopRegistration
                     workshopId={workshop._id}
                     isRegistrationOpen={isRegistrationOpen}

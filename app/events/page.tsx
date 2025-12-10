@@ -58,12 +58,12 @@ export default function EventsPage() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-transparent text-white">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-transparent text-black dark:text-white">
       {/* HERO */}
-      <section className="py-16 shadow-inner">
+      <section className="py-16 shadow-inner bg-gray-50 dark:bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold mb-3">Events</h1>
-          <p className="text-lg text-cyan-100">
+          <h1 className="text-4xl font-bold mb-3 text-black dark:text-white">Events</h1>
+          <p className="text-lg text-gray-600 dark:text-cyan-100">
             Explore our latest robotics events, meetups & competitions.
           </p>
 
@@ -73,7 +73,7 @@ export default function EventsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search events..."
-              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl outline-none text-white placeholder-gray-300 focus:ring-2 focus:ring-cyan-400"
+              className="w-full px-4 py-3 bg-gray-100 dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-xl outline-none text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-300 focus:ring-2 focus:ring-cyan-400"
             />
           </div>
         </div>
@@ -92,7 +92,7 @@ export default function EventsPage() {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: index * 0.07 }}
-                    className="bg-white/10 border border-white/20 rounded-xl overflow-hidden shadow-lg cursor-pointer group"
+                    className="bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-lg dark:shadow-lg cursor-pointer group"
                   >
                     {/* IMAGE */}
                     {event.image && (
@@ -106,11 +106,11 @@ export default function EventsPage() {
 
                     {/* BODY */}
                     <div className="p-4">
-                      <h2 className="text-xl font-bold mb-2 group-hover:text-cyan-300 duration-300">
+                      <h2 className="text-xl font-bold mb-2 text-black dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 duration-300">
                         {event.title}
                       </h2>
 
-                      <p className="text-sm text-gray-300 line-clamp-3 mb-3">
+                      <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-3">
                         {event.description}
                       </p>
 
@@ -118,8 +118,8 @@ export default function EventsPage() {
                       <span
                         className={`px-3 py-1 text-sm rounded-full ${
                           event.mode === "online"
-                            ? "bg-green-500/20 text-green-300 border border-green-400/40"
-                            : "bg-yellow-500/20 text-yellow-300 border border-yellow-400/40"
+                            ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-400/40"
+                            : "bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-400/40"
                         }`}
                       >
                         {event.mode === "online"
@@ -128,7 +128,7 @@ export default function EventsPage() {
                       </span>
 
                       {/* DATE & TIME */}
-                      <div className="mt-3 text-gray-300 text-sm space-y-1">
+                      <div className="mt-3 text-gray-600 dark:text-gray-300 text-sm space-y-1">
                         <p>📅 {new Date(event.eventDate).toDateString()}</p>
                         <p>⏰ {event.eventTime}</p>
                         <p>📍 {event.location}</p>
@@ -151,7 +151,7 @@ export default function EventsPage() {
               </div>
             ) : (
               <div className="text-center py-16">
-                <p className="text-cyan-300 text-lg">No events found.</p>
+                <p className="text-cyan-600 dark:text-cyan-300 text-lg">No events found.</p>
               </div>
             )
           ) : (
@@ -169,12 +169,12 @@ export default function EventsPage() {
                 variant="outline"
                 disabled={page === 1}
                 onClick={() => setPage(page - 1)}
-                className="border-cyan-400 text-cyan-300 hover:bg-cyan-500 hover:text-black"
+                className="border-cyan-400 text-cyan-600 dark:text-cyan-300 hover:bg-cyan-100 dark:hover:bg-cyan-500 hover:text-black dark:hover:text-black"
               >
                 Previous
               </Button>
 
-              <span className="text-cyan-200 font-medium py-2 px-4 bg-white/10 rounded-lg border border-white/10">
+              <span className="text-cyan-700 dark:text-cyan-200 font-medium py-2 px-4 bg-gray-100 dark:bg-white/10 rounded-lg border border-gray-300 dark:border-white/10">
                 Page {page} of {totalPages}
               </span>
 
@@ -182,7 +182,7 @@ export default function EventsPage() {
                 variant="outline"
                 disabled={page === totalPages}
                 onClick={() => setPage(page + 1)}
-                className="border-cyan-400 text-cyan-300 hover:bg-cyan-500 hover:text-black"
+                className="border-cyan-400 text-cyan-600 dark:text-cyan-300 hover:bg-cyan-100 dark:hover:bg-cyan-500 hover:text-black dark:hover:text-black"
               >
                 Next
               </Button>
