@@ -25,9 +25,9 @@ const HeroWithRobot: React.FC = () => {
       />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-40">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center relative z-10">
           {/* LEFT TEXT BLOCK */}
-          <div className="text-center lg:text-left">
+          <div className="text-center lg:text-left relative z-20">
             <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full mb-6 border border-white/20">
               <Cpu size={18} className="text-cyan-300 animate-pulse" />
               <span className="text-sm font-medium text-cyan-200 tracking-wide">
@@ -55,11 +55,11 @@ const HeroWithRobot: React.FC = () => {
               events.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link href="/events">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start relative z-20">
+              <Link href="/events" className="block cursor-pointer">
                 <Button
                   size="lg"
-                  className="group bg-cyan-500 hover:bg-cyan-400 text-black font-semibold shadow-lg shadow-cyan-500/30"
+                  className="group bg-cyan-500 hover:bg-cyan-400 text-black font-semibold shadow-lg shadow-cyan-500/30 w-full sm:w-auto cursor-pointer"
                 >
                   Explore Events
                   <ArrowRight
@@ -69,11 +69,11 @@ const HeroWithRobot: React.FC = () => {
                 </Button>
               </Link>
 
-              <Link href="/members">
+              <Link href="/members" className="block cursor-pointer">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-cyan-300 text-cyan-300 hover:bg-cyan-300 hover:text-black transition"
+                  className="border-cyan-300 text-cyan-300 hover:bg-cyan-300 hover:text-black transition w-full sm:w-auto cursor-pointer"
                 >
                   Meet Our Team
                 </Button>
@@ -82,8 +82,10 @@ const HeroWithRobot: React.FC = () => {
           </div>
 
           {/* ROBOT CANVAS */}
-          <div className="flex justify-center items-center w-full h-[500px] mt-10 lg:mt-0">
-            <RobotCanvas />
+          <div className="flex justify-center items-center w-full h-[500px] mt-10 lg:mt-0 pointer-events-none">
+            <div className="w-full h-full pointer-events-none">
+              <RobotCanvas />
+            </div>
           </div>
         </div>
       </div>

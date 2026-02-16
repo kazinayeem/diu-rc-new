@@ -18,6 +18,19 @@ export default function ResearchPapersPage() {
   const limit = 10;
   const [pages, setPages] = useState(1);
 
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<string>).detail || "";
+      setPage(1);
+      setSearch(detail);
+    };
+
+    window.addEventListener("admin-search", handler as EventListener);
+    return () => {
+      window.removeEventListener("admin-search", handler as EventListener);
+    };
+  }, []);
+
   const query = useMemo(() => {
     return new URLSearchParams({
       page: String(page),

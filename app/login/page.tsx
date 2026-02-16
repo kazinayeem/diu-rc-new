@@ -14,9 +14,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState("admin123");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Prevent multiple submissions
+    if (loading || isRedirecting) return;
+    
     setError("");
     setLoading(true);
 
@@ -29,13 +34,26 @@ export default function LoginPage() {
 
       if (result?.error) {
         setError(result.error);
-      } else {
+        setLoading(false);
+      } else if (result?.ok) {
+        // Mark as redirecting to prevent multiple clicks
+        setIsRedirecting(true);
+        
+        // Add a small delay to ensure session is properly set
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Perform redirect
         router.push("/admin");
+        
+        // Refresh to ensure we get latest data
+        await new Promise(resolve => setTimeout(resolve, 300));
         router.refresh();
+      } else {
+        setError("Login failed. Please try again.");
+        setLoading(false);
       }
-    } catch {
+    } catch (err) {
       setError("An error occurred. Please try again.");
-    } finally {
       setLoading(false);
     }
   };
@@ -75,7 +93,8 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 bg-white/5 text-white border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1f8fff] placeholder-white/40"
+                disabled={loading || isRedirecting}
+                className="w-full px-4 py-2 bg-white/5 text-white border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1f8fff] placeholder-white/40 disabled:opacity-60"
               />
             </div>
 
@@ -87,16 +106,17 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 bg-white/5 text-white border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1f8fff] placeholder-white/40"
+                disabled={loading || isRedirecting}
+                className="w-full px-4 py-2 bg-white/5 text-white border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1f8fff] placeholder-white/40 disabled:opacity-60"
               />
             </div>
 
             <Button
               type="submit"
               className="w-full bg-[#1f8fff] hover:bg-[#0e6fd8] text-white font-semibold py-2 rounded-lg shadow-md shadow-black/30 transition-all"
-              disabled={loading}
+              disabled={loading || isRedirecting}
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {isRedirecting ? "Redirecting..." : loading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
 
