@@ -35,7 +35,7 @@ export default function DataTable({
   return (
     <Card
       variant="elevated"
-      className="bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl text-white"
+      className="bg-[#0f172a]/70 border border-white/10 backdrop-blur-xl shadow-xl text-slate-100"
     >
       <CardContent className="p-0">
         <div className="overflow-x-auto">
@@ -43,19 +43,19 @@ export default function DataTable({
             {/* ======================= */}
             {/* TABLE HEADER */}
             {/* ======================= */}
-            <thead className="bg-white/10 backdrop-blur-xl border-b border-white/10">
+            <thead className="bg-white/5 backdrop-blur-xl border-b border-white/10">
               <tr>
                 {columns.map((column) => (
                   <th
                     key={column.key}
-                    className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white/70"
+                    className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-300"
                   >
                     {column.label}
                   </th>
                 ))}
 
                 {(onEdit || onDelete) && (
-                  <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-white/70">
+                  <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-300">
                     Actions
                   </th>
                 )}
@@ -70,7 +70,7 @@ export default function DataTable({
                 <tr>
                   <td
                     colSpan={columns.length + (onEdit || onDelete ? 1 : 0)}
-                    className="px-6 py-8 text-center text-white/50"
+                    className="px-6 py-8 text-center text-slate-400"
                   >
                     No data available
                   </td>
@@ -84,7 +84,7 @@ export default function DataTable({
                     {columns.map((column) => (
                       <td
                         key={column.key}
-                        className="px-6 py-4 whitespace-nowrap text-sm text-white/90"
+                        className="px-6 py-4 whitespace-nowrap text-sm text-slate-100"
                       >
                         {column.render
                           ? column.render(row[column.key], row)
@@ -128,7 +128,7 @@ export default function DataTable({
         {/* PAGINATION */}
         {/* ======================= */}
         {pagination && pagination.pages > 1 && (
-          <div className="px-6 py-4 border-t border-white/10 flex items-center justify-between text-white/70">
+            <div className="px-6 py-4 border-t border-white/10 flex items-center justify-between text-slate-300">
             <div className="text-sm">
               Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
               {Math.min(pagination.page * pagination.limit, pagination.total)}{" "}
@@ -139,21 +139,21 @@ export default function DataTable({
               <Button
                 variant="outline"
                 size="sm"
-                className="border-white/20 text-white hover:bg-white/10"
+                className="border-white/20 text-slate-100 hover:bg-white/10"
                 onClick={() => pagination.onPageChange(pagination.page - 1)}
                 disabled={pagination.page === 1}
               >
                 <ChevronLeft size={16} />
               </Button>
 
-              <span className="px-4 py-2 text-sm text-white/80">
+              <span className="px-4 py-2 text-sm text-slate-200">
                 Page {pagination.page} of {pagination.pages}
               </span>
 
               <Button
                 variant="outline"
                 size="sm"
-                className="border-white/20 text-white hover:bg-white/10"
+                className="border-white/20 text-slate-100 hover:bg-white/10"
                 onClick={() => pagination.onPageChange(pagination.page + 1)}
                 disabled={pagination.page === pagination.pages}
               >

@@ -28,29 +28,26 @@ export default async function AdminDashboard() {
   }
 
   return (
-    <div className="text-white ">
+    <div className="text-slate-100">
       {/* HEADER */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-        <p className="text-white/60">Welcome to the admin dashboard</p>
+        <h1 className="text-3xl font-semibold text-slate-100">Dashboard</h1>
+        <p className="text-slate-400">Welcome to the admin dashboard</p>
       </div>
 
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <AnalyticsCard
-            className="bg-transparent"
             title="Members"
             value={String(stats.members)}
             icon={Users}
           />
           <AnalyticsCard
-            className="bg-transparent"
             title="Events"
             value={String(stats.events)}
             icon={Calendar}
           />
           <AnalyticsCard
-            className="bg-transparent"
             title="Registrations"
             value={String(stats.registrations)}
             icon={BookOpen}

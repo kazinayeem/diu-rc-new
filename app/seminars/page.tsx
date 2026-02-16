@@ -1,8 +1,25 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Footer from '@/components/public/Footer';
 import SeminarCard from '@/components/public/SeminarCard';
 import connectDB from '@/lib/db';
 import Seminar from '@/lib/models/Seminar';
+
+export const metadata: Metadata = {
+  title: 'DIU Robotics Club | Seminars',
+  description: 'Explore upcoming seminars and expert talks by DIU Robotics Club.',
+  openGraph: {
+    title: 'DIU Robotics Club | Seminars',
+    description: 'Explore upcoming seminars and expert talks by DIU Robotics Club.',
+    images: ['/diurc_logo.png'],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'DIU Robotics Club | Seminars',
+    description: 'Explore upcoming seminars and expert talks by DIU Robotics Club.',
+    images: ['/diurc_logo.png'],
+  },
+};
 
 async function getSeminars() {
   try {

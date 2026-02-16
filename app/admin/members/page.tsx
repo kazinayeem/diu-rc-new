@@ -25,6 +25,19 @@ export default function MembersPage() {
     pages: 0,
   });
 
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<string>).detail || "";
+      setPagination((prev) => ({ ...prev, page: 1 }));
+      setSearch(detail);
+    };
+
+    window.addEventListener("admin-search", handler as EventListener);
+    return () => {
+      window.removeEventListener("admin-search", handler as EventListener);
+    };
+  }, []);
+
   const queryStr = useMemo(() =>
     new URLSearchParams({
       page: String(pagination.page),

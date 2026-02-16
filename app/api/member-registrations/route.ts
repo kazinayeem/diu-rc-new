@@ -86,6 +86,7 @@ export async function POST(request: NextRequest) {
       "batch",
       "currentYear",
       "whyJoin",
+      "paymentOptionId",
       "paymentNumber",
       "paymentMethod",
       "transactionId",

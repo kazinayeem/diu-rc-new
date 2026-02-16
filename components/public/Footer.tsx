@@ -112,14 +112,14 @@ const Footer = () => {
             &copy; {currentYear} DIU Robotics Club. All rights reserved.
           </p>
           <p className="text-gray-400 dark:text-dark-400 text-xs">
-            Built by{' '}
-            <a 
-              href="https://kazinayeem.site" 
-              target="_blank" 
+            Built by 
+            <a
+              href="https://bornosoftnr.com"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors"
             >
-              Mohammad Ali Nayeem
+              Bornosoft
             </a>
           </p>
         </div>

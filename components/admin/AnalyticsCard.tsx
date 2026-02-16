@@ -22,20 +22,31 @@ export default function AnalyticsCard({
   className,
 }: AnalyticsCardProps) {
   return (
-    <Card variant="elevated" className={cn('', className)}>
+    <Card
+      variant="elevated"
+      className={cn(
+        "bg-white/5 border border-white/10 shadow-[0_12px_30px_rgba(2,6,23,0.35)]",
+        className
+      )}
+    >
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-dark-600 mb-1">{title}</p>
-            <p className="text-2xl font-bold text-dark-900">{value}</p>
+            <p className="text-sm text-slate-300 mb-1">{title}</p>
+            <p className="text-2xl font-semibold text-slate-100">{value}</p>
             {trend && (
-              <p className={cn('text-xs mt-1', trend.isPositive ? 'text-green-600' : 'text-red-600')}>
-                {trend.isPositive ? '↑' : '↓'} {Math.abs(trend.value)}% from last month
+              <p
+                className={cn(
+                  "text-xs mt-1",
+                  trend.isPositive ? "text-emerald-300" : "text-rose-300"
+                )}
+              >
+                {trend.isPositive ? "↑" : "↓"} {Math.abs(trend.value)}% from last month
               </p>
             )}
           </div>
-          <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
-            <Icon className="text-primary-600" size={24} />
+          <div className="w-12 h-12 bg-emerald-400/15 rounded-xl flex items-center justify-center">
+            <Icon className="text-emerald-200" size={24} />
           </div>
         </div>
       </CardContent>

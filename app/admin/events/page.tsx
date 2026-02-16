@@ -33,6 +33,19 @@ export default function EventsPage() {
     }).toString();
   }, [page, limit, search, status, type, featured]);
 
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<string>).detail || "";
+      setPage(1);
+      setSearch(detail);
+    };
+
+    window.addEventListener("admin-search", handler as EventListener);
+    return () => {
+      window.removeEventListener("admin-search", handler as EventListener);
+    };
+  }, []);
+
   const { data, isLoading: isFetching } = useGetEventsQuery({ query: queryString });
   const [deleteEvent, { isLoading: deleting }] = useDeleteEventMutation();
 

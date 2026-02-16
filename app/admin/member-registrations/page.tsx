@@ -18,6 +18,19 @@ export default function MemberRegistrationsPage() {
 
   const [selectedRegistration, setSelectedRegistration] = useState<any>(null);
 
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<string>).detail || "";
+      setPage(1);
+      setSearch(detail);
+    };
+
+    window.addEventListener("admin-search", handler as EventListener);
+    return () => {
+      window.removeEventListener("admin-search", handler as EventListener);
+    };
+  }, []);
+
   const queryStr = useMemo(() =>
     new URLSearchParams({
       page: String(page),

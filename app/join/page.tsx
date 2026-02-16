@@ -1,8 +1,28 @@
 import React from "react";
+import type { Metadata } from "next";
 import MemberRegistrationForm from "@/components/public/MemberRegistrationForm";
 import AnimatedJoinHero from "@/components/public/AnimatedJoinHero";
 import AnimatedBenefits from "@/components/public/AnimatedBenefits";
 import AnimatedFormSection from "@/components/public/AnimatedFormSection";
+
+export const metadata: Metadata = {
+  title: "Join DIU Robotic Club",
+  description:
+    "Apply for membership in DIU Robotics Club. Join workshops, research, and competitions.",
+  openGraph: {
+    title: "Join DIU Robotic Club",
+    description:
+      "Apply for membership in DIU Robotics Club. Join workshops, research, and competitions.",
+    images: ["/diurc_logo.png"],
+  },
+  twitter: {
+    card: "summary",
+    title: "Join DIU Robotic Club",
+    description:
+      "Apply for membership in DIU Robotics Club. Join workshops, research, and competitions.",
+    images: ["/diurc_logo.png"],
+  },
+};
 
 export default function JoinPage() {
   return (
@@ -24,11 +44,12 @@ export default function JoinPage() {
             <div className="max-w-3xl mx-auto px-4">
               <div className="text-center mb-10">
                 <h2 className="text-4xl font-bold text-white mb-3">
-                  Apply for Membership
+                  Apply for Membership / সদস্যপদে আবেদন
                 </h2>
                 <p className="text-white/70 leading-relaxed text-lg">
                   Fill out the form below. Our team will review your application
-                  and get back to you shortly.
+                  and get back to you shortly. / নিচের ফর্মটি পূরণ করুন। আমরা
+                  আপনার আবেদন যাচাই করে দ্রুত জানাব।
                 </p>
               </div>
 

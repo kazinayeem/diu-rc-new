@@ -2,15 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import Image from "next/image";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useTheme } from "@/components/providers/ThemeProvider";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { theme, setTheme, isDark } = useTheme();
-
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll);
@@ -45,10 +43,17 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-700 rounded-lg flex items-center justify-center shadow-[0_0_12px_rgba(0,255,255,0.4)] group-hover:shadow-[0_0_20px_rgba(0,255,255,0.7)] transition-all">
-              <span className="text-white font-bold text-xl">RC</span>
+            <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shadow-[0_8px_20px_rgba(0,0,0,0.35)] group-hover:shadow-[0_10px_24px_rgba(0,0,0,0.45)] transition-all">
+              <Image
+                src="/diurc_logo.png"
+                alt="DIU Robotics Club"
+                width={32}
+                height={32}
+                className="object-contain"
+                priority
+              />
             </div>
-            <span className="text-lg font-bold text-cyan-200 group-hover:text-white transition-colors">
+            <span className="text-lg font-semibold text-amber-200 group-hover:text-amber-100 transition-colors">
               DIU Robotics Club
             </span>
           </Link>
@@ -59,33 +64,18 @@ const Navbar = () => {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-cyan-200/80 hover:text-white transition-all hover:drop-shadow-[0_0_10px_#38e8ff]"
+                className="text-slate-200/80 hover:text-amber-100 transition-all"
               >
                 {link.label}
               </Link>
             ))}
 
-            {/* THEME TOGGLE */}
-            <button
-              onClick={() => setTheme(isDark ? "light" : "dark")}
-              className="p-2 rounded-lg text-cyan-200 hover:bg-white/10 transition"
-              title={`Switch to ${isDark ? "light" : "dark"} mode`}
-            >
-              {isDark ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-
-            <Link
-              href="/login"
-              className="px-4 py-2 bg-cyan-500 text-black font-semibold rounded-lg hover:bg-cyan-400 transition shadow-[0_0_12px_rgba(0,255,255,0.3)]"
-            >
-              Admin
-            </Link>
           </div>
 
           {/* MOBILE MENU BUTTON */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-lg text-cyan-200 hover:bg-white/10 transition"
+            className="md:hidden p-2 rounded-lg text-slate-200 hover:bg-white/10 transition"
           >
             {isOpen ? <X size={26} /> : <Menu size={26} />}
           </button>
@@ -106,19 +96,12 @@ const Navbar = () => {
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="block px-4 py-3 text-cyan-200 hover:bg-white/10 hover:text-white rounded-lg transition-all"
+                className="block px-4 py-3 text-slate-200 hover:bg-white/10 hover:text-amber-100 rounded-lg transition-all"
               >
                 {link.label}
               </Link>
             ))}
 
-            <Link
-              href="/login"
-              onClick={() => setIsOpen(false)}
-              className="block mx-4 mt-2 px-4 py-2 bg-cyan-500 text-black text-center rounded-lg font-semibold hover:bg-cyan-400 transition"
-            >
-              Admin
-            </Link>
           </div>
         </div>
       </div>

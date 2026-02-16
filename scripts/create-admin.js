@@ -10,14 +10,16 @@ require('dotenv').config({ path: '.env.local' });
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-
-const AdminSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  password: String,
-  role: { type: String, enum: ['super-admin', 'admin', 'moderator'], default: 'admin' },
-  isActive: { type: Boolean, default: true },
-}, { timestamps: true });
+const AdminSchema = new mongoose.Schema(
+  {
+    name: String,
+    email: { type: String, unique: true },
+    password: String,
+    role: { type: String, enum: ['super-admin', 'admin', 'moderator'], default: 'admin' },
+    isActive: { type: Boolean, default: true },
+  },
+  { timestamps: true }
+);
 
 const Admin = mongoose.models.Admin || mongoose.model('Admin', AdminSchema);
 
@@ -33,11 +35,11 @@ async function createAdmin() {
     await mongoose.connect(mongoUri);
     console.log('✅ Connected to MongoDB');
 
-    
     const existingAdmin = await Admin.findOne({ email: 'admin@example.com' });
     if (existingAdmin) {
       console.log('⚠️  Admin with email admin@example.com already exists');
       console.log('   To create a new admin, change the email in this script');
+      await mongoose.disconnect();
       process.exit(0);
     }
 
@@ -59,7 +61,8 @@ async function createAdmin() {
     console.log('\n📧 Email: admin@example.com');
     console.log('🔑 Password: admin123');
     console.log('\n⚠️  IMPORTANT: Change the password after first login!');
-    
+
+    await mongoose.disconnect();
     process.exit(0);
   } catch (error) {
     console.error('❌ Error creating admin:', error);

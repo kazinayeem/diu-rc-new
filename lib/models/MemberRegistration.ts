@@ -17,8 +17,9 @@ export interface IMemberRegistration extends Document {
   github?: string;
 
   
+  paymentOptionId: string;
   paymentNumber: string;
-  paymentMethod: "bkash" | "nagad" | "rocket";
+  paymentMethod: string;
   transactionId: string;
   paymentStatus: "pending" | "verified" | "rejected";
   status: "pending" | "approved" | "rejected";
@@ -42,12 +43,9 @@ const MemberRegistrationSchema = new Schema<IMemberRegistration>(
     github: String,
 
     /** PAYMENT INFO */
+    paymentOptionId: { type: String, required: true },
     paymentNumber: { type: String, required: true },
-    paymentMethod: {
-      type: String,
-      enum: ["bkash", "nagad", "rocket"],
-      required: true,
-    },
+    paymentMethod: { type: String, required: true },
     transactionId: { type: String, required: true },
 
     /** PAYMENT STATUS */

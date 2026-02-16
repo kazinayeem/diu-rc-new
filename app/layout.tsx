@@ -6,14 +6,40 @@ import { SessionProvider } from "@/components/providers/SessionProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import StoreProvider from "./StoreProvider";
 import HideNavbarWrapper from "@/components/HideNavbarWrapper";
-import Footer from "@/components/public/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://diurc.vercel.app"),
   title: "DIU Robotic Club - Innovation Through Robotics",
   description:
     "Empowering the next generation of engineers and innovators through robotics, automation, and cutting-edge technology.",
+  icons: {
+    icon: "/diurc_logo.png",
+    shortcut: "/diurc_logo.png",
+    apple: "/diurc_logo.png",
+  },
+  openGraph: {
+    title: "DIU Robotic Club",
+    description:
+      "Empowering the next generation of engineers and innovators through robotics, automation, and cutting-edge technology.",
+    images: [
+      {
+        url: "/diurc_logo.png",
+        width: 512,
+        height: 512,
+        alt: "DIU Robotics Club Logo",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "DIU Robotic Club",
+    description:
+      "Empowering the next generation of engineers and innovators through robotics, automation, and cutting-edge technology.",
+    images: ["/diurc_logo.png"],
+  },
 };
 
 export default function RootLayout({
@@ -29,7 +55,6 @@ export default function RootLayout({
             <StoreProvider>
               <HideNavbarWrapper>
                 {children}
-                <Footer />
               </HideNavbarWrapper>
             </StoreProvider>
           </SessionProvider>

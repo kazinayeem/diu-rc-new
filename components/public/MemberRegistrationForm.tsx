@@ -27,9 +27,17 @@ interface RegistrationFormData {
   linkedin: string;
   github: string;
 
+  paymentOptionId: string;
   paymentNumber: string;
   paymentMethod: string;
   transactionId: string;
+}
+
+interface PaymentOptionItem {
+  _id: string;
+  name: string;
+  number: string;
+  instruction: string;
 }
 
 /* ============================================
@@ -53,10 +61,15 @@ export default function MemberRegistrationForm() {
     linkedin: "",
     github: "",
 
-    paymentNumber: "0194312421", 
+    paymentOptionId: "",
+    paymentNumber: "",
     paymentMethod: "",
     transactionId: "",
   });
+
+  const [paymentOptions, setPaymentOptions] = useState<PaymentOptionItem[]>([]);
+  const [selectedPayment, setSelectedPayment] =
+    useState<PaymentOptionItem | null>(null);
 
   const [skillInput, setSkillInput] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -88,6 +101,33 @@ export default function MemberRegistrationForm() {
 
   const [createMemberRegistration] = useCreateMemberRegistrationMutation();
 
+  React.useEffect(() => {
+    const loadPaymentOptions = async () => {
+      try {
+        const res = await fetch("/api/payment-options");
+        const data = await res.json();
+        const options = Array.isArray(data?.data) ? data.data : [];
+        setPaymentOptions(options);
+        if (options.length > 0) {
+          setSelectedPayment(options[0]);
+        }
+      } catch {
+        setPaymentOptions([]);
+      }
+    };
+
+    loadPaymentOptions();
+  }, []);
+
+  React.useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      paymentOptionId: selectedPayment?._id || "",
+      paymentNumber: selectedPayment?.number || "",
+      paymentMethod: selectedPayment?.name || "",
+    }));
+  }, [selectedPayment]);
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -112,8 +152,9 @@ export default function MemberRegistrationForm() {
         portfolio: "",
         linkedin: "",
         github: "",
-        paymentNumber: "0194312421",
-        paymentMethod: "",
+        paymentOptionId: selectedPayment?._id || "",
+        paymentNumber: selectedPayment?.number || "",
+        paymentMethod: selectedPayment?.name || "",
         transactionId: "",
       });
     } catch (err: any) {
@@ -161,14 +202,14 @@ export default function MemberRegistrationForm() {
             {/* Name + Student ID */}
             <div className="grid md:grid-cols-2 gap-6">
               <InputField
-                label="Full Name *"
+                label="Full Name / পূর্ণ নাম *"
                 value={formData.name}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
               />
               <InputField
-                label="Student ID *"
+                label="Student ID / স্টুডেন্ট আইডি *"
                 value={formData.studentId}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setFormData({
@@ -182,7 +223,7 @@ export default function MemberRegistrationForm() {
             {/* Email + Phone */}
             <div className="grid md:grid-cols-2 gap-6">
               <InputField
-                label="Email *"
+                label="Email / ইমেইল *"
                 type="email"
                 value={formData.email}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -191,7 +232,7 @@ export default function MemberRegistrationForm() {
               />
 
               <InputField
-                label="Phone *"
+                label="Phone / মোবাইল *"
                 value={formData.phone}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setFormData({ ...formData, phone: e.target.value })
@@ -202,7 +243,7 @@ export default function MemberRegistrationForm() {
             {/* Department / Batch / Year */}
             <div className="grid md:grid-cols-3 gap-6">
               <InputField
-                label="Department *"
+                label="Department / বিভাগ *"
                 value={formData.department}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setFormData({ ...formData, department: e.target.value })
@@ -210,7 +251,7 @@ export default function MemberRegistrationForm() {
               />
 
               <InputField
-                label="Batch *"
+                label="Batch / ব্যাচ *"
                 value={formData.batch}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setFormData({ ...formData, batch: e.target.value })
@@ -218,7 +259,7 @@ export default function MemberRegistrationForm() {
               />
 
               <SelectField
-                label="Current Year *"
+                label="Current Year / বর্ষ *"
                 value={formData.currentYear}
                 onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                   setFormData({ ...formData, currentYear: e.target.value })
@@ -228,7 +269,7 @@ export default function MemberRegistrationForm() {
             </div>
 
             <InputField
-              label="CGPA"
+              label="CGPA / সিজিপিএ"
               value={formData.cgpa}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setFormData({ ...formData, cgpa: e.target.value })
@@ -236,7 +277,7 @@ export default function MemberRegistrationForm() {
             />
 
             <TextareaField
-              label="Previous Experience"
+              label="Previous Experience / পূর্ব অভিজ্ঞতা"
               value={formData.previousExperience}
               onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
                 setFormData({ ...formData, previousExperience: e.target.value })
@@ -244,7 +285,7 @@ export default function MemberRegistrationForm() {
             />
 
             <TextareaField
-              label="Why do you want to join? *"
+              label="Why do you want to join? / কেন যোগ দিতে চান? *"
               required
               value={formData.whyJoin}
               onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
@@ -254,7 +295,9 @@ export default function MemberRegistrationForm() {
 
             {/* Skills */}
             <div>
-              <label className="block text-sm text-white/80 mb-2">Skills</label>
+              <label className="block text-sm text-white/80 mb-2">
+                Skills / দক্ষতা
+              </label>
 
               <div className="flex gap-2 mb-3">
                 <input
@@ -274,7 +317,7 @@ export default function MemberRegistrationForm() {
                   onClick={addSkill}
                   className="border-white/40 text-white"
                 >
-                  Add
+                  Add / যোগ করুন
                 </Button>
               </div>
 
@@ -300,56 +343,75 @@ export default function MemberRegistrationForm() {
             {/* Payment Section */}
             <div className="p-4 rounded-xl bg-black/20 border border-white/20">
               <h3 className="text-lg font-semibold text-white mb-3">
-                Membership Fee
+                Membership Fee / সদস্যপদ ফি
               </h3>
 
-              <p className="text-white/70 text-sm mb-3">
-                Please send{" "}
-                <span className="font-bold text-blue-300">200 BDT</span> to the
-                number below:
-              </p>
+              {paymentOptions.length === 0 ? (
+                <p className="text-white/70 text-sm mb-4">
+                  No payment options are available right now.
+                </p>
+              ) : (
+                <div className="grid md:grid-cols-3 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm text-white/80 mb-2">
+                      Payment Option / পেমেন্ট অপশন
+                    </label>
+                    <select
+                      value={selectedPayment?._id || ""}
+                      onChange={(e) => {
+                        const option = paymentOptions.find(
+                          (item) => item._id === e.target.value
+                        );
+                        setSelectedPayment(option || null);
+                      }}
+                      className="w-full px-4 py-2 bg-black/30 border border-white/20 rounded-lg text-white"
+                    >
+                      {paymentOptions.map((option) => (
+                        <option key={option._id} value={option._id}>
+                          {option.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-              <div className="grid md:grid-cols-3 gap-4">
-                {/* Editable Send Money Number */}
-                <InputField
-                  label="Send Money Number *"
-                  value={formData.paymentNumber}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setFormData({
-                      ...formData,
-                      paymentNumber: e.target.value,
-                    })
-                  }
-                />
+                  <InputField
+                    label="Send Money Number / নাম্বার *"
+                    value={formData.paymentNumber}
+                    readOnly
+                  />
 
-                {/* Payment Method */}
-                <SelectField
-                  label="Payment Method *"
-                  value={formData.paymentMethod}
-                  onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                    setFormData({
-                      ...formData,
-                      paymentMethod: e.target.value,
-                    })
-                  }
-                  options={["bkash", "nagad", "rocket"]}
-                />
+                  <InputField
+                    label="Payment Method / মেথড *"
+                    value={formData.paymentMethod}
+                    readOnly
+                  />
+                </div>
+              )}
 
-                {/* Transaction ID */}
-                <InputField
-                  label="Transaction ID *"
-                  value={formData.transactionId}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setFormData({
-                      ...formData,
-                      transactionId: e.target.value,
-                    })
-                  }
-                />
-              </div>
+              {selectedPayment && (
+                <p className="text-white/70 text-sm mb-4">
+                  {selectedPayment.instruction}
+                </p>
+              )}
+
+              {selectedPayment && (
+                <div>
+                  <InputField
+                    label="Transaction ID / ট্রানজেকশন আইডি *"
+                    value={formData.transactionId}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setFormData({
+                        ...formData,
+                        transactionId: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              )}
 
               <p className="text-white/50 text-xs mt-3">
-                Your application will be verified after confirming payment.
+                Your application will be verified after confirming payment. /
+                পেমেন্ট যাচাই শেষে আবেদনটি যাচাই করা হবে।
               </p>
             </div>
 
@@ -359,7 +421,9 @@ export default function MemberRegistrationForm() {
               className="w-full bg-blue-600 hover:bg-blue-500"
               size="lg"
             >
-              {loading ? "Submitting..." : "Submit Application"}
+              {loading
+                ? "Submitting..."
+                : "Submit Application / আবেদন জমা দিন"}
             </Button>
           </form>
         </CardContent>
