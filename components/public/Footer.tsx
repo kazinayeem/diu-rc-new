@@ -112,7 +112,7 @@ const Footer = () => {
             &copy; {currentYear} DIU Robotics Club. All rights reserved.
           </p>
           <p className="text-gray-400 dark:text-dark-400 text-xs">
-            Built by 
+            Built by {' '}
             <a
               href="https://bornosoftnr.com"
               target="_blank"

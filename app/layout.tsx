@@ -14,6 +14,12 @@ export const metadata: Metadata = {
   title: "DIU Robotic Club - Innovation Through Robotics",
   description:
     "Empowering the next generation of engineers and innovators through robotics, automation, and cutting-edge technology.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "DIU RC",
+  },
   icons: {
     icon: "/diurc_logo.png",
     shortcut: "/diurc_logo.png",
@@ -49,6 +55,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.className}>
+      <head>
+        <meta name="theme-color" content="#06b6d4" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="DIU RC" />
+        <link rel="manifest" href="/manifest.json" />
+        <script src="/sw-register.js" suppressHydrationWarning></script>
+      </head>
       <body className="bg-white dark:bg-[#071024] text-black dark:text-white">
         <ThemeProvider>
           <SessionProvider>
