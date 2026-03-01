@@ -42,6 +42,12 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip non http/https requests (e.g. chrome-extension://)
+  const url = new URL(event.request.url);
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return;
+  }
+
   // Skip API calls - let them fail if offline
   if (event.request.url.includes('/api/')) {
     return;
@@ -50,23 +56,28 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Clone the response
+        // Only cache valid responses
+        if (!response || response.status !== 200 || response.type === 'error') {
+          return response;
+        }
+
+        // Clone the response to cache it
         const responseToCache = response.clone();
 
-        // Cache successful responses
-        if (response.status === 200 && response.type === 'basic') {
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
-        }
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
 
         return response;
       })
       .catch(() => {
-        // Return cached version or offline page
+        // Return cached version
         return caches.match(event.request)
           .then((response) => {
-            return response || caches.match('/offline.html');
+            return response || new Response('Offline', { status: 503 });
+          })
+          .catch(() => {
+            return new Response('Offline', { status: 503 });
           });
       })
   );

@@ -13,37 +13,21 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("system");
-  const [isDark, setIsDark] = useState(false);
+  const [theme, setThemeState] = useState<Theme>("dark");
+  const [isDark, setIsDark] = useState(true);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    // Load theme from localStorage
-    const stored = localStorage.getItem("theme") as Theme | null;
-    if (stored) {
-      setThemeState(stored);
-    }
+    // Always force dark mode
+    document.documentElement.classList.add("dark");
   }, []);
 
   useEffect(() => {
     if (!mounted) return;
-
-    const htmlElement = document.documentElement;
-    let resolvedTheme: "light" | "dark" = theme as "light" | "dark";
-
-    if (theme === "system") {
-      resolvedTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
-    }
-
-    setIsDark(resolvedTheme === "dark");
-    if (resolvedTheme === "dark") {
-      htmlElement.classList.add("dark");
-    } else {
-      htmlElement.classList.remove("dark");
-    }
+    // Always keep dark class on html element
+    document.documentElement.classList.add("dark");
+    setIsDark(true);
   }, [theme, mounted]);
 
   const setTheme = (newTheme: Theme) => {

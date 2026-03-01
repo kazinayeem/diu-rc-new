@@ -94,8 +94,16 @@ export const api = createApi({
       query: (opts) => `notices${opts?.query ? `?${opts.query}` : ""}`,
       providesTags: ["Notices"],
     }),
+    getMarqueeNotice: builder.query<any, void>({
+      query: () => "notices/marquee",
+      providesTags: ["Notices"],
+    }),
     createNotice: builder.mutation<any, any>({
       query: (body) => ({ url: "notices", method: "POST", body }),
+      invalidatesTags: ["Notices"],
+    }),
+    updateNotice: builder.mutation<any, { id: string; body: any }>({
+      query: ({ id, body }) => ({ url: `notices/${id}`, method: "PUT", body }),
       invalidatesTags: ["Notices"],
     }),
     deleteNotice: builder.mutation<any, string>({
@@ -196,6 +204,37 @@ export const api = createApi({
       ],
     }),
 
+    // Additional endpoints for public pages
+    getBootcamps: builder.query<any, { query?: string | undefined }>({
+      query: (opts) => `events?type=bootcamp${opts?.query ? `&${opts.query}` : ""}`,
+      providesTags: ["Events"],
+    }),
+    getWorkshops: builder.query<any, { query?: string | undefined }>({
+      query: (opts) => `events?type=workshop${opts?.query ? `&${opts.query}` : ""}`,
+      providesTags: ["Events"],
+    }),
+    getEventBySlug: builder.query<any, string>({
+      query: (slug) => `events?slug=${slug}`,
+      transformResponse: (response: any) => ({
+        ...response,
+        data: response.data?.[0],
+      }),
+      providesTags: (result, error, slug) => [{ type: "Events", id: slug }],
+    }),
+    createRegistration: builder.mutation<any, { eventId: string; name: string; email: string; phone: string }>({
+      query: ({ eventId, name, email, phone }) => ({
+        url: `member-registrations`,
+        method: "POST",
+        body: {
+          eventId,
+          name,
+          email,
+          phone,
+        },
+      }),
+      invalidatesTags: ["MemberRegistrations"],
+    }),
+
     
     uploadFile: builder.mutation<any, FormData>({
       query: (body) => ({ url: "upload", method: "POST", body }),
@@ -230,8 +269,15 @@ export const {
   useUpdateSeminarMutation,
   useDeleteSeminarMutation,
 
+  useGetBootcampsQuery,
+  useGetWorkshopsQuery,
+  useGetEventBySlugQuery,
+  useCreateRegistrationMutation,
+
   useGetNoticesQuery,
+  useGetMarqueeNoticeQuery,
   useCreateNoticeMutation,
+  useUpdateNoticeMutation,
   useDeleteNoticeMutation,
 
   useGetPostsQuery,

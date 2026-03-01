@@ -6,17 +6,22 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 dark:bg-dark-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* About */}
+    <footer className="relative bg-[rgba(2,24,37,0.95)] border-t border-[rgba(76,201,240,0.12)] backdrop-blur-xl">
+      {/* Decorative top line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#4CC9F0]/40 to-transparent" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+          {/* Brand */}
           <div>
-            <h3 className="text-lg font-bold mb-4">DIU Robotics Club</h3>
-            <p className="text-gray-300 dark:text-dark-300 text-sm">
+            <h3 className="text-base font-bold mb-4 bg-gradient-to-r from-[#4CC9F0] to-[#3FB6D6] bg-clip-text text-transparent">
+              DIU Robotics Club
+            </h3>
+            <p className="text-[#90E0EF]/60 text-sm leading-relaxed">
               Empowering innovation through robotics and automation. Building the future, one robot at a time.
             </p>
-            <div className="mt-4 text-xs text-gray-400 dark:text-dark-400">
-              <p className="font-semibold mb-1">Collaboration:</p>
+            <div className="mt-5 text-xs text-[#90E0EF]/40 space-y-1">
+              <p className="font-semibold text-[#90E0EF]/60">Collaboration:</p>
               <p>DIU Robotics Lab × DIU SWE Dept</p>
               <p>Daffodil International University</p>
             </div>
@@ -24,103 +29,69 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-bold mb-4">Quick Links</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/" className="text-gray-300 dark:text-dark-300 hover:text-white transition-colors">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/events" className="text-gray-300 dark:text-dark-300 hover:text-white transition-colors">
-                  Events
-                </Link>
-              </li>
-              <li>
-                <Link href="/seminars" className="text-gray-300 dark:text-dark-300 hover:text-white transition-colors">
-                  Seminars
-                </Link>
-              </li>
-              <li>
-                <Link href="/members" className="text-gray-300 dark:text-dark-300 hover:text-white transition-colors">
-                  Members
-                </Link>
-              </li>
+            <h3 className="text-sm font-bold mb-4 text-[#4CC9F0] uppercase tracking-widest">Quick Links</h3>
+            <ul className="space-y-2.5 text-sm">
+              {[['/', 'Home'], ['/events', 'Events'], ['/seminars', 'Seminars'], ['/teams', 'Team & Members']].map(([href, label]) => (
+                <li key={href}>
+                  <Link href={href} className="text-[#90E0EF]/60 hover:text-[#00E5FF] transition-colors duration-200">
+                    {label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Resources */}
           <div>
-            <h3 className="text-lg font-bold mb-4">Resources</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/research" className="text-gray-300 dark:text-dark-300 hover:text-white transition-colors">
-                  Research Projects
-                </Link>
-              </li>
-              <li>
-                <Link href="/gallery" className="text-gray-300 dark:text-dark-300 hover:text-white transition-colors">
-                  Gallery
-                </Link>
-              </li>
-              <li>
-                <Link href="/login" className="text-gray-300 dark:text-dark-300 hover:text-white transition-colors">
-                  Admin Portal
-                </Link>
-              </li>
+            <h3 className="text-sm font-bold mb-4 text-[#4CC9F0] uppercase tracking-widest">Resources</h3>
+            <ul className="space-y-2.5 text-sm">
+              {[['/research', 'Research Projects'], ['/workshops', 'Workshops'], ['/publications', 'Publications'], ['/login', 'Admin Portal']].map(([href, label]) => (
+                <li key={href}>
+                  <Link href={href} className="text-[#90E0EF]/60 hover:text-[#00E5FF] transition-colors duration-200">
+                    {label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <h3 className="text-lg font-bold mb-4">Contact Us</h3>
+            <h3 className="text-sm font-bold mb-4 text-[#4CC9F0] uppercase tracking-widest">Contact Us</h3>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-center space-x-2 text-gray-300 dark:text-dark-300">
-                <Mail size={16} />
+              <li className="flex items-center gap-2 text-[#90E0EF]/60">
+                <Mail size={14} className="text-[#3FB6D6] flex-shrink-0" />
                 <span>info@diuroboticclub.com</span>
               </li>
-              <li className="flex items-center space-x-2 text-gray-300 dark:text-dark-300">
-                <Phone size={16} />
+              <li className="flex items-center gap-2 text-[#90E0EF]/60">
+                <Phone size={14} className="text-[#3FB6D6] flex-shrink-0" />
                 <span>+880 1234 567890</span>
               </li>
-              <li className="flex items-start space-x-2 text-gray-300 dark:text-dark-300">
-                <MapPin size={16} className="mt-1" />
+              <li className="flex items-start gap-2 text-[#90E0EF]/60">
+                <MapPin size={14} className="text-[#3FB6D6] flex-shrink-0 mt-0.5" />
                 <span>Daffodil International University, Dhaka, Bangladesh</span>
               </li>
             </ul>
-            <div className="flex space-x-4 mt-4">
-              <a
-                href="#"
-                className="text-gray-300 dark:text-dark-300 hover:text-white transition-colors"
-                aria-label="Github"
-              >
-                <Github size={20} />
+            <div className="flex gap-4 mt-5">
+              <a href="#" aria-label="Github"
+                className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#90E0EF]/60 hover:text-[#00E5FF] hover:border-[#4CC9F0]/40 hover:bg-[#4CC9F0]/10 transition-all">
+                <Github size={15} />
               </a>
-              <a
-                href="#"
-                className="text-gray-300 dark:text-dark-300 hover:text-white transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin size={20} />
+              <a href="#" aria-label="LinkedIn"
+                className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#90E0EF]/60 hover:text-[#00E5FF] hover:border-[#4CC9F0]/40 hover:bg-[#4CC9F0]/10 transition-all">
+                <Linkedin size={15} />
               </a>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 dark:border-dark-800 mt-8 pt-8 text-center text-sm">
-          <p className="text-gray-300 dark:text-dark-300 mb-2">
-            &copy; {currentYear} DIU Robotics Club. All rights reserved.
+        {/* Bottom */}
+        <div className="mt-12 pt-6 border-t border-[rgba(76,201,240,0.08)] flex flex-col sm:flex-row items-center justify-between gap-2">
+          <p className="text-xs text-[#90E0EF]/30">
+            © {currentYear} DIU Robotics Club. All rights reserved.
           </p>
-          <p className="text-gray-400 dark:text-dark-400 text-xs">
-            Built by {' '}
-            <a
-              href="https://bornosoftnr.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors"
-            >
-              Bornosoft
-            </a>
+          <p className="text-xs text-[#90E0EF]/20">
+            Built with Next.js · MongoDB · Tailwind CSS
           </p>
         </div>
       </div>

@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
     const featured = searchParams.get("featured");
     const slug = searchParams.get("slug");
     const type = searchParams.get("type");
+    const search = searchParams.get("search");
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
     const skip = (page - 1) * limit;
@@ -24,6 +25,12 @@ export async function GET(request: NextRequest) {
     if (featured === "true") query.featured = true;
     if (slug) query.slug = slug;
     if (type) query.type = type;
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ];
+    }
 
     const events = await Event.find(query)
       .populate("createdBy", "name email")

@@ -1,140 +1,327 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useGetEventsQuery, useGetEventQuery } from "@/lib/api/api";
-import AnimatedWorkshopHero from "@/components/public/AnimatedWorkshopHero";
-import AnimatedWorkshopContent from "@/components/public/AnimatedWorkshopContent";
-import AnimatedWorkshopRegistration from "@/components/public/AnimatedWorkshopRegistration";
+import React, { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useGetEventBySlugQuery, useCreateRegistrationMutation } from "@/lib/api/api";
+import { motion } from "framer-motion";
+import { Calendar, MapPin, Users, Zap, ChevronLeft, Send } from "lucide-react";
 
-interface Workshop {
-  _id: string;
-  title: string;
-  description: string;
-  image?: string;
-  content?: string;
-  eventDate: string;
-  eventTime: string;
-  location: string;
-  registrationLimit?: number;
-  registrationOpen?: boolean;
-  registrationCount?: number;
-  type: string;
-  isPaid?: boolean;
-}
+export default function WorkshopDetailPage({ params }: { params: { slug: string } }) {
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
+  const [submitted, setSubmitted] = useState(false);
 
-export default function WorkshopDetailPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const [workshop, setWorkshop] = useState<Workshop | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+  const { data: workshopData, isLoading } = useGetEventBySlugQuery(params.slug);
+  const workshop = workshopData?.data;
 
-  const { data: listData, isFetching: fetchingList } = useGetEventsQuery({ query: `slug=${params.slug}` });
+  const [register, { isLoading: isRegistering }] = useCreateRegistrationMutation();
 
-  const foundId = listData?.success ? listData.data?.[0]?._id : "";
-  const { data: detailData, isFetching: fetchingDetail } = useGetEventQuery(foundId || "");
-
-  useEffect(() => {
-    // Still loading if either query is fetching
-    if (fetchingList || fetchingDetail) {
-      setLoading(true);
-      return;
-    }
-
-    // Both queries are done loading
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      const found = listData?.success ? listData.data?.[0] : undefined;
-
-      if (!found) {
-        setWorkshop(null);
-        setNotFound(true);
-        setLoading(false);
-        return;
-      }
-
-      if (detailData?.success) {
-        setWorkshop(detailData.data);
-      } else {
-        setWorkshop(found);
-      }
-      
-      setNotFound(false);
-      setLoading(false);
+      await register({
+        eventId: workshop?._id,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+      }).unwrap();
+      setSubmitted(true);
+      setFormData({ name: "", email: "", phone: "" });
+      setTimeout(() => setSubmitted(false), 3000);
     } catch (error) {
-      console.error("Error fetching workshop:", error);
-      setWorkshop(null);
-      setNotFound(true);
-      setLoading(false);
+      console.error("Registration failed:", error);
     }
-  }, [fetchingList, fetchingDetail, listData, detailData]);
+  };
 
-  
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-transparent text-black dark:text-white text-xl">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mb-4"></div>
-          <p>Loading workshop details...</p>
-        </div>
+      <div className="min-h-screen bg-gradient-to-b from-[#0d1b2a] to-[#1a2f4a] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4CC9F0]"></div>
       </div>
     );
   }
 
-  
-  if (notFound || !workshop) {
+  if (!workshop) {
     return (
-      <div className="min-h-screen flex flex-col bg-white dark:bg-transparent text-black dark:text-white">
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Workshop not found</h1>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">The workshop you're looking for doesn't exist.</p>
-            <a href="/workshops" className="text-cyan-600 dark:text-cyan-400 underline hover:no-underline">
-              ← Back to Workshops
-            </a>
-          </div>
-        </main>
+      <div className="min-h-screen bg-gradient-to-b from-[#0d1b2a] to-[#1a2f4a] flex flex-col items-center justify-center px-4">
+        <h1 className="text-2xl font-bold text-[#4CC9F0] mb-4">Workshop Not Found</h1>
+        <Link href="/workshops" className="text-[#90E0EF] hover:text-[#4CC9F0]">
+          Back to Workshops
+        </Link>
       </div>
     );
   }
-
-  const registrationCount = workshop.registrationCount ?? 0;
-
-  const isRegistrationOpen =
-    Boolean(workshop.registrationOpen) &&
-    (workshop.registrationLimit === undefined ||
-      registrationCount < workshop.registrationLimit);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-transparent text-black dark:text-white">
-      <main className="flex-grow">
-        {/* HERO */}
-        <AnimatedWorkshopHero workshop={workshop} />
+    <div className="min-h-screen bg-gradient-to-b from-[#0d1b2a] to-[#1a2f4a]">
+      {/* BACK BUTTON */}
+      <div className="sticky top-0 z-10 bg-[rgba(13,27,42,0.8)] border-b border-[rgba(76,201,240,0.1)] backdrop-blur-sm">
+        <div className="max-w-4xl mx-auto px-4 py-4">
+          <Link
+            href="/workshops"
+            className="inline-flex items-center gap-2 text-[#4CC9F0] hover:text-[#00E5FF] transition-colors"
+          >
+            <ChevronLeft size={20} />
+            Back to Workshops
+          </Link>
+        </div>
+      </div>
 
-        {/* CONTENT */}
-        <section className="py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-3 gap-8 items-start">
-              {/* LEFT CONTENT */}
-              <div className="md:col-span-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-2xl p-6 dark:backdrop-blur-md">
-                <AnimatedWorkshopContent workshop={workshop} />
-              </div>
-
-              {/* RIGHT SIDEBAR */}
-              <div className="md:col-span-1 sticky top-24">
-                <div className="bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-2xl dark:backdrop-blur-md">
-                  <AnimatedWorkshopRegistration
-                    workshopId={workshop._id}
-                    isRegistrationOpen={isRegistrationOpen}
-                    workshop={workshop}
-                  />
-                </div>
-              </div>
-            </div>
+      {/* HERO IMAGE */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="relative h-96 bg-[rgba(76,201,240,0.05)]"
+      >
+        {workshop.image ? (
+          <Image
+            src={workshop.image}
+            alt={workshop.title}
+            fill
+            className="object-cover"
+            onError={(e) => {
+              (e.target as any).src =
+                "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80";
+            }}
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-[#4361EE]/20 to-[#3A0CA3]/20 flex items-center justify-center">
+            <Users size={64} className="text-[#90E0EF]/30" />
           </div>
-        </section>
-      </main>
+        )}
+      </motion.div>
+
+      {/* CONTENT */}
+      <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* MAIN CONTENT */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-2"
+          >
+            {/* TITLE */}
+            <h1 className="text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-[#4CC9F0] to-[#4361EE] bg-clip-text text-transparent">
+              {workshop.title}
+            </h1>
+
+            {/* STATUS BADGE */}
+            <div className="mb-6">
+              <span
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  workshop.status === "upcoming"
+                    ? "bg-blue-500/20 text-blue-300"
+                    : workshop.status === "ongoing"
+                    ? "bg-green-500/20 text-green-300"
+                    : "bg-gray-500/20 text-gray-300"
+                }`}
+              >
+                {workshop.status?.charAt(0).toUpperCase() + workshop.status?.slice(1)}
+              </span>
+            </div>
+
+            {/* META INFO */}
+            <div className="space-y-4 mb-8 pb-8 border-b border-[rgba(76,201,240,0.1)]">
+              {workshop.eventDate && (
+                <div className="flex items-start gap-3">
+                  <Calendar size={20} className="text-[#4CC9F0] mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="text-[#90E0EF]/60 text-sm">Date & Time</p>
+                    <p className="text-[#4CC9F0] font-medium">
+                      {new Date(workshop.eventDate).toLocaleDateString("en-US", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}{" "}
+                      {workshop.eventTime && `at ${workshop.eventTime}`}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {workshop.location && (
+                <div className="flex items-start gap-3">
+                  <MapPin size={20} className="text-[#4CC9F0] mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="text-[#90E0EF]/60 text-sm">Location</p>
+                    <p className="text-[#4CC9F0] font-medium">{workshop.location}</p>
+                    {workshop.mode === "online" && workshop.eventLink && (
+                      <a
+                        href={workshop.eventLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#00E5FF] hover:underline mt-1 text-sm"
+                      >
+                        Join online →
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {workshop.host && workshop.host.length > 0 && (
+                <div className="flex items-start gap-3">
+                  <Users size={20} className="text-[#4CC9F0] mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="text-[#90E0EF]/60 text-sm">Hosts</p>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Array.isArray(workshop.host) ? (
+                        workshop.host.map((h: string, idx: number) => (
+                          <span
+                            key={idx}
+                            className="px-3 py-1 bg-[rgba(76,201,240,0.1)] text-[#4CC9F0] rounded-full text-sm"
+                          >
+                            {h}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="px-3 py-1 bg-[rgba(76,201,240,0.1)] text-[#4CC9F0] rounded-full text-sm">
+                          {workshop.host}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {workshop.guest && workshop.guest.length > 0 && (
+                <div className="flex items-start gap-3">
+                  <Zap size={20} className="text-[#00E5FF] mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="text-[#90E0EF]/60 text-sm">Guest Speakers</p>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Array.isArray(workshop.guest) ? (
+                        workshop.guest.map((g: string, idx: number) => (
+                          <span
+                            key={idx}
+                            className="px-3 py-1 bg-[rgba(0,229,255,0.1)] text-[#00E5FF] rounded-full text-sm"
+                          >
+                            {g}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="px-3 py-1 bg-[rgba(0,229,255,0.1)] text-[#00E5FF] rounded-full text-sm">
+                          {workshop.guest}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* DESCRIPTION */}
+            <div className="prose prose-invert max-w-none">
+              <h2 className="text-2xl font-bold text-[#4CC9F0] mb-4">About</h2>
+              <p className="text-[#90E0EF]/80 leading-relaxed whitespace-pre-wrap">
+                {workshop.description || "No description available"}
+              </p>
+            </div>
+          </motion.div>
+
+          {/* SIDEBAR */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="lg:col-span-1"
+          >
+            {/* PRICING CARD */}
+            <div className="sticky top-24 bg-[rgba(2,29,46,0.8)] border border-[rgba(76,201,240,0.2)] rounded-xl p-6 space-y-6">
+              <div>
+                <p className="text-[#90E0EF]/60 text-sm mb-2">Registration</p>
+                {workshop.registrationOpen ? (
+                  <p className="text-xl font-bold text-green-400">Open</p>
+                ) : (
+                  <p className="text-xl font-bold text-red-400">Closed</p>
+                )}
+              </div>
+
+              {workshop.isPaid && (
+                <div>
+                  <p className="text-[#90E0EF]/60 text-sm mb-2">Fee</p>
+                  <p className="text-2xl font-bold text-[#4CC9F0]">
+                    ৳{workshop.registrationFee}
+                  </p>
+                  <p className="text-xs text-[#90E0EF]/60 mt-1">
+                    Payment: {workshop.paymentMethod === "both" ? "bKash & Nagad" : workshop.paymentMethod === "bkash" ? "bKash" : "Nagad"}
+                  </p>
+                  {workshop.paymentNumber && (
+                    <p className="text-xs text-[#90E0EF]/60 mt-1">
+                      @{workshop.paymentNumber}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {workshop.registrationLimit > 0 && (
+                <div>
+                  <p className="text-[#90E0EF]/60 text-sm mb-2">Seats Available</p>
+                  <p className="text-lg font-bold text-[#4CC9F0]">
+                    {workshop.registrationLimit}
+                  </p>
+                </div>
+              )}
+
+              {/* REGISTRATION FORM */}
+              {workshop.registrationOpen ? (
+                <form onSubmit={handleRegister} className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-3 py-2 bg-[rgba(76,201,240,0.05)] border border-[rgba(76,201,240,0.2)] rounded-lg text-[#90E0EF] placeholder-[#90E0EF]/40 focus:outline-none focus:ring-2 focus:ring-[#4CC9F0] text-sm"
+                    required
+                  />
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full px-3 py-2 bg-[rgba(76,201,240,0.05)] border border-[rgba(76,201,240,0.2)] rounded-lg text-[#90E0EF] placeholder-[#90E0EF]/40 focus:outline-none focus:ring-2 focus:ring-[#4CC9F0] text-sm"
+                    required
+                  />
+                  <input
+                    type="tel"
+                    placeholder="Phone"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full px-3 py-2 bg-[rgba(76,201,240,0.05)] border border-[rgba(76,201,240,0.2)] rounded-lg text-[#90E0EF] placeholder-[#90E0EF]/40 focus:outline-none focus:ring-2 focus:ring-[#4CC9F0] text-sm"
+                    required
+                  />
+
+                  {submitted && (
+                    <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                      <p className="text-green-300 text-sm text-center">
+                        ✓ Registered successfully!
+                      </p>
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={isRegistering}
+                    className="w-full px-4 py-3 bg-gradient-to-r from-[#4CC9F0] to-[#4361EE] text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-[#4CC9F0]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                  >
+                    <Send size={16} />
+                    {isRegistering ? "Registering..." : "Register Now"}
+                  </button>
+                </form>
+              ) : (
+                <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+                  <p className="text-red-300 text-center font-medium">
+                    Registration Closed
+                  </p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -12,14 +12,30 @@ export const Card: React.FC<CardProps> = ({
   ...props
 }) => {
   const variants = {
-    default: 'bg-white border border-dark-200',
-    elevated: 'bg-white shadow-lg',
-    outlined: 'bg-white border-2 border-dark-300',
+    // Standard glass card
+    default: [
+      'bg-[rgba(2,48,71,0.45)] backdrop-blur-xl',
+      'border border-[rgba(76,201,240,0.18)]',
+    ].join(' '),
+    // Elevated glass with subtle glow
+    elevated: [
+      'bg-[rgba(2,48,71,0.5)] backdrop-blur-xl',
+      'border border-[rgba(76,201,240,0.18)]',
+      'shadow-[0_8px_32px_rgba(2,24,37,0.6)]',
+      'hover:shadow-[0_12px_40px_rgba(0,229,255,0.12)]',
+      'transition-shadow duration-300',
+    ].join(' '),
+    // Outlined with gradient border
+    outlined: [
+      'bg-[rgba(3,29,46,0.6)] backdrop-blur-xl',
+      'border border-[rgba(63,182,214,0.3)]',
+      'shadow-[0_0_0_1px_rgba(63,182,214,0.08)]',
+    ].join(' '),
   };
 
   return (
     <div
-      className={cn('rounded-xl overflow-hidden', variants[variant], className)}
+      className={cn('rounded-2xl overflow-hidden', variants[variant], className)}
       {...props}
     >
       {children}

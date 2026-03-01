@@ -43,6 +43,15 @@ export async function PUT(
     await connectDB();
 
     const body = await request.json();
+
+    // If setting this notice as the marquee, clear all others first
+    if (body.isMarquee === true) {
+      await Notice.updateMany(
+        { _id: { $ne: params.id } },
+        { $set: { isMarquee: false } }
+      );
+    }
+
     const notice = await Notice.findByIdAndUpdate(params.id, body, {
       new: true,
       runValidators: true,

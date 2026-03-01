@@ -11,6 +11,9 @@ import {
   AnimatedCTA,
 } from "@/components/public/AnimatedSections";
 import DataPrefetcher from "@/components/DataPrefetcher";
+import connectDB from "@/lib/db";
+import Sponsor from "@/lib/models/Sponsor";
+import SponsorsMarquee from "@/components/public/SponsorsMarquee";
 
 import dynamic from "next/dynamic";
 
@@ -63,6 +66,13 @@ async function getFeaturedContent() {
 
 export default async function HomePage() {
   const { events, seminars, members } = await getFeaturedContent();
+
+  // Fetch sponsors directly from DB
+  let sponsors: any[] = [];
+  try {
+    await connectDB();
+    sponsors = await Sponsor.find({ isVisible: true }).sort({ order: 1, createdAt: 1 }).lean();
+  } catch {}
 
   return (
     <div className="min-h-screen flex flex-col bg-[#071024] text-white">
@@ -292,35 +302,20 @@ export default async function HomePage() {
 
         {/* Sponsors / Partners */}
         <AnimatedSection className="py-16">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold text-cyan-200">
-                Sponsors & Partners
-              </h2>
-              <p className="text-white/60 mt-2">
-                We grow together with industry and community support.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {[
-                "Innovation Hub",
-                "Tech Partner",
-                "Research Lab",
-                "Community Sponsor",
-              ].map((partner) => (
-                <div
-                  key={partner}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center text-white/70 hover:bg-white/10 transition"
-                >
-                  <div className="h-10 w-10 rounded-full bg-cyan-400/20 border border-cyan-300/30 mx-auto mb-3" />
-                  <p className="text-sm font-medium text-white/80">
-                    {partner}
-                  </p>
-                </div>
-              ))}
-            </div>
+          <div className="max-w-7xl mx-auto px-6 mb-8">
+            <h2 className="text-3xl font-bold text-cyan-200">
+              Sponsors & Partners
+            </h2>
+            <p className="text-white/60 mt-2">
+              We grow together with industry and community support.
+            </p>
           </div>
+          <SponsorsMarquee sponsors={sponsors.map((s: any) => ({
+            _id: s._id.toString(),
+            name: s.name,
+            logoUrl: s.logoUrl,
+            websiteUrl: s.websiteUrl,
+          }))} />
         </AnimatedSection>
 
         {/* FAQ */}

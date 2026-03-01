@@ -9,7 +9,6 @@ import { useGetMembersQuery, useDeleteMemberMutation } from "@/lib/api/api";
 
 export default function MembersPage() {
   const [members, setMembers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
 
   const [showForm, setShowForm] = useState(false);
   const [editingMember, setEditingMember] = useState<any>(null);
@@ -53,15 +52,16 @@ export default function MembersPage() {
   const [deleteMember] = useDeleteMemberMutation();
 
   useEffect(() => {
-    setLoading(isFetching);
-    if (data?.success) {
-      setMembers(data.data);
+    if (data?.success && data?.data) {
+      console.log("Members data received:", data);
+      setMembers(Array.isArray(data.data) ? data.data : []);
       setPagination((prev) => ({
         ...prev,
-        total: data.pagination.total,
-        pages: data.pagination.pages,
+        total: data.pagination?.total || 0,
+        pages: data.pagination?.pages || 0,
       }));
     } else {
+      console.warn("No valid data from API:", data);
       setMembers([]);
       setPagination((prev) => ({ ...prev, total: 0, pages: 0 }));
     }
@@ -224,9 +224,14 @@ export default function MembersPage() {
       )}
 
       {/* TABLE */}
-      {loading ? (
-        <div className="text-center py-12 text-white/60">Loading...</div>
-      ) : (
+      {isFetching ? (
+        <div className="text-center py-12">
+          <div className="inline-block">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#1f8fff]"></div>
+            <p className="text-white/60 mt-4">Loading members...</p>
+          </div>
+        </div>
+      ) : members.length > 0 ? (
         <DataTable
           columns={columns}
           data={members}
@@ -236,6 +241,10 @@ export default function MembersPage() {
               setPagination((prev) => ({ ...prev, page })),
           }}
         />
+      ) : (
+        <div className="text-center py-12 text-white/60">
+          <p>No members found. Add your first member to get started.</p>
+        </div>
       )}
     </div>
   );

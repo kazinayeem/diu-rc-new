@@ -1,11 +1,31 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt from "bcryptjs";
 
+export type AdminRole = "super-admin" | "manager";
+
+export const ALL_PERMISSIONS = [
+  "dashboard",
+  "members",
+  "member-registrations",
+  "events",
+  "research",
+  "payment",
+  "projects",
+  "notices",
+  "posts",
+  "seminars",
+  "workshops",
+  "sponsors",
+] as const;
+
+export type Permission = (typeof ALL_PERMISSIONS)[number];
+
 export interface IAdmin extends Document {
   name: string;
   email: string;
   password: string;
-  role: "super-admin" | "admin" | "moderator";
+  role: AdminRole;
+  permissions: Permission[];
   isActive: boolean;
   lastLogin?: Date;
   createdAt: Date;
@@ -40,8 +60,14 @@ const AdminSchema: Schema<IAdmin> = new Schema(
 
     role: {
       type: String,
-      enum: ["super-admin", "admin", "moderator"],
-      default: "admin",
+      enum: ["super-admin", "manager"],
+      default: "manager",
+    },
+
+    permissions: {
+      type: [String],
+      enum: ALL_PERMISSIONS,
+      default: [],
     },
 
     isActive: {
@@ -88,7 +114,10 @@ AdminSchema.index({ role: 1, isActive: 1 });
 
 
 
+// Delete cached model to pick up schema changes after hot reload / redeploy
+delete (mongoose.models as any).Admin;
+
 const Admin: Model<IAdmin> =
-  mongoose.models.Admin || mongoose.model<IAdmin>("Admin", AdminSchema);
+  mongoose.model<IAdmin>("Admin", AdminSchema);
 
 export default Admin;

@@ -18,7 +18,7 @@ export interface IEvent extends Document {
   registrationFee?: number;
   paymentMethod?: "bkash" | "nagad" | "both";
   paymentNumber?: string;
-  type: "event" | "workshop" | "seminar";
+  type: "event" | "workshop" | "seminar" | "bootcamp";
   status: "upcoming" | "ongoing" | "completed" | "cancelled";
   featured: boolean;
   attendees?: number;

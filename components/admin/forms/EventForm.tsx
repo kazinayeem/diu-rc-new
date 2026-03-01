@@ -9,9 +9,10 @@ import { useCreateEventMutation, useUpdateEventMutation } from "@/lib/api/api";
 interface EventFormProps {
   event?: any;
   onClose: () => void;
+  itemType?: "events" | "seminars" | "bootcamp" | "workshops";
 }
 
-export default function EventForm({ event, onClose }: EventFormProps) {
+export default function EventForm({ event, onClose, itemType = "events" }: EventFormProps) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -32,6 +33,8 @@ export default function EventForm({ event, onClose }: EventFormProps) {
     registrationFee: "",
     paymentMethod: "both",
     paymentNumber: "",
+    host: "",
+    guest: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -63,6 +66,8 @@ export default function EventForm({ event, onClose }: EventFormProps) {
         registrationFee: event.registrationFee?.toString() || "",
         paymentMethod: event.paymentMethod || "both",
         paymentNumber: event.paymentNumber || "",
+        host: event.host || "",
+        guest: event.guest || "",
       });
     }
   }, [event]);
@@ -182,7 +187,54 @@ export default function EventForm({ event, onClose }: EventFormProps) {
                 placeholder="https://example.com/image.jpg"
                 className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
               />
+              {formData.image && (
+                <div className="mt-3 p-2 bg-white/5 border border-white/10 rounded-lg">
+                  <img 
+                    src={formData.image} 
+                    alt="Preview" 
+                    className="w-full h-40 object-cover rounded"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none";
+                    }}
+                  />
+                </div>
+              )}
             </div>
+
+            {/* HOST & GUEST (for seminars and workshops) */}
+            {(itemType === "seminars" || itemType === "workshops") && (
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm mb-2 text-white/80">
+                    Host Name
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.host}
+                    onChange={(e) =>
+                      setFormData({ ...formData, host: e.target.value })
+                    }
+                    placeholder="Event host name"
+                    className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm mb-2 text-white/80">
+                    Guest Speaker
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.guest}
+                    onChange={(e) =>
+                      setFormData({ ...formData, guest: e.target.value })
+                    }
+                    placeholder="Guest speaker name"
+                    className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+                  />
+                </div>
+              </div>
+            )}
 
             {/* DATE + TIME */}
             <div className="grid grid-cols-2 gap-4">
@@ -300,28 +352,34 @@ export default function EventForm({ event, onClose }: EventFormProps) {
               </div>
             )}
 
+            {/* SEAT LIMIT (for all types) */}
+            <div>
+              <label className="block text-sm mb-2 text-white/80">
+                Seat Limit (Capacity)
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.registrationLimit}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      registrationLimit: e.target.value,
+                    })
+                  }
+                  placeholder="0 = Unlimited"
+                  className="flex-1 px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+                />
+                <div className="flex items-center text-white/60 text-xs whitespace-nowrap">
+                  (0 = unlimited)
+                </div>
+              </div>
+            </div>
+
             {/* WORKSHOP SETTINGS */}
             {formData.type === "workshop" && (
               <div className="border-t border-white/10 pt-4 space-y-4">
-                {/* Registration Limit */}
-                <div>
-                  <label className="block text-sm mb-2 text-white/80">
-                    Registration Limit
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.registrationLimit}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        registrationLimit: e.target.value,
-                      })
-                    }
-                    placeholder="Leave empty for unlimited"
-                    className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
-                  />
-                </div>
-
                 {/* Registration Open */}
                 <div className="flex items-center">
                   <input

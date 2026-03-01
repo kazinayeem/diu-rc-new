@@ -6,6 +6,7 @@ export interface INotice extends Document {
   type: 'general' | 'important' | 'urgent';
   priority: number;
   isActive: boolean;
+  isMarquee: boolean;
   expiresAt?: Date;
   attachment?: string;
   createdBy: mongoose.Types.ObjectId;
@@ -41,6 +42,10 @@ const NoticeSchema: Schema = new Schema(
       type: Boolean,
       default: true,
     },
+    isMarquee: {
+      type: Boolean,
+      default: false,
+    },
     expiresAt: {
       type: Date,
     },
@@ -61,8 +66,10 @@ const NoticeSchema: Schema = new Schema(
 
 NoticeSchema.index({ isActive: 1, type: 1, priority: -1 });
 NoticeSchema.index({ expiresAt: 1 });
+NoticeSchema.index({ isMarquee: 1 });
 
-const Notice: Model<INotice> = mongoose.models.Notice || mongoose.model<INotice>('Notice', NoticeSchema);
+delete (mongoose.models as any).Notice;
+const Notice: Model<INotice> = mongoose.model<INotice>('Notice', NoticeSchema);
 
 export default Notice;
 

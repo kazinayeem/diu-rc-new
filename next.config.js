@@ -4,7 +4,17 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ['res.cloudinary.com', 'picsum.photos', 'avatars.githubusercontent.com', 'diurc.vercel.app'],
+    domains: ['res.cloudinary.com', 'picsum.photos', 'avatars.githubusercontent.com', 'diurc.vercel.app', 'www.kazinayeem.site', 'kazinayeem.site'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+      {
+        protocol: 'http',
+        hostname: '**',
+      },
+    ],
   },
 
   eslint: {

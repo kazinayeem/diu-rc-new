@@ -45,7 +45,7 @@ export function AnimatedCTA() {
           automation
         </p>
         <a href="/join" className="inline-block">
-          <button className="px-8 py-4 bg-white text-primary-600 rounded-lg font-semibold text-lg hover:bg-primary-50 transition-colors">
+          <button className="px-8 py-4 bg-cyan-500 text-[#071024] rounded-lg font-semibold text-lg hover:bg-cyan-400 transition-colors">
             Apply for Membership
           </button>
         </a>

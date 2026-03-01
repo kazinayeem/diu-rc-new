@@ -2,14 +2,12 @@
 
 import React, { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import Link from "next/link";
 import { AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("admin@example.com");
   const [password, setPassword] = useState("admin123");
   const [error, setError] = useState("");
@@ -38,16 +36,8 @@ export default function LoginPage() {
       } else if (result?.ok) {
         // Mark as redirecting to prevent multiple clicks
         setIsRedirecting(true);
-        
-        // Add a small delay to ensure session is properly set
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Perform redirect
-        router.push("/admin");
-        
-        // Refresh to ensure we get latest data
-        await new Promise(resolve => setTimeout(resolve, 300));
-        router.refresh();
+        // Hard redirect so the server session cookie is properly read by admin layout
+        window.location.href = "/admin";
       } else {
         setError("Login failed. Please try again.");
         setLoading(false);

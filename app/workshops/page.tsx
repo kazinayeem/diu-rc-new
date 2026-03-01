@@ -1,210 +1,212 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
-import { useGetEventsQuery } from "@/lib/api/api";
-import { Button } from "@/components/ui/Button";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-
-interface WorkshopItem {
-  _id: string;
-  title: string;
-  slug: string;
-  description: string;
-  image?: string;
-  eventDate: string;
-  eventTime: string;
-  location: string;
-  mode?: string;
-  isPaid: boolean;
-  registrationFee?: number;
-  registrationOpen?: boolean;
-}
+import { useGetWorkshopsQuery } from "@/lib/api/api";
+import { motion } from "framer-motion";
+import { Calendar, Users, MapPin, ChevronRight } from "lucide-react";
 
 export default function WorkshopsPage() {
-  const [workshops, setWorkshops] = useState<WorkshopItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-
+  const limit = 12;
   const [search, setSearch] = useState("");
 
-  const limit = 6;
+  const { data: workshopsData, isLoading } = useGetWorkshopsQuery({
+    query: `page=${page}&limit=${limit}&${search ? `search=${search}` : ""}`,
+  });
 
-  const query = `type=workshop&page=${page}&limit=${limit}`;
-  const { data, isFetching } = useGetEventsQuery({ query });
+  const workshops = workshopsData?.data?.data || [];
+  const totalPages = workshopsData?.data?.pages || 1;
 
-  useEffect(() => {
-    setLoading(isFetching);
-    if (data?.success) {
-      setWorkshops(data.data || []);
-      setTotalPages(data.pagination?.pages || 1);
-    }
-  }, [data, isFetching]);
-
-  
-  const filteredWorkshops = useMemo(() => {
-    return workshops.filter((item) =>
-      item.title.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [search, workshops]);
-
-  
-  const formatTime = (time: string) => {
-    if (!time) return "";
-    return new Date("1970-01-01T" + time + ":00")
-      .toLocaleTimeString([], {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      })
-      .toUpperCase();
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 },
+    },
   };
 
-  const SkeletonCard = () => (
-    <div className="animate-pulse bg-white/10 rounded-xl h-72 w-full" />
-  );
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-transparent text-black dark:text-white">
-      {/* HERO SECTION */}
-      <section className="py-16 shadow-inner bg-gray-50 dark:bg-transparent">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold mb-3 text-black dark:text-white">Workshops</h1>
-          <p className="text-lg text-gray-600 dark:text-cyan-100">
-            Learn, build & explore robotics with our hands-on workshops.
-          </p>
-
-          {/* SEARCH BOX */}
-          <div className="max-w-md mt-6">
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search workshops..."
-              className="w-full px-4 py-3 bg-gray-100 dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-xl outline-none text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-300 focus:ring-2 focus:ring-cyan-400"
-            />
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-[#0d1b2a] to-[#1a2f4a]">
+      {/* HERO */}
+      <section className="relative py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center"
+          >
+            <h1 className="text-5xl sm:text-6xl font-bold mb-6 bg-gradient-to-r from-[#4CC9F0] via-[#00E5FF] to-[#4361EE] bg-clip-text text-transparent">
+              Workshops
+            </h1>
+            <p className="text-lg sm:text-xl text-[#90E0EF]/80 max-w-2xl mx-auto">
+              Master hands-on skills through practical workshops led by industry experts
+            </p>
+          </motion.div>
         </div>
       </section>
 
-      {/* WORKSHOPS SECTION */}
-      <main className="flex-grow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* WORKSHOP GRID */}
-          {!loading ? (
-            filteredWorkshops.length > 0 ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredWorkshops.map((workshop, index) => (
-                  <motion.div
-                    key={workshop._id}
-                    initial={{ opacity: 0, y: 25 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: index * 0.07 }}
-                    className="bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-lg dark:shadow-lg group"
-                  >
-                    <Link href={`/workshops/${workshop.slug}`}>
+      {/* SEARCH */}
+      <section className="py-8 px-4 sm:px-6 lg:px-8 border-b border-[rgba(76,201,240,0.1)]">
+        <div className="max-w-6xl mx-auto">
+          <input
+            type="text"
+            placeholder="Search workshops..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            className="w-full px-4 py-3 bg-[rgba(76,201,240,0.05)] border border-[rgba(76,201,240,0.2)] rounded-lg text-[#90E0EF] placeholder-[#90E0EF]/40 focus:outline-none focus:ring-2 focus:ring-[#4CC9F0]"
+          />
+        </div>
+      </section>
+
+      {/* CARDS GRID */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          {isLoading ? (
+            <div className="text-center py-20">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#4CC9F0]"></div>
+              <p className="text-[#90E0EF]/60 mt-4">Loading workshops...</p>
+            </div>
+          ) : workshops.length === 0 ? (
+            <div className="text-center py-20 text-[#90E0EF]/60">
+              No workshops found
+            </div>
+          ) : (
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {workshops.map((workshop: any) => (
+                <motion.div key={workshop._id} variants={itemVariants}>
+                  <Link href={`/workshops/${workshop.slug}`}>
+                    <div className="group h-full bg-[rgba(2,29,46,0.8)] border border-[rgba(76,201,240,0.12)] rounded-xl overflow-hidden hover:border-[rgba(76,201,240,0.3)] transition-all duration-300 cursor-pointer hover:shadow-lg hover:shadow-[#4CC9F0]/10">
                       {/* IMAGE */}
-                      {workshop.image && (
-                        <div className="h-40 w-full overflow-hidden">
-                          <img
+                      <div className="relative h-48 overflow-hidden bg-[rgba(76,201,240,0.05)]">
+                        {workshop.image ? (
+                          <Image
                             src={workshop.image}
-                            className="w-full h-full object-cover group-hover:scale-105 duration-300"
+                            alt={workshop.title}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-300"
+                            onError={(e) => {
+                              (e.target as any).src =
+                                "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&q=80";
+                            }}
                           />
-                        </div>
-                      )}
-
-                      {/* BODY */}
-                      <div className="p-4">
-                        <h2 className="text-xl font-bold mb-2 text-black dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 duration-300">
-                          {workshop.title}
-                        </h2>
-
-                        <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-3">
-                          {workshop.description}
-                        </p>
-
-                        {/* Free/Paid Badge */}
-                        {workshop.isPaid ? (
-                          <span className="px-3 py-1 text-sm rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-400/40">
-                            Paid — ৳{workshop.registrationFee}
-                          </span>
                         ) : (
-                          <span className="px-3 py-1 text-sm rounded-full bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-400/40">
-                            Free Workshop
-                          </span>
+                          <div className="w-full h-full bg-gradient-to-br from-[#4361EE]/20 to-[#3A0CA3]/20 flex items-center justify-center">
+                            <Users size={48} className="text-[#90E0EF]/30" />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* CONTENT */}
+                      <div className="p-5 space-y-3">
+                        {/* TITLE */}
+                        <h3 className="font-semibold text-[#4CC9F0] group-hover:text-[#00E5FF] line-clamp-2 transition-colors">
+                          {workshop.title}
+                        </h3>
+
+                        {/* META INFO */}
+                        <div className="space-y-2 text-sm text-[#90E0EF]/70">
+                          {workshop.eventDate && (
+                            <div className="flex items-center gap-2">
+                              <Calendar size={16} className="text-[#4CC9F0]" />
+                              <span>
+                                {new Date(workshop.eventDate).toLocaleDateString(
+                                  "en-US",
+                                  { month: "short", day: "numeric" }
+                                )}
+                              </span>
+                            </div>
+                          )}
+
+                          {workshop.location && (
+                            <div className="flex items-center gap-2">
+                              <MapPin size={16} className="text-[#4CC9F0]" />
+                              <span className="truncate">{workshop.location}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* HOST/GUEST */}
+                        {workshop.host && workshop.host.length > 0 && (
+                          <div className="pt-2 border-t border-[rgba(76,201,240,0.1)]">
+                            <p className="text-xs text-[#90E0EF]/60 mb-1">Host:</p>
+                            <p className="text-xs text-[#4CC9F0]">
+                              {Array.isArray(workshop.host)
+                                ? workshop.host.slice(0, 2).join(", ")
+                                : workshop.host}
+                              {Array.isArray(workshop.host) && workshop.host.length > 2
+                                ? ` +${workshop.host.length - 2}`
+                                : ""}
+                            </p>
+                          </div>
                         )}
 
-                        {/* Date & Time */}
-                        <div className="mt-3 text-gray-600 dark:text-gray-300 text-sm space-y-1">
-                          <p>
-                            📅 {new Date(workshop.eventDate).toDateString()}
-                          </p>
-                          <p>⏰ {formatTime(workshop.eventTime)}</p>
-                          <p>📍 {workshop.location}</p>
+                        {/* STATUS BADGE */}
+                        <div className="flex items-center justify-between pt-2">
+                          <span
+                            className={`px-2 py-1 rounded text-xs font-medium ${
+                              workshop.status === "upcoming"
+                                ? "bg-blue-500/20 text-blue-300"
+                                : workshop.status === "ongoing"
+                                ? "bg-green-500/20 text-green-300"
+                                : "bg-gray-500/20 text-gray-300"
+                            }`}
+                          >
+                            {workshop.status?.charAt(0).toUpperCase() +
+                              workshop.status?.slice(1)}
+                          </span>
+                          <ChevronRight
+                            size={16}
+                            className="text-[#4CC9F0] group-hover:translate-x-1 transition-transform"
+                          />
                         </div>
                       </div>
-                    </Link>
-
-                    {/* REGISTER */}
-                    {workshop.registrationOpen && (
-                      <div className="p-4 pt-0">
-                        <Button
-                          onClick={() =>
-                            (window.location.href = `/workshops/${workshop.slug}`)
-                          }
-                          className="w-full bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg"
-                        >
-                          {workshop.isPaid
-                            ? `Register – ৳${workshop.registrationFee}`
-                            : "Register Now"}
-                        </Button>
-                      </div>
-                    )}
-                  </motion.div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-16">
-                <p className="text-cyan-300 text-lg">No workshops found.</p>
-              </div>
-            )
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <SkeletonCard key={i} />
+                    </div>
+                  </Link>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
 
           {/* PAGINATION */}
-          {!loading && totalPages > 1 && (
-            <div className="flex justify-center mt-10 gap-4">
-              <Button
-                variant="outline"
+          {totalPages > 1 && (
+            <div className="flex justify-center gap-4 mt-12">
+              <button
+                onClick={() => setPage(Math.max(1, page - 1))}
                 disabled={page === 1}
-                onClick={() => setPage(page - 1)}
-                className="border-cyan-400 text-cyan-300 hover:bg-cyan-500 hover:text-black"
+                className="px-4 py-2 bg-[rgba(76,201,240,0.1)] border border-[rgba(76,201,240,0.2)] rounded-lg text-[#4CC9F0] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[rgba(76,201,240,0.2)] transition-colors"
               >
                 Previous
-              </Button>
-
-              <span className="text-cyan-200 font-medium py-2 px-4 bg-white/10 rounded-lg border border-white/10">
+              </button>
+              <span className="px-4 py-2 text-[#90E0EF]/80">
                 Page {page} of {totalPages}
               </span>
-
-              <Button
-                variant="outline"
+              <button
+                onClick={() => setPage(Math.min(totalPages, page + 1))}
                 disabled={page === totalPages}
-                onClick={() => setPage(page + 1)}
-                className="border-cyan-400 text-cyan-300 hover:bg-cyan-500 hover:text-black"
+                className="px-4 py-2 bg-[rgba(76,201,240,0.1)] border border-[rgba(76,201,240,0.2)] rounded-lg text-[#4CC9F0] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[rgba(76,201,240,0.2)] transition-colors"
               >
                 Next
-              </Button>
+              </button>
             </div>
           )}
         </div>
-      </main>
+      </section>
     </div>
   );
 }

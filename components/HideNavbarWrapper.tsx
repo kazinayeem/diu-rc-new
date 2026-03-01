@@ -3,6 +3,7 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
+import NoticeTickerBar from "@/components/public/NoticeTickerBar";
 import { usePrefetchInit } from "@/lib/api/usePrefetchInit";
 
 export default function HideNavbarWrapper({
@@ -19,6 +20,7 @@ export default function HideNavbarWrapper({
 
   return (
     <>
+      {!hideNavbar && <NoticeTickerBar />}
       {!hideNavbar && <Navbar />}
       {children}
       {!hideFooter && <Footer />}

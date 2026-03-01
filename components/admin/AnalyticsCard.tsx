@@ -38,15 +38,15 @@ export default function AnalyticsCard({
               <p
                 className={cn(
                   "text-xs mt-1",
-                  trend.isPositive ? "text-emerald-300" : "text-rose-300"
+                  trend.isPositive ? "text-[#4CC9F0]" : "text-[#7b7bff]"
                 )}
               >
                 {trend.isPositive ? "↑" : "↓"} {Math.abs(trend.value)}% from last month
               </p>
             )}
           </div>
-          <div className="w-12 h-12 bg-emerald-400/15 rounded-xl flex items-center justify-center">
-            <Icon className="text-emerald-200" size={24} />
+          <div className="w-12 h-12 bg-[rgba(63,182,214,0.12)] border border-[rgba(76,201,240,0.2)] rounded-xl flex items-center justify-center">
+            <Icon className="text-[#4CC9F0]" size={24} />
           </div>
         </div>
       </CardContent>
