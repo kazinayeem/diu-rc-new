@@ -7,7 +7,7 @@ import {
   useGetSeminarsQuery,
   useGetPostsQuery,
 } from "@/lib/api/api";
-import EventFormPage from "@/components/admin/forms/EventFormPage";
+import EventFormEnhanced from "@/components/admin/forms/EventFormEnhanced";
 import DataTable from "@/components/admin/DataTable";
 import { ArrowLeft, Plus } from "lucide-react";
 
@@ -123,7 +123,13 @@ export default function CreateProgramPage() {
 
         {/* FORM SECTION */}
         <div className="mb-12">
-          <EventFormPage itemType={type} />
+          <EventFormEnhanced 
+            itemType={type}
+            onSuccess={() => {
+              // Refresh data after creation
+              window.location.reload();
+            }}
+          />
         </div>
 
         {/* LIST SECTION */}

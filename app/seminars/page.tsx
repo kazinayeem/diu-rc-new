@@ -16,8 +16,8 @@ export default function SeminarsPage() {
     query: `page=${page}&limit=${limit}&${search ? `search=${search}` : ""}`,
   });
 
-  const seminars = seminarsData?.data?.data || [];
-  const totalPages = seminarsData?.data?.pages || 1;
+  const seminars = seminarsData?.data || [];
+  const totalPages = seminarsData?.pagination?.pages || 1;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -90,7 +90,7 @@ export default function SeminarsPage() {
             >
               {seminars.map((seminar: any) => (
                 <motion.div key={seminar._id} variants={itemVariants}>
-                  <Link href={`/seminars/${seminar.slug}`}>
+                  <Link href={`/events/${seminar.slug}`}>
                     <div className="group h-full bg-[rgba(2,29,46,0.8)] border border-[rgba(76,201,240,0.12)] rounded-xl overflow-hidden hover:border-[rgba(76,201,240,0.3)] transition-all duration-300 cursor-pointer hover:shadow-lg hover:shadow-[#4CC9F0]/10">
                       {/* IMAGE */}
                       <div className="relative h-48 overflow-hidden bg-[rgba(76,201,240,0.05)]">

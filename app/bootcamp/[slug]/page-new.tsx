@@ -459,10 +459,9 @@ export default function BootcampDetailsPage() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
             className="lg:col-span-1"
           >
-            <div className="sticky top-24 bg-white dark:bg-white/5 rounded-2xl p-5 border border-gray-200 dark:border-white/10 shadow-xl backdrop-blur-sm">
+            <div className="sticky top-24 bg-gradient-to-br from-cyan-50 dark:from-cyan-500/10 to-blue-50 dark:to-blue-500/10 rounded-xl p-6 border border-cyan-200 dark:border-cyan-500/30 shadow-lg">
               {/* Registration Status */}
               {event.status === "cancelled" ? (
                 <div className="mb-6 p-4 bg-red-100 dark:bg-red-500/20 border border-red-300 dark:border-red-400/40 rounded-lg">

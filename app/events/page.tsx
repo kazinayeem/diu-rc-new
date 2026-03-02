@@ -92,60 +92,76 @@ export default function EventsPage() {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: index * 0.07 }}
-                    className="bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-lg dark:shadow-lg cursor-pointer group"
                   >
-                    {/* IMAGE */}
-                    {event.image && (
-                      <div className="h-40 w-full overflow-hidden">
-                        <img
-                          src={event.image}
-                          className="w-full h-full object-cover group-hover:scale-105 duration-300"
-                        />
+                    <Link href={`/events/${event.slug}`}>
+                      <div className="bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-lg dark:shadow-lg cursor-pointer group hover:shadow-xl dark:hover:shadow-xl hover:border-cyan-400 dark:hover:border-cyan-400/40 transition-all duration-300 h-full">
+                        {/* IMAGE */}
+                        {event.image && (
+                          <div className="h-40 w-full overflow-hidden bg-gray-200 dark:bg-gray-800">
+                            <img
+                              src={event.image}
+                              alt={event.title}
+                              className="w-full h-full object-cover group-hover:scale-105 duration-300"
+                            />
+                          </div>
+                        )}
+
+                        {/* BODY */}
+                        <div className="p-4">
+                          <h2 className="text-xl font-bold mb-2 text-black dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 duration-300 line-clamp-2">
+                            {event.title}
+                          </h2>
+
+                          <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-3">
+                            {event.description}
+                          </p>
+
+                          {/* STATUS BADGE */}
+                          <div className="flex items-center gap-2 mb-3 flex-wrap">
+                            <span
+                              className={`px-2 py-1 text-xs rounded-full font-medium ${
+                                event.status === "upcoming"
+                                  ? "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300"
+                                  : event.status === "ongoing"
+                                  ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300"
+                                  : event.status === "completed"
+                                  ? "bg-gray-100 dark:bg-gray-500/20 text-gray-700 dark:text-gray-300"
+                                  : "bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300"
+                              }`}
+                            >
+                              {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+                            </span>
+
+                            {/* MODE BADGE */}
+                            <span
+                              className={`px-2 py-1 text-xs rounded-full font-medium ${
+                                event.mode === "online"
+                                  ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300"
+                                  : "bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-300"
+                              }`}
+                            >
+                              {event.mode === "online"
+                                ? "🌐 Online"
+                                : "📍 Offline"}
+                            </span>
+                          </div>
+
+                          {/* DATE & TIME */}
+                          <div className="text-gray-600 dark:text-gray-300 text-xs space-y-1">
+                            <p>📅 {new Date(event.eventDate).toDateString()}</p>
+                            <p>⏰ {event.eventTime}</p>
+                            <p>📍 {event.location}</p>
+                          </div>
+                        </div>
+
+                        {/* VIEW DETAILS BUTTON */}
+                        <div className="px-4 pb-4">
+                          <div className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-semibold py-2 px-3 rounded-lg text-center transition-all duration-300 text-sm">
+                            View Details →
+                          </div>
+                        </div>
                       </div>
-                    )}
-
-                    {/* BODY */}
-                    <div className="p-4">
-                      <h2 className="text-xl font-bold mb-2 text-black dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 duration-300">
-                        {event.title}
-                      </h2>
-
-                      <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-3">
-                        {event.description}
-                      </p>
-
-                      {/* MODE BADGE */}
-                      <span
-                        className={`px-3 py-1 text-sm rounded-full ${
-                          event.mode === "online"
-                            ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-400/40"
-                            : "bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-400/40"
-                        }`}
-                      >
-                        {event.mode === "online"
-                          ? "Online Event"
-                          : "Offline Event"}
-                      </span>
-
-                      {/* DATE & TIME */}
-                      <div className="mt-3 text-gray-600 dark:text-gray-300 text-sm space-y-1">
-                        <p>📅 {new Date(event.eventDate).toDateString()}</p>
-                        <p>⏰ {event.eventTime}</p>
-                        <p>📍 {event.location}</p>
-                      </div>
-                    </div>
-
-                    {/* JOIN BUTTON FOR ONLINE EVENTS */}
-                    {event.mode === "online" && event.eventLink && (
-                      <div className="p-4 pt-0">
-                        <Button
-                          onClick={() => window.open(event.eventLink, "_blank")}
-                          className="w-full bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg"
-                        >
-                          Join Event →
-                        </Button>
-                      </div>
-                    )}
+                    </Link>
                   </motion.div>
                 ))}
               </div>

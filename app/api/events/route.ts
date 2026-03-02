@@ -41,9 +41,32 @@ export async function GET(request: NextRequest) {
 
     const total = await Event.countDocuments(query);
 
+    // Calculate registration counts and spots remaining for all events
+    const enrichedEvents = await Promise.all(
+      events.map(async (event: any) => {
+        let registrationCount = 0;
+        // Count registrations for all event types
+        const WorkshopRegistration = (
+          await import("@/lib/models/WorkshopRegistration")
+        ).default;
+        registrationCount = await WorkshopRegistration.countDocuments({
+          workshopId: event._id,
+          status: { $in: ["pending", "confirmed"] },
+        });
+
+        return {
+          ...event,
+          registrationCount,
+          spotsRemaining: event.registrationLimit
+            ? Math.max(0, event.registrationLimit - registrationCount)
+            : null,
+        };
+      })
+    );
+
     return NextResponse.json({
       success: true,
-      data: events,
+      data: enrichedEvents,
       pagination: {
         page,
         limit,
@@ -84,13 +107,10 @@ export async function POST(request: NextRequest) {
     }
 
     
+    // Only delete workshop-specific fields for non-workshop types
+    // Keep registration and payment settings for all event types
     if (body.type !== "workshop") {
-      delete body.isPaid;
-      delete body.registrationFee;
-      delete body.paymentMethod;
-      delete body.paymentNumber;
-      delete body.registrationLimit;
-      delete body.registrationOpen;
+      // Workshop-specific
     }
 
     

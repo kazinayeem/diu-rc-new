@@ -16,8 +16,8 @@ export default function WorkshopsPage() {
     query: `page=${page}&limit=${limit}&${search ? `search=${search}` : ""}`,
   });
 
-  const workshops = workshopsData?.data?.data || [];
-  const totalPages = workshopsData?.data?.pages || 1;
+  const workshops = workshopsData?.data || [];
+  const totalPages = workshopsData?.pagination?.pages || 1;
 
   const containerVariants = {
     hidden: { opacity: 0 },

@@ -16,8 +16,8 @@ export default function BootcampPage() {
     query: `page=${page}&limit=${limit}&${search ? `search=${search}` : ""}`,
   });
 
-  const bootcamps = bootcampsData?.data?.data || [];
-  const totalPages = bootcampsData?.data?.pages || 1;
+  const bootcamps = bootcampsData?.data || [];
+  const totalPages = bootcampsData?.pagination?.pages || 1;
 
   const containerVariants = {
     hidden: { opacity: 0 },

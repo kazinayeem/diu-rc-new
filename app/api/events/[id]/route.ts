@@ -23,17 +23,15 @@ export async function GET(
       );
     }
 
-    
+    // Count registrations for all event types
     let registrationCount = 0;
-    if (event.type === "workshop") {
-      const WorkshopRegistration = (
-        await import("@/lib/models/WorkshopRegistration")
-      ).default;
-      registrationCount = await WorkshopRegistration.countDocuments({
-        workshopId: params.id,
-        status: { $in: ["pending", "confirmed"] },
-      });
-    }
+    const WorkshopRegistration = (
+      await import("@/lib/models/WorkshopRegistration")
+    ).default;
+    registrationCount = await WorkshopRegistration.countDocuments({
+      workshopId: params.id,
+      status: { $in: ["pending", "confirmed"] },
+    });
 
     const eventData = event.toObject();
     return NextResponse.json({
@@ -85,13 +83,10 @@ export async function PUT(
     }
 
     
+    // Only delete workshop-specific fields for non-workshop types
+    // Keep registration and payment settings for all event types
     if (body.type !== "workshop") {
-      delete body.isPaid;
-      delete body.registrationFee;
-      delete body.paymentMethod;
-      delete body.paymentNumber;
-      delete body.registrationLimit;
-      delete body.registrationOpen;
+      // Workshop-specific
     }
 
     

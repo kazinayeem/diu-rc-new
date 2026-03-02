@@ -70,23 +70,34 @@ export const api = createApi({
       invalidatesTags: ["Events"],
     }),
 
-    
+    // Seminars - using unified Event model
     getSeminars: builder.query<any, { query?: string | undefined }>({
-      query: (opts) => `seminars${opts?.query ? `?${opts.query}` : ""}`,
-      providesTags: ["Seminars"],
+      query: (opts) => `events?type=seminar${opts?.query ? `&${opts.query}` : ""}`,
+      providesTags: ["Events"],
     }),
-    getSeminar: builder.query<any, string>({ query: (id) => `seminars/${id}` }),
+    getSeminar: builder.query<any, string>({ 
+      query: (id) => `events/${id}`,
+      providesTags: ["Events"],
+    }),
     createSeminar: builder.mutation<any, any>({
-      query: (body) => ({ url: "seminars", method: "POST", body }),
-      invalidatesTags: ["Seminars"],
+      query: (body) => ({ 
+        url: "events", 
+        method: "POST", 
+        body: { ...body, type: "seminar" } 
+      }),
+      invalidatesTags: ["Events"],
     }),
     updateSeminar: builder.mutation<any, { id: string; body: any }>({
-      query: ({ id, body }) => ({ url: `seminars/${id}`, method: "PUT", body }),
-      invalidatesTags: ["Seminars"],
+      query: ({ id, body }) => ({ 
+        url: `events/${id}`, 
+        method: "PUT", 
+        body: { ...body, type: "seminar" } 
+      }),
+      invalidatesTags: ["Events"],
     }),
     deleteSeminar: builder.mutation<any, string>({
-      query: (id) => ({ url: `seminars/${id}`, method: "DELETE" }),
-      invalidatesTags: ["Seminars"],
+      query: (id) => ({ url: `events/${id}`, method: "DELETE" }),
+      invalidatesTags: ["Events"],
     }),
 
     

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "create-admin": "node scripts/create-admin.js"
+    "create-admin": "node scripts/create-admin.js",
+    "seed-events": "node scripts/seed-all-events.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",

@@ -61,19 +61,25 @@ export default function ProgramsPage() {
   });
   const [deleteWorkshop] = useDeleteEventMutation();
 
-  const [showForm, setShowForm] = useState(false);
-  const [editingItem, setEditingItem] = useState<any>(null);
   const [totalPages, setTotalPages] = useState(1);
 
   // Determine data based on program type
-  const currentData =
+  const rawData =
     programType === "events"
-      ? eventsData?.data || { data: [], total: 0, page: 1, pages: 1 }
+      ? eventsData
       : programType === "seminars"
-      ? seminarsData?.data || { data: [], total: 0, page: 1, pages: 1 }
+      ? seminarsData
       : programType === "bootcamp"
-      ? bootcampData?.data || { data: [], total: 0, page: 1, pages: 1 }
-      : workshopsData?.data || { data: [], total: 0, page: 1, pages: 1 };
+      ? bootcampData
+      : workshopsData;
+
+  const currentData = {
+    data: rawData?.data || [],
+    total: rawData?.pagination?.total || 0,
+    page: rawData?.pagination?.page || page,
+    pages: rawData?.pagination?.pages || 1,
+    limit: rawData?.pagination?.limit || limit,
+  };
 
   const isLoading = 
     programType === "events"
@@ -133,8 +139,8 @@ export default function ProgramsPage() {
   }, [currentData, search, status, priceType, locationType]);
 
   const handleEdit = (item: any) => {
-    setEditingItem(item);
-    setShowForm(true);
+    // Navigate to the edit page
+    router.push(`/admin/programs/${item._id}`);
   };
 
   const handleDelete = async (item: any) => {
@@ -156,11 +162,6 @@ export default function ProgramsPage() {
     }
   };
 
-  const handleFormClose = () => {
-    setShowForm(false);
-    setEditingItem(null);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0d1b2a] to-[#1a2f4a]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -179,16 +180,7 @@ export default function ProgramsPage() {
               }}
               className="px-6 py-2.5 bg-gradient-to-r from-[#3A0CA3] to-[#4361EE] hover:shadow-lg text-white font-semibold rounded-lg transition-all flex items-center gap-2"
             >
-              <Plus size={18} /> Full Form
-            </button>
-            <button
-              onClick={() => {
-                setEditingItem(null);
-                setShowForm(true);
-              }}
-              className="px-6 py-2.5 bg-gradient-to-r from-[#4361EE] to-[#3A0CA3] hover:shadow-lg text-white font-semibold rounded-lg transition-all flex items-center gap-2"
-            >
-              <Plus size={18} /> Quick Add
+              <Plus size={18} /> Create New
             </button>
           </div>
         </div>
@@ -277,41 +269,32 @@ export default function ProgramsPage() {
         </div>
 
         {/* DATA TABLE */}
-        {showForm && (
-          <EventForm
-            event={editingItem}
-            itemType={programType}
-            onClose={handleFormClose}
-          />
-        )}
-        {!showForm && (
-          <div className="bg-[rgba(2,29,46,0.8)] border border-[rgba(76,201,240,0.12)] rounded-xl overflow-hidden">
-            {isLoading ? (
-              <div className="p-8 text-center">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#4CC9F0]"></div>
-                <p className="text-[#90E0EF]/60 mt-4">Loading {programType}...</p>
-              </div>
-            ) : filteredData.length === 0 ? (
-              <div className="p-8 text-center text-[#90E0EF]/60">
-                No {programType} found. Try adjusting your filters or create a new one.
-              </div>
-            ) : (
-              <DataTable
-                columns={columns}
-                data={filteredData}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                pagination={{
-                  page,
-                  limit,
-                  total: currentData?.total || 0,
-                  pages: totalPages,
-                  onPageChange: setPage,
-                }}
-              />
-            )}
-          </div>
-        )}
+        <div className="bg-[rgba(2,29,46,0.8)] border border-[rgba(76,201,240,0.12)] rounded-xl overflow-hidden">
+          {isLoading ? (
+            <div className="p-8 text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#4CC9F0]"></div>
+              <p className="text-[#90E0EF]/60 mt-4">Loading {programType}...</p>
+            </div>
+          ) : filteredData.length === 0 ? (
+            <div className="p-8 text-center text-[#90E0EF]/60">
+              No {programType} found. Try adjusting your filters or create a new one.
+            </div>
+          ) : (
+            <DataTable
+              columns={columns}
+              data={filteredData}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              pagination={{
+                page,
+                limit,
+                total: currentData?.total || 0,
+                pages: totalPages,
+                onPageChange: setPage,
+              }}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

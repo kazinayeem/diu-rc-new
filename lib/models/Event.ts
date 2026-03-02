@@ -16,13 +16,24 @@ export interface IEvent extends Document {
   registrationOpen: boolean;
   isPaid: boolean;
   registrationFee?: number;
-  paymentMethod?: "bkash" | "nagad" | "both";
-  paymentNumber?: string;
+  paymentMethods?: Array<{
+    method: "bkash" | "nagad";
+    number: string;
+    instructions?: string;
+  }>;
   type: "event" | "workshop" | "seminar" | "bootcamp";
   status: "upcoming" | "ongoing" | "completed" | "cancelled";
   featured: boolean;
   attendees?: number;
   tags?: string[];
+  hosts?: Array<{
+    name: string;
+    image?: string;
+  }>;
+  guests?: Array<{
+    name: string;
+    image?: string;
+  }>;
   createdBy: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -113,21 +124,29 @@ const EventSchema: Schema = new Schema(
     registrationFee: {
       type: Number,
       min: [0, "Registration fee must be positive"],
+      default: 0,
     },
 
-    paymentMethod: {
-      type: String,
-      enum: ["bkash", "nagad", "both"],
-    },
-
-    paymentNumber: {
-      type: String,
-      trim: true,
-    },
+    paymentMethods: [
+      {
+        method: {
+          type: String,
+          enum: ["bkash", "nagad"],
+        },
+        number: {
+          type: String,
+          trim: true,
+        },
+        instructions: {
+          type: String,
+          default: "",
+        },
+      },
+    ],
 
     type: {
       type: String,
-      enum: ["event", "workshop", "seminar"],
+      enum: ["event", "workshop", "seminar", "bootcamp"],
       default: "event",
     },
 
@@ -148,6 +167,32 @@ const EventSchema: Schema = new Schema(
     },
 
     tags: [String],
+
+    hosts: [
+      {
+        name: {
+          type: String,
+          trim: true,
+        },
+        image: {
+          type: String,
+          default: "",
+        },
+      },
+    ],
+
+    guests: [
+      {
+        name: {
+          type: String,
+          trim: true,
+        },
+        image: {
+          type: String,
+          default: "",
+        },
+      },
+    ],
 
     createdBy: {
       type: Schema.Types.ObjectId,

@@ -55,45 +55,48 @@ export default function NoticeTickerBar() {
     return () => clearInterval(interval);
   }, []);
 
-  if (!notice || dismissed) return null;
-
-  const styles = typeStyles[notice.type] ?? typeStyles.general;
-  const ticker = `${notice.title}  —  ${notice.content}`;
+  const styles = notice ? (typeStyles[notice.type] ?? typeStyles.general) : typeStyles.general;
+  const ticker = notice ? `${notice.title}  —  ${notice.content}` : "";
+  const isVisible = notice && !dismissed;
 
   return (
     <div
-      className={`w-full ${styles.bar} border-b backdrop-blur-sm flex items-center gap-3 pr-3 overflow-hidden`}
-      style={{ height: "40px" }}
+      className={`fixed top-0 left-0 right-0 z-50 w-full ${isVisible ? styles.bar : 'bg-transparent'} ${isVisible ? 'border-b' : ''} backdrop-blur-sm flex items-center gap-3 pr-3 overflow-hidden transition-all duration-300`}
+      style={{ height: isVisible ? "40px" : "0px" }}
     >
-      {/* Label badge */}
-      <span
-        className={`flex-shrink-0 flex items-center gap-1 px-3 h-full ${styles.badge} text-xs font-bold tracking-widest uppercase`}
-      >
-        <Megaphone size={13} />
-        {styles.label}
-      </span>
-
-      {/* Scrolling text */}
-      <div className="flex-1 overflow-hidden relative">
-        <div className="notice-ticker flex whitespace-nowrap">
-          <span className={`${styles.text} text-sm font-medium pr-20`}>
-            {ticker}
+      {isVisible && (
+        <>
+          {/* Label badge */}
+          <span
+            className={`flex-shrink-0 flex items-center gap-1 px-3 h-full ${styles.badge} text-xs font-bold tracking-widest uppercase`}
+          >
+            <Megaphone size={13} />
+            {styles.label}
           </span>
-          {/* Duplicate for seamless loop */}
-          <span className={`${styles.text} text-sm font-medium pr-20`} aria-hidden>
-            {ticker}
-          </span>
-        </div>
-      </div>
 
-      {/* Dismiss */}
-      <button
-        onClick={() => setDismissed(true)}
-        className="flex-shrink-0 text-white/70 hover:text-white transition-colors"
-        aria-label="Dismiss notice"
-      >
-        <X size={16} />
-      </button>
+          {/* Scrolling text */}
+          <div className="flex-1 overflow-hidden relative">
+            <div className="notice-ticker flex whitespace-nowrap">
+              <span className={`${styles.text} text-sm font-medium pr-20`}>
+                {ticker}
+              </span>
+              {/* Duplicate for seamless loop */}
+              <span className={`${styles.text} text-sm font-medium pr-20`} aria-hidden>
+                {ticker}
+              </span>
+            </div>
+          </div>
+
+          {/* Dismiss */}
+          <button
+            onClick={() => setDismissed(true)}
+            className="flex-shrink-0 text-white/70 hover:text-white transition-colors"
+            aria-label="Dismiss notice"
+          >
+            <X size={16} />
+          </button>
+        </>
+      )}
     </div>
   );
 }

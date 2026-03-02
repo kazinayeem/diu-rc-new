@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
-import Seminar from '@/lib/models/Seminar';
+import Event from '@/lib/models/Event';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { slugify } from '@/lib/utils';
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const skip = (page - 1) * limit;
 
-    const query: any = {};
+    const query: any = { type: 'seminar' };
     if (status) query.status = status;
     if (featured === 'true') query.featured = true;
     if (search) {
@@ -28,14 +28,14 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    const seminars = await Seminar.find(query)
+    const seminars = await Event.find(query)
       .populate('createdBy', 'name email')
-      .sort({ seminarDate: -1 })
+      .sort({ eventDate: -1 })
       .skip(skip)
       .limit(limit)
       .lean();
 
-    const total = await Seminar.countDocuments(query);
+    const total = await Event.countDocuments(query);
 
     return NextResponse.json({
       success: true,
@@ -70,8 +70,9 @@ export async function POST(request: NextRequest) {
       body.slug = slugify(body.title);
     }
 
-    const seminar = await Seminar.create({
+    const seminar = await Event.create({
       ...body,
+      type: 'seminar',
       createdBy: (session.user as any).id,
     });
 

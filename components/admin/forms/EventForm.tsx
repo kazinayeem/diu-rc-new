@@ -13,6 +13,17 @@ interface EventFormProps {
 }
 
 export default function EventForm({ event, onClose, itemType = "events" }: EventFormProps) {
+  // Convert itemType to internal type format
+  const getInitialType = (): "event" | "workshop" | "seminar" | "bootcamp" => {
+    switch (itemType) {
+      case "seminars": return "seminar";
+      case "workshops": return "workshop";
+      case "bootcamp": return "bootcamp";
+      case "events":
+      default: return "event";
+    }
+  };
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -24,7 +35,7 @@ export default function EventForm({ event, onClose, itemType = "events" }: Event
     eventLink: "", 
     image: "", 
     registrationLink: "",
-    type: "event",
+    type: getInitialType(),
     status: "upcoming",
     featured: false,
     registrationLimit: "",
@@ -155,6 +166,26 @@ export default function EventForm({ event, onClose, itemType = "events" }: Event
                 }
                 className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
               />
+            </div>
+
+            {/* TYPE */}
+            <div>
+              <label className="block text-sm mb-2 text-white/80">
+                Type *
+              </label>
+              <select
+                required
+                value={formData.type}
+                onChange={(e) =>
+                  setFormData({ ...formData, type: e.target.value as "event" | "workshop" | "seminar" | "bootcamp" })
+                }
+                className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+              >
+                <option value="event">Event</option>
+                <option value="workshop">Workshop</option>
+                <option value="seminar">Seminar</option>
+                <option value="bootcamp">Bootcamp</option>
+              </select>
             </div>
 
             {/* DESCRIPTION */}
