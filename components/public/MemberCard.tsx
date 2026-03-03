@@ -3,7 +3,6 @@
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Linkedin, Github, ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/Card";
 
 interface MemberCardProps {
@@ -16,11 +15,6 @@ interface MemberCardProps {
     batch: string;
     image?: string;
     bio?: string;
-    socialLinks?: {
-      linkedin?: string;
-      github?: string;
-      portfolio?: string;
-    };
   };
 }
 
@@ -82,31 +76,6 @@ const MemberCard: React.FC<MemberCardProps> = ({ member }) => {
             {/* Department */}
             <p className="text-xs text-[#90E0EF]/50 mb-3">{member.department}</p>
           </div>
-
-          {/* Social Links */}
-          {member.socialLinks &&
-            (member.socialLinks.linkedin || member.socialLinks.github || member.socialLinks.portfolio) && (
-              <div className="flex justify-center gap-3 pt-2 border-t border-[rgba(76,201,240,0.08)] mt-auto">
-                {member.socialLinks.linkedin && (
-                  <a href={member.socialLinks.linkedin} target="_blank" rel="noopener noreferrer"
-                    className="text-[#90E0EF]/50 hover:text-[#4CC9F0] transition-colors">
-                    <Linkedin size={15} />
-                  </a>
-                )}
-                {member.socialLinks.github && (
-                  <a href={member.socialLinks.github} target="_blank" rel="noopener noreferrer"
-                    className="text-[#90E0EF]/50 hover:text-[#4CC9F0] transition-colors">
-                    <Github size={15} />
-                  </a>
-                )}
-                {member.socialLinks.portfolio && (
-                  <a href={member.socialLinks.portfolio} target="_blank" rel="noopener noreferrer"
-                    className="text-[#90E0EF]/50 hover:text-[#4CC9F0] transition-colors">
-                    <ExternalLink size={15} />
-                  </a>
-                )}
-              </div>
-            )}
         </CardContent>
       </Card>
     </motion.div>
