@@ -158,7 +158,13 @@ export default function MemberRegistrationForm() {
         transactionId: "",
       });
     } catch (err: any) {
-      setError(err?.data?.message || err?.message || "Registration failed");
+      // API returns { error: "..." } or { message: "..." } — check both
+      setError(
+        err?.data?.error ||
+        err?.data?.message ||
+        err?.message ||
+        "Registration failed. Please try again."
+      );
     } finally {
       setLoading(false);
     }

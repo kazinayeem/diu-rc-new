@@ -162,10 +162,11 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     if (error.code === 11000) {
       const field = Object.keys(error.keyPattern)[0];
+      const friendlyField = field === "studentId" ? "Student ID" : field === "email" ? "email address" : field;
       return NextResponse.json(
         {
           success: false,
-          error: `A registration with this ${field} already exists`,
+          error: `You have already submitted a registration with this ${friendlyField}. If you need help, please contact us.`,
         },
         { status: 400 }
       );

@@ -623,26 +623,46 @@ export default function MemberRegistrationsPage() {
 
               {/* Accept / Reject */}
               <div className="flex gap-3 mt-6 border-t border-white/10 pt-4">
-                <Button
-                  onClick={() =>
-                    handleStatusUpdate(selectedRegistration._id, "approved")
-                  }
-                  disabled={isUpdating}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isUpdating ? "Processing..." : "Accept"}
-                </Button>
+                {/* Accept button — hidden when already approved */}
+                {selectedRegistration.status !== "approved" && (
+                  <Button
+                    onClick={() =>
+                      handleStatusUpdate(selectedRegistration._id, "approved")
+                    }
+                    disabled={isUpdating}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isUpdating ? "Processing..." : "Accept"}
+                  </Button>
+                )}
 
-                <Button
-                  onClick={() =>
-                    handleStatusUpdate(selectedRegistration._id, "rejected")
-                  }
-                  disabled={isUpdating}
-                  className="flex-1 border-red-400 text-red-400 hover:bg-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                  variant="outline"
-                >
-                  {isUpdating ? "Processing..." : "Reject"}
-                </Button>
+                {/* Approved badge — shown instead of Accept when already approved */}
+                {selectedRegistration.status === "approved" && (
+                  <div className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-green-500/15 border border-green-500/30 text-green-400 font-medium text-sm">
+                    ✅ Approved
+                  </div>
+                )}
+
+                {/* Reject button — hidden when already rejected */}
+                {selectedRegistration.status !== "rejected" && (
+                  <Button
+                    onClick={() =>
+                      handleStatusUpdate(selectedRegistration._id, "rejected")
+                    }
+                    disabled={isUpdating}
+                    className="flex-1 border-red-400 text-red-400 hover:bg-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                    variant="outline"
+                  >
+                    {isUpdating ? "Processing..." : "Reject"}
+                  </Button>
+                )}
+
+                {/* Rejected badge — shown instead of Reject when already rejected */}
+                {selectedRegistration.status === "rejected" && (
+                  <div className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-500/15 border border-red-500/30 text-red-400 font-medium text-sm">
+                    ❌ Rejected
+                  </div>
+                )}
               </div>
             </div>
           </div>
