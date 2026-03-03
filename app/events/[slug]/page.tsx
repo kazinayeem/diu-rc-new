@@ -233,7 +233,7 @@ export default function EventDetailsPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-transparent text-black dark:text-white">
       {/* Back Button */}
-      <div className="sticky top-0 z-50 bg-white/80 dark:bg-black/40 backdrop-blur-sm border-b border-gray-200 dark:border-white/10">
+      <div className="sticky top-[104px] z-30 bg-white/80 dark:bg-black/40 backdrop-blur-sm border-b border-gray-200 dark:border-white/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Link
             href="/events"

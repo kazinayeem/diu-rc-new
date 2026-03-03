@@ -5,6 +5,9 @@ import SeminarCard from "@/components/public/SeminarCard";
 import AnimatedMissionVision from "@/components/public/AnimatedMissionVision";
 import AnimatedWhatWeDo from "@/components/public/AnimatedWhatWeDo";
 import AnimatedAchievements from "@/components/public/AnimatedAchievements";
+import HomeImageSlider from "@/components/public/HomeImageSlider";
+import ClubVideoPreview from "@/components/public/ClubVideoPreview";
+import ConvenerMessage from "@/components/public/ConvenerMessage";
 import FAQAccordion from "@/components/public/FAQAccordion";
 import {
   AnimatedSection,
@@ -13,6 +16,7 @@ import {
 import DataPrefetcher from "@/components/DataPrefetcher";
 import connectDB from "@/lib/db";
 import Sponsor from "@/lib/models/Sponsor";
+import HomeContent from "@/lib/models/HomeContent";
 import SponsorsMarquee from "@/components/public/SponsorsMarquee";
 
 import dynamic from "next/dynamic";
@@ -64,8 +68,35 @@ async function getFeaturedContent() {
   }
 }
 
+async function getHomeContent() {
+  try {
+    await connectDB();
+    const doc = await HomeContent.findOne({ isActive: true }).sort({ updatedAt: -1 }).lean();
+
+    if (!doc) {
+      return { heroSlides: [], achievements: [] };
+    }
+
+    const heroSlides = (doc.heroSlides ?? [])
+      .filter((item: any) => item?.isVisible !== false && item?.imageUrl)
+      .sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0));
+
+    const achievements = (doc.achievements ?? [])
+      .filter(
+        (item: any) =>
+          item?.isVisible !== false && item?.name && item?.shortDescription && item?.imageUrl
+      )
+      .sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0));
+
+    return { heroSlides, achievements };
+  } catch {
+    return { heroSlides: [], achievements: [] };
+  }
+}
+
 export default async function HomePage() {
   const { events, seminars, members } = await getFeaturedContent();
+  const { heroSlides, achievements } = await getHomeContent();
 
   // Fetch sponsors directly from DB
   let sponsors: any[] = [];
@@ -91,9 +122,11 @@ export default async function HomePage() {
         />
 
         <HeroWithRobot />
+        <HomeImageSlider slides={heroSlides} />
+        <ClubVideoPreview videoUrl="https://youtu.be/ZBL3rCvjtQU" />
         <AnimatedMissionVision />
         <AnimatedWhatWeDo />
-        <AnimatedAchievements />
+        <AnimatedAchievements achievements={achievements} />
 
         {/* Campus Labs + Impact */}
         <AnimatedSection className="py-16">
@@ -415,6 +448,7 @@ export default async function HomePage() {
         )}
 
         {/* 🚀 NEW BOTTOM SECTIONS */}
+        <ConvenerMessage />
         <LatestEvents />
         <LatestWorkshops />
 

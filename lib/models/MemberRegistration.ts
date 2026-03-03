@@ -6,64 +6,154 @@ export interface IMemberRegistration extends Document {
   email: string;
   phone: string;
   department: string;
-  batch: string;
-  currentYear: string;
+  batch?: string;
+  currentYear?: string;
   cgpa?: string;
   previousExperience?: string;
-  whyJoin: string;
+  whyJoin?: string;
   skills: string[];
   portfolio?: string;
   linkedin?: string;
   github?: string;
 
-  
-  paymentOptionId: string;
-  paymentNumber: string;
+  paymentOptionId?: string;
+  paymentNumber?: string;
   paymentMethod: string;
-  transactionId: string;
-  paymentStatus: "pending" | "verified" | "rejected";
+  transactionId?: string;
+  paymentStatus: "pending" | "approved" | "rejected";
   status: "pending" | "approved" | "rejected";
 }
 
 const MemberRegistrationSchema = new Schema<IMemberRegistration>(
   {
-    name: { type: String, required: true },
-    studentId: { type: String, required: true, unique: true },
-    email: { type: String, required: true },
-    phone: { type: String, required: true },
-    department: { type: String, required: true },
-    batch: { type: String, required: true },
-    currentYear: { type: String, required: true },
-    cgpa: { type: String },
-    previousExperience: String,
-    whyJoin: { type: String, required: true },
-    skills: [String],
-    portfolio: String,
-    linkedin: String,
-    github: String,
-
-    /** PAYMENT INFO */
-    paymentOptionId: { type: String, required: true },
-    paymentNumber: { type: String, required: true },
-    paymentMethod: { type: String, required: true },
-    transactionId: { type: String, required: true },
-
-    /** PAYMENT STATUS */
-    paymentStatus: {
+    // REQUIRED FIELDS
+    name: {
       type: String,
-      enum: ["pending", "verified", "rejected"],
-      default: "pending",
+      required: false,
+      trim: true,
+      default: null,
+    },
+    studentId: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: false,
+      unique: false,
+      lowercase: true,
+      trim: true,
+      default: null,
+    },
+    phone: {
+      type: String,
+      required: false,
+      default: null,
+      trim: true,
+    },
+    department: {
+      type: String,
+      required: false,
+      default: "None",
+      trim: true,
     },
 
-    /** REVIEW STATUS */
+    // OPTIONAL PERSONAL INFO
+    batch: {
+      type: String,
+      required: false,
+      default: null,
+      trim: true,
+    },
+    currentYear: {
+      type: String,
+      required: false,
+      default: null,
+      trim: true,
+    },
+    cgpa: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    previousExperience: {
+      type: String,
+      required: false,
+      default: null,
+      trim: true,
+    },
+    whyJoin: {
+      type: String,
+      required: false,
+      default: null,
+      trim: true,
+    },
+    skills: {
+      type: [String],
+      required: false,
+      default: [],
+    },
+    portfolio: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    linkedin: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    github: {
+      type: String,
+      required: false,
+      default: null,
+    },
+
+    // OPTIONAL PAYMENT INFO
+    paymentOptionId: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    paymentNumber: {
+      type: String,
+      required: false,
+      default: null,
+      trim: true,
+    },
+    paymentMethod: {
+      type: String,
+      required: true,
+      default: "bkash",
+      trim: true,
+    },
+    transactionId: {
+      type: String,
+      required: false,
+      default: null,
+      trim: true,
+    },
+
+    // STATUS FIELDS - AUTO-SET FOR ADMIN IMPORTS
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      required: true,
+      default: "approved",
+    },
     status: {
       type: String,
       enum: ["pending", "approved", "rejected"],
-      default: "pending",
+      required: true,
+      default: "approved",
     },
-
   },
-  { timestamps: true }
+  { 
+    timestamps: true,
+    validateBeforeSave: false,  // Disable automatic validation
+  }
 );
 
 export default mongoose.models.MemberRegistration ||

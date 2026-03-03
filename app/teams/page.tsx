@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MemberCard from "@/components/public/MemberCard";
 import { useGetMembersQuery, useGetMemberRegistrationsQuery } from "@/lib/api/api";
-import { Search, ChevronRight } from "lucide-react";
+import { Search } from "lucide-react";
 
 export default function TeamPage() {
   // ── Team members (roles: president/vice/executive/general) ──
@@ -17,14 +17,11 @@ export default function TeamPage() {
 
   const [selected, setSelected] = useState<any>(null);
   const [search, setSearch] = useState("");
-  const [memberPage, setMemberPage] = useState(1);
-  const [showAllMembers, setShowAllMembers] = useState(false);
-  
-  const INITIAL_MEMBERS_DISPLAY = 50;
+  const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 20;
 
-  const { data: teamData, isFetching: teamFetching } = useGetMembersQuery({ query: "limit=200" });
-  const { data: regData, isFetching: regFetching } = useGetMemberRegistrationsQuery({ query: "limit=500&status=approved" });
+  const { data: teamData, isFetching: teamFetching } = useGetMembersQuery({ query: "limit=10000" });
+  const { data: regData, isFetching: regFetching } = useGetMemberRegistrationsQuery({ query: "limit=10000&status=approved" });
 
   useEffect(() => {
     setTeamLoading(teamFetching);
@@ -36,26 +33,64 @@ export default function TeamPage() {
     if (regData?.success) setAllMembers(regData.data || []);
   }, [regData, regFetching]);
 
-  // ── Team sections (no pagination – show all by role) ──
-  const team = {
-    president: teamMembers.filter((m) => m.role === "president"),
-    deputy:    teamMembers.filter((m) => m.role === "deputy"),
-    executive: teamMembers.filter((m) => m.role === "executive"),
-    general:   teamMembers.filter((m) => m.role === "general"),
+  // Position hierarchy for sorting
+  const positionOrder: Record<string, number> = {
+    "advisor": 1,
+    "convener": 2,
+    "president": 3,
+    "vice-president": 4,
+    "vice president": 4,
+    "general secretary": 5,
+    "treasurer": 6,
+    "joint secretary": 7,
+    "assistant general secretary": 8,
+    "organizing secretary": 9,
+    "assistant organizing secretary": 10,
+    "training secretary": 11,
+    "training secretory": 11,
+    "assistant training secretary": 12,
+    "media and press secretary": 13,
+    "senior assistant media and press secretary": 14,
+    "assistant media and press secretary": 15,
+    "public relation and communication secretary": 16,
+    "assistant public relation and communication secretary": 17,
+    "executive": 18,
+    "deputy": 19,
+    "general": 20,
+    "member": 21,
   };
 
-  // ── Registered members: search + paginate ──
+  // Sort function by position hierarchy
+  const sortByPosition = (a: any, b: any) => {
+    const aOrder = positionOrder[a.role] || 999;
+    const bOrder = positionOrder[b.role] || 999;
+    return aOrder - bOrder;
+  };
+
+  // ── Team sections (sorted by position hierarchy) ──
+  const team = {
+    president: teamMembers.filter((m) => m.role === "president").sort(sortByPosition),
+    deputy:    teamMembers.filter((m) => m.role === "deputy").sort(sortByPosition),
+    executive: teamMembers.filter((m) => m.role === "executive").sort(sortByPosition),
+    general:   teamMembers.filter((m) => m.role === "general").sort(sortByPosition),
+  };
+
+  // ── Registered members: search + pagination ──
   const filteredReg = useMemo(
     () => allMembers.filter((m) => (m?.name || "").toLowerCase().includes(search.toLowerCase())),
     [allMembers, search]
   );
 
-  // Initial display (50 members) or paginated (20 per page)
-  const displayMembers = showAllMembers ? filteredReg : filteredReg.slice(0, INITIAL_MEMBERS_DISPLAY);
+  // Pagination logic
   const totalPages = Math.ceil(filteredReg.length / ITEMS_PER_PAGE);
-  const paginatedReg = showAllMembers 
-    ? filteredReg.slice((memberPage - 1) * ITEMS_PER_PAGE, memberPage * ITEMS_PER_PAGE)
-    : displayMembers;
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedMembers = filteredReg.slice(startIndex, endIndex);
+
+  // Reset to page 1 when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   const Skeleton = () => <div className="animate-pulse bg-white/10 rounded-xl h-56 w-full" />;
 
@@ -76,7 +111,7 @@ export default function TeamPage() {
           {teamLoading
             ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} />)
             : list.map((member) => (
-                <div key={member._id} onClick={() => setSelected(member)} className="cursor-pointer">
+                <div key={member._id} onClick={() => setSelected(member)} className="cursor-pointer h-full">
                   <MemberCard member={member} />
                 </div>
               ))}
@@ -102,11 +137,29 @@ export default function TeamPage() {
       </section>
 
       <main className="max-w-7xl mx-auto px-6 pb-24">
-        {/* ── TEAM SECTIONS ── */}
-        <TeamSection title="President" list={team.president} />
-        <TeamSection title="Deputy President" list={team.deputy} />
-        <TeamSection title="Executive Members" list={team.executive} />
-        <TeamSection title="General Members" list={team.general} />
+        {/* ── TEAM SECTIONS (Sorted by Position) ── */}
+        {teamMembers.length > 0 && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-14"
+          >
+            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+              <span className="w-1 h-6 bg-cyan-400 rounded-full inline-block" />
+              Leadership Team
+            </h2>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {teamLoading
+                ? Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} />)
+                : [...teamMembers].sort(sortByPosition).map((member) => (
+                    <div key={member._id} onClick={() => setSelected(member)} className="cursor-pointer h-full">
+                      <MemberCard member={member} />
+                    </div>
+                  ))}
+            </div>
+          </motion.section>
+        )}
 
         {!teamLoading && teamMembers.length === 0 && (
           <p className="text-center text-gray-500 dark:text-gray-400 py-10">No team members found.</p>
@@ -131,15 +184,25 @@ export default function TeamPage() {
           viewport={{ once: true }}
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-              <span className="w-1 h-6 bg-purple-400 rounded-full inline-block" />
-              Registered Members
+            <div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span className="w-1 h-6 bg-purple-400 rounded-full inline-block" />
+                Registered Members
+              </h2>
               {!regLoading && (
-                <span className="text-sm font-normal text-gray-400 ml-2">
-                  ({showAllMembers ? filteredReg.length : Math.min(INITIAL_MEMBERS_DISPLAY, filteredReg.length)}{filteredReg.length > INITIAL_MEMBERS_DISPLAY && !showAllMembers && '+'})
-                </span>
+                <p className="text-white/60 text-sm mt-1">
+                  Showing {filteredReg.length > 0 ? startIndex + 1 : 0}-{Math.min(endIndex, filteredReg.length)} of {filteredReg.length}
+                  <span className="ml-2 text-cyan-400">
+                    (Total: {allMembers.length})
+                  </span>
+                  {search && filteredReg.length !== allMembers.length && (
+                    <span className="ml-2 text-yellow-400">
+                      - Filtered: {filteredReg.length}
+                    </span>
+                  )}
+                </p>
               )}
-            </h2>
+            </div>
           </div>
 
           {/* Search Section */}
@@ -147,12 +210,11 @@ export default function TeamPage() {
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && setMemberPage(1)}
               placeholder="Search members by name…"
               className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all"
             />
             <button
-              onClick={() => setMemberPage(1)}
+              onClick={() => setSearch(search)}
               className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors"
             >
               <Search size={18} />
@@ -163,18 +225,18 @@ export default function TeamPage() {
           {/* Members Grid */}
           <motion.div 
             layout
-            className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
           >
             {regLoading
               ? Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} />)
-              : paginatedReg.map((m, idx) => (
+              : paginatedMembers.map((m, idx) => (
                   <motion.div
                     key={m._id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.02 }}
                     onClick={() => setSelected(m)}
-                    className="cursor-pointer"
+                    className="cursor-pointer h-full"
                   >
                     <MemberCard member={m} />
                   </motion.div>
@@ -185,59 +247,34 @@ export default function TeamPage() {
             <p className="text-center py-16 text-gray-500 dark:text-gray-400">No members found matching "{search}".</p>
           )}
 
-          {/* View All Button */}
-          {!regLoading && !showAllMembers && filteredReg.length > INITIAL_MEMBERS_DISPLAY && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex justify-center mt-12"
-            >
-              <button
-                onClick={() => {
-                  setShowAllMembers(true);
-                  setMemberPage(1);
-                }}
-                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-all transform hover:scale-105 shadow-lg hover:shadow-purple-500/50"
-              >
-                View All Members ({filteredReg.length})
-                <ChevronRight size={20} />
-              </button>
-            </motion.div>
-          )}
-
-          {/* Pagination - Show when viewing all members */}
-          {!regLoading && showAllMembers && totalPages > 1 && (
+          {/* Pagination Controls */}
+          {!regLoading && filteredReg.length > 0 && totalPages > 1 && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="flex flex-col items-center gap-6 mt-12"
             >
-              {/* Page info */}
-              <p className="text-gray-400 text-sm">
-                Showing {(memberPage - 1) * ITEMS_PER_PAGE + 1} - {Math.min(memberPage * ITEMS_PER_PAGE, filteredReg.length)} of {filteredReg.length} members
-              </p>
-
               {/* Pagination buttons */}
               <div className="flex justify-center items-center gap-3 flex-wrap">
                 <button
-                  disabled={memberPage === 1}
-                  onClick={() => setMemberPage(1)}
-                  className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white disabled:opacity-30 hover:bg-white/10 transition-colors font-medium"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(1)}
+                  className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors font-medium"
                 >
                   First
                 </button>
 
                 <button
-                  disabled={memberPage === 1}
-                  onClick={() => setMemberPage((p) => p - 1)}
-                  className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white disabled:opacity-30 hover:bg-white/10 transition-colors"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                  className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
                 >
                   ← Previous
                 </button>
 
                 <div className="flex gap-2">
                   {Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .filter((p) => p === 1 || p === totalPages || Math.abs(p - memberPage) <= 2)
+                    .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2)
                     .reduce<(number | "…")[]>((acc, p, idx, arr) => {
                       if (idx > 0 && (p as number) - (arr[idx - 1] as number) > 1) acc.push("…");
                       acc.push(p);
@@ -249,9 +286,9 @@ export default function TeamPage() {
                       ) : (
                         <button
                           key={p}
-                          onClick={() => setMemberPage(p as number)}
+                          onClick={() => setCurrentPage(p as number)}
                           className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${
-                            memberPage === p
+                            currentPage === p
                               ? "bg-purple-500 text-white shadow-lg shadow-purple-500/50"
                               : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
                           }`}
@@ -263,33 +300,26 @@ export default function TeamPage() {
                 </div>
 
                 <button
-                  disabled={memberPage === totalPages}
-                  onClick={() => setMemberPage((p) => p + 1)}
-                  className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white disabled:opacity-30 hover:bg-white/10 transition-colors"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
                 >
                   Next →
                 </button>
 
                 <button
-                  disabled={memberPage === totalPages}
-                  onClick={() => setMemberPage(totalPages)}
-                  className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white disabled:opacity-30 hover:bg-white/10 transition-colors font-medium"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(totalPages)}
+                  className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors font-medium"
                 >
                   Last
                 </button>
               </div>
 
-              {/* Back to initial view */}
-              <button
-                onClick={() => {
-                  setShowAllMembers(false);
-                  setMemberPage(1);
-                  setSearch("");
-                }}
-                className="text-purple-400 hover:text-purple-300 text-sm underline transition-colors mt-2"
-              >
-                Show less
-              </button>
+              {/* Page info */}
+              <p className="text-gray-400 text-sm">
+                Page {currentPage} of {totalPages}
+              </p>
             </motion.div>
           )}
         </motion.section>
@@ -379,20 +409,6 @@ export default function TeamPage() {
                     </div>
                   )}
                 </div>
-
-                {/* Social links */}
-                {(selected?.linkedin || selected?.github || selected?.socialLinks?.linkedin || selected?.socialLinks?.github) && (
-                  <div className="flex justify-center gap-4 pt-4">
-                    {(selected.linkedin || selected?.socialLinks?.linkedin) && (
-                      <a href={selected.linkedin || selected.socialLinks.linkedin} target="_blank" rel="noopener noreferrer"
-                        className="text-blue-400 hover:text-blue-300 underline text-sm">LinkedIn</a>
-                    )}
-                    {(selected.github || selected?.socialLinks?.github) && (
-                      <a href={selected.github || selected.socialLinks.github} target="_blank" rel="noopener noreferrer"
-                        className="text-gray-300 hover:text-white underline text-sm">GitHub</a>
-                    )}
-                  </div>
-                )}
 
                 <p className="text-gray-600 text-xs pt-3 border-t border-white/10">
                   Joined {selected?.createdAt ? new Date(selected.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "-"}

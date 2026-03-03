@@ -81,8 +81,8 @@ const HeroWithRobot: React.FC = () => {
             </div>
           </div>
 
-          {/* ROBOT CANVAS */}
-          <div className="flex justify-center items-center w-full h-[500px] mt-10 lg:mt-0 pointer-events-none">
+          {/* ROBOT CANVAS - Desktop Only */}
+          <div className="hidden lg:flex justify-center items-center w-full h-[500px] pointer-events-none">
             <div className="w-full h-full pointer-events-none">
               <RobotCanvas />
             </div>

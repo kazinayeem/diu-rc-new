@@ -25,6 +25,7 @@ import {
   GraduationCap,
   Megaphone,
   Star,
+  Mail,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -47,6 +48,8 @@ const ALL_MENU_ITEMS: MenuItem[] = [
   { href: "/admin/notices", label: "Notices", icon: Megaphone, permission: "notices" },
   { href: "/admin/payment", label: "Payment", icon: CreditCard, permission: "payment" },
   { href: "/admin/sponsors", label: "Sponsors", icon: Star, permission: "sponsors" },
+  { href: "/admin/settings/homepage", label: "Homepage Content", icon: ImageIcon, superAdminOnly: true },
+  { href: "/admin/settings/smtp", label: "SMTP Config", icon: Mail, superAdminOnly: true },
   { href: "/admin/settings/admins", label: "Manage Admins", icon: ShieldCheck, superAdminOnly: true },
   { href: "/admin/settings", label: "Settings", icon: Settings, superAdminOnly: true },
 ];

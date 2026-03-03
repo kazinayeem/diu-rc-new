@@ -184,18 +184,35 @@ export default function MemberForm({ member, onClose }: MemberFormProps) {
                   }
                   className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg"
                 >
-                  <option className="text-black" value="general">
-                    General
-                  </option>
-                  <option className="text-black" value="deputy">
-                    Deputy
-                  </option>
-                  <option className="text-black" value="executive">
-                    Executive
-                  </option>
-                  <option className="text-black" value="president">
-                    President 
-                  </option>
+                  <optgroup label="Advising Panel" className="text-black font-bold">
+                    <option className="text-black" value="advisor">Advisor</option>
+                    <option className="text-black" value="convener">Convener</option>
+                  </optgroup>
+                  <optgroup label="Executive Committee" className="text-black font-bold">
+                    <option className="text-black" value="president">President</option>
+                    <option className="text-black" value="vice-president">Vice-president</option>
+                    <option className="text-black" value="vice president">Vice President</option>
+                    <option className="text-black" value="general secretary">General Secretary</option>
+                    <option className="text-black" value="treasurer">Treasurer</option>
+                    <option className="text-black" value="joint secretary">Joint Secretary</option>
+                    <option className="text-black" value="assistant general secretary">Assistant General Secretary</option>
+                    <option className="text-black" value="organizing secretary">Organizing Secretary</option>
+                    <option className="text-black" value="assistant organizing secretary">Assistant Organizing Secretary</option>
+                    <option className="text-black" value="training secretary">Training Secretary</option>
+                    <option className="text-black" value="training secretory">Training secretory</option>
+                    <option className="text-black" value="assistant training secretary">Assistant Training Secretary</option>
+                    <option className="text-black" value="media and press secretary">Media and Press Secretary</option>
+                    <option className="text-black" value="senior assistant media and press secretary">Senior Assistant Media and Press Secretary</option>
+                    <option className="text-black" value="assistant media and press secretary">Assistant Media and Press Secretary</option>
+                    <option className="text-black" value="public relation and communication secretary">Public Relation and Communication Secretary</option>
+                    <option className="text-black" value="assistant public relation and communication secretary">Assistant Public Relation and Communication Secretary</option>
+                    <option className="text-black" value="executive">Executive</option>
+                  </optgroup>
+                  <optgroup label="Team Roles" className="text-black font-bold">
+                    <option className="text-black" value="deputy">Deputy</option>
+                    <option className="text-black" value="general">General</option>
+                    <option className="text-black" value="member">Member</option>
+                  </optgroup>
                 </select>
               </div>
 

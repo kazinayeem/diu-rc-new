@@ -1,10 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Loader, AlertCircle, Check, Plus, X, Edit2 } from "lucide-react";
 import { useUpdateEventMutation, useCreateEventMutation } from "@/lib/api/api";
+import "react-quill-new/dist/quill.snow.css";
+
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 interface EventFormEnhancedProps {
   event?: any;
@@ -33,6 +37,49 @@ export default function EventFormEnhanced({
   itemType = "events",
   onSuccess,
 }: EventFormEnhancedProps) {
+  const quillModules = {
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      [{ font: [] }],
+      [{ size: ["small", false, "large", "huge"] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ indent: "-1" }, { indent: "+1" }],
+      [{ align: [] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }],
+      ["blockquote", "code-block"],
+      ["link", "image", "video"],
+      ["clean"],
+    ],
+  };
+
+  const quillFormats = [
+    "header",
+    "font",
+    "size",
+    "align",
+    "indent",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "list",
+    "bullet",
+    "color",
+    "background",
+    "link",
+    "image",
+    "video",
+    "blockquote",
+    "code-block",
+  ];
+
+  const getPlainText = (html: string) =>
+    html
+      .replace(/<[^>]*>/g, " ")
+      .replace(/&nbsp;/g, " ")
+      .trim();
+
   // Convert itemType to internal type format
   const getInitialType = (): "event" | "workshop" | "seminar" | "bootcamp" => {
     switch (itemType) {
@@ -181,7 +228,7 @@ export default function EventFormEnhanced({
       if (!formData.title.trim()) {
         throw new Error("Title is required");
       }
-      if (!formData.description.trim()) {
+      if (!getPlainText(formData.description)) {
         throw new Error("Description is required");
       }
       if (!formData.eventDate) {
@@ -299,29 +346,40 @@ export default function EventFormEnhanced({
             <label className="block text-sm font-medium mb-2">
               Description <span className="text-red-600">*</span>
             </label>
-            <textarea
-              name="description"
+            <ReactQuill
+              theme="snow"
               value={formData.description}
-              onChange={handleChange}
+              onChange={(value) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  description: value,
+                }))
+              }
+              modules={quillModules}
+              formats={quillFormats}
               placeholder="Short description"
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white"
-              required
+              className="bg-white dark:bg-gray-800 rounded-lg"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2">Rich Content / Details</label>
-            <textarea
-              name="content"
+            <ReactQuill
+              theme="snow"
               value={formData.content}
-              onChange={handleChange}
-              placeholder="Detailed content and agenda (supports markdown or plain text)"
-              rows={8}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white font-mono text-sm"
+              onChange={(value) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  content: value,
+                }))
+              }
+              modules={quillModules}
+              formats={quillFormats}
+              placeholder="Detailed content, agenda, links, images, and formatting"
+              className="bg-white dark:bg-gray-800 rounded-lg"
             />
             <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
-              💡 Tip: Use markdown formatting: **bold**, *italic*, - bullet points, 1. numbered
+              Full editor enabled: headings, colors, alignment, lists, links, image/video embed, and code block.
             </p>
           </div>
 

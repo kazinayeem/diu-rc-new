@@ -22,7 +22,6 @@ const Navbar = () => {
     { href: "/events", label: "Events" },
     { href: "/teams", label: "Team & Members" },
     { href: "/projects", label: "Projects" },
-    { href: "/workshops", label: "Workshops" },
     { href: "/publications", label: "Publications" },
   ];
 

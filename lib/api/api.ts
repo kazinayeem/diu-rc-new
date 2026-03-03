@@ -25,6 +25,10 @@ export const api = createApi({
     "AdminStats",
     "Uploads",
   ],
+  keepUnusedDataFor: 60, // Keep cached data for 60 seconds
+  refetchOnMountOrArgChange: 30, // Refetch if data is older than 30 seconds
+  refetchOnFocus: false, // Don't refetch when window regains focus
+  refetchOnReconnect: true, // Refetch when connection is restored
   endpoints: (builder) => ({
     
     getMembers: builder.query<any, { query?: string | undefined }>({
@@ -172,22 +176,35 @@ export const api = createApi({
     
     getMemberRegistrations: builder.query<any, { query?: string | undefined }>({
       query: (opts) => `member-registrations${opts?.query ? `?${opts.query}` : ""}`,
-      providesTags: ["MemberRegistrations"],
+      providesTags: (result) => 
+        result?.data
+          ? [
+              ...result.data.map(({ _id }: any) => ({ type: "MemberRegistrations" as const, id: _id })),
+              { type: "MemberRegistrations", id: "LIST" },
+            ]
+          : [{ type: "MemberRegistrations", id: "LIST" }],
+      keepUnusedDataFor: 30, // Keep this specific query cache for 30 seconds
     }),
     createMemberRegistration: builder.mutation<any, any>({
       query: (body) => ({ url: `member-registrations`, method: "POST", body }),
-      invalidatesTags: ["MemberRegistrations"],
+      invalidatesTags: [{ type: "MemberRegistrations", id: "LIST" }],
     }),
     getMemberRegistration: builder.query<any, string>({
       query: (id) => `member-registrations/${id}`,
     }),
     updateMemberRegistration: builder.mutation<any, { id: string; body: any }>({
       query: ({ id, body }) => ({ url: `member-registrations/${id}`, method: "PUT", body }),
-      invalidatesTags: ["MemberRegistrations"],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "MemberRegistrations", id },
+        { type: "MemberRegistrations", id: "LIST" },
+      ],
     }),
     deleteMemberRegistration: builder.mutation<any, string>({
       query: (id) => ({ url: `member-registrations/${id}`, method: "DELETE" }),
-      invalidatesTags: ["MemberRegistrations"],
+      invalidatesTags: (result, error, id) => [
+        { type: "MemberRegistrations", id },
+        { type: "MemberRegistrations", id: "LIST" },
+      ],
     }),
 
     

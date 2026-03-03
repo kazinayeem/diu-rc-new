@@ -3,12 +3,14 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import DataTable from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/Button";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 import MemberForm from "@/components/admin/forms/MemberForm";
 import { useGetMembersQuery, useDeleteMemberMutation } from "@/lib/api/api";
 
 export default function MembersPage() {
   const [members, setMembers] = useState<any[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [deletingBulk, setDeletingBulk] = useState(false);
 
   const [showForm, setShowForm] = useState(false);
   const [editingMember, setEditingMember] = useState<any>(null);
@@ -89,8 +91,89 @@ export default function MembersPage() {
     
   };
 
+  const handleBulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+
+    if (!confirm(`Are you sure you want to delete ${selectedIds.length} member(s)?`)) {
+      return;
+    }
+
+    setDeletingBulk(true);
+    try {
+      const deletePromises = selectedIds.map(id => deleteMember(id).unwrap());
+      await Promise.all(deletePromises);
+      setSelectedIds([]);
+      alert(`Successfully deleted ${selectedIds.length} member(s)`);
+    } catch (error) {
+      console.error("Bulk delete error:", error);
+      alert("Failed to delete some members");
+    } finally {
+      setDeletingBulk(false);
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    if (members.length === 0) {
+      alert("No members to delete");
+      return;
+    }
+
+    const confirmMsg = `⚠️ WARNING: This will delete ALL members from the database! This action cannot be undone! Are you sure?`;
+
+    if (!confirm(confirmMsg)) {
+      return;
+    }
+
+    setDeletingBulk(true);
+    try {
+      const allIds = members.map((member: any) => member._id);
+      const deletePromises = allIds.map(id => deleteMember(id).unwrap());
+      await Promise.all(deletePromises);
+      setSelectedIds([]);
+      alert(`Successfully deleted all ${allIds.length} member(s)`);
+    } catch (error) {
+      console.error("Delete all error:", error);
+      alert("Failed to delete all members");
+    } finally {
+      setDeletingBulk(false);
+    }
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === members.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(members.map(member => member._id));
+    }
+  };
+
+  const toggleSelectOne = (id: string) => {
+    setSelectedIds(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
   
   const columns = [
+    {
+      key: "select",
+      label: (
+        <input
+          type="checkbox"
+          checked={members.length > 0 && selectedIds.length === members.length}
+          onChange={toggleSelectAll}
+          className="cursor-pointer"
+        />
+      ),
+      render: (_: any, row: any) => (
+        <input
+          type="checkbox"
+          checked={selectedIds.includes(row._id)}
+          onChange={() => toggleSelectOne(row._id)}
+          className="cursor-pointer"
+        />
+      ),
+    },
     { key: "name", label: "Name" },
     { key: "studentId", label: "Student ID" },
     { key: "email", label: "Email" },
@@ -152,16 +235,66 @@ export default function MembersPage() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-white mb-1">Members</h1>
-          <p className="text-white/60">Manage club members</p>
+          <p className="text-white/60">
+            Manage club members
+            {pagination.total > 0 && (
+              <span className="ml-2 text-cyan-400">
+                (Total: {pagination.total})
+              </span>
+            )}
+            {selectedIds.length > 0 && (
+              <span className="ml-2 text-yellow-400">
+                - {selectedIds.length} selected
+              </span>
+            )}
+          </p>
         </div>
 
-        <Button
-          className="bg-[#1f8fff] hover:bg-[#0e6fd8]"
-          onClick={() => setShowForm(true)}
-        >
-          <Plus size={20} className="mr-2" />
-          Add Member
-        </Button>
+        <div className="flex gap-3">
+          {selectedIds.length > 0 && (
+            <Button
+              onClick={handleBulkDelete}
+              disabled={deletingBulk}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {deletingBulk ? (
+                <>
+                  <Loader2 size={18} className="mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 size={18} className="mr-2" />
+                  Delete Selected ({selectedIds.length})
+                </>
+              )}
+            </Button>
+          )}
+          <Button
+            onClick={handleDeleteAll}
+            disabled={deletingBulk || members.length === 0}
+            className="bg-red-700 hover:bg-red-800"
+          >
+            {deletingBulk ? (
+              <>
+                <Loader2 size={18} className="mr-2 animate-spin" />
+                Deleting...
+              </>
+            ) : (
+              <>
+                <Trash2 size={18} className="mr-2" />
+                Delete All
+              </>
+            )}
+          </Button>
+          <Button
+            className="bg-[#1f8fff] hover:bg-[#0e6fd8]"
+            onClick={() => setShowForm(true)}
+          >
+            <Plus size={20} className="mr-2" />
+            Add Member
+          </Button>
+        </div>
       </div>
 
       {/* FILTERS */}
@@ -187,15 +320,35 @@ export default function MembersPage() {
           <option className="text-black" value="">
             All Roles
           </option>
-          <option className="text-black" value="member">
-            Member
-          </option>
-          <option className="text-black" value="executive">
-            Executive
-          </option>
-          <option className="text-black" value="president">
-            President
-          </option>
+          <optgroup label="Advising Panel" className="text-black font-bold">
+            <option className="text-black" value="advisor">Advisor</option>
+            <option className="text-black" value="convener">Convener</option>
+          </optgroup>
+          <optgroup label="Executive Committee" className="text-black font-bold">
+            <option className="text-black" value="president">President</option>
+            <option className="text-black" value="vice-president">Vice-president</option>
+            <option className="text-black" value="vice president">Vice President</option>
+            <option className="text-black" value="general secretary">General Secretary</option>
+            <option className="text-black" value="treasurer">Treasurer</option>
+            <option className="text-black" value="joint secretary">Joint Secretary</option>
+            <option className="text-black" value="assistant general secretary">Assistant General Secretary</option>
+            <option className="text-black" value="organizing secretary">Organizing Secretary</option>
+            <option className="text-black" value="assistant organizing secretary">Assistant Organizing Secretary</option>
+            <option className="text-black" value="training secretary">Training Secretary</option>
+            <option className="text-black" value="training secretory">Training secretory</option>
+            <option className="text-black" value="assistant training secretary">Assistant Training Secretary</option>
+            <option className="text-black" value="media and press secretary">Media and Press Secretary</option>
+            <option className="text-black" value="senior assistant media and press secretary">Senior Assistant Media and Press Secretary</option>
+            <option className="text-black" value="assistant media and press secretary">Assistant Media and Press Secretary</option>
+            <option className="text-black" value="public relation and communication secretary">Public Relation and Communication Secretary</option>
+            <option className="text-black" value="assistant public relation and communication secretary">Assistant Public Relation and Communication Secretary</option>
+            <option className="text-black" value="executive">Executive</option>
+          </optgroup>
+          <optgroup label="Team Roles" className="text-black font-bold">
+            <option className="text-black" value="deputy">Deputy</option>
+            <option className="text-black" value="general">General</option>
+            <option className="text-black" value="member">Member</option>
+          </optgroup>
         </select>
 
         <select

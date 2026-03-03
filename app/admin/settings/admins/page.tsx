@@ -154,14 +154,14 @@ export default function ManageAdminsPage() {
 
   return (
     <div className="text-slate-100">
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-semibold mb-1">Manage Admins</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold mb-1">Manage Admins</h1>
           <p className="text-slate-400">Create managers and assign their permissions</p>
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-[#071024] font-semibold rounded-xl transition-colors"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-[#071024] font-semibold rounded-xl transition-colors"
         >
           <Plus size={18} />
           Add Admin
@@ -173,98 +173,182 @@ export default function ManageAdminsPage() {
           <Loader2 size={20} className="animate-spin" /> Loading admins…
         </div>
       ) : (
-        <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-white/10 text-slate-400 text-xs uppercase tracking-wider">
-                <th className="px-5 py-4 text-left">Name / Email</th>
-                <th className="px-5 py-4 text-left">Role</th>
-                <th className="px-5 py-4 text-left">Permissions</th>
-                <th className="px-5 py-4 text-left">Status</th>
-                <th className="px-5 py-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {admins.map((admin) => (
-                <tr
-                  key={admin._id}
-                  className="border-b border-white/5 hover:bg-white/5 transition-colors"
-                >
-                  <td className="px-5 py-4">
-                    <p className="font-medium text-slate-100">{admin.name}</p>
-                    <p className="text-slate-400 text-xs">{admin.email}</p>
-                  </td>
-                  <td className="px-5 py-4">
-                    <span
-                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                        admin.role === "super-admin"
-                          ? "bg-amber-400/15 text-amber-300 ring-1 ring-amber-400/30"
-                          : "bg-cyan-400/15 text-cyan-300 ring-1 ring-cyan-400/30"
-                      }`}
-                    >
-                      <ShieldCheck size={11} />
-                      {admin.role === "super-admin" ? "Super Admin" : "Manager"}
-                    </span>
-                  </td>
-                  <td className="px-5 py-4">
-                    {admin.role === "super-admin" ? (
-                      <span className="text-slate-400 text-xs">All access</span>
-                    ) : admin.permissions?.length ? (
-                      <div className="flex flex-wrap gap-1">
-                        {admin.permissions.map((p) => (
-                          <span
-                            key={p}
-                            className="px-1.5 py-0.5 bg-slate-700 rounded text-xs text-slate-300"
-                          >
-                            {ALL_PERMISSIONS.find((x) => x.key === p)?.label ?? p}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="text-slate-500 text-xs">No permissions</span>
-                    )}
-                  </td>
-                  <td className="px-5 py-4">
-                    {admin.isActive ? (
-                      <span className="flex items-center gap-1 text-emerald-400 text-xs">
-                        <CheckCircle2 size={13} /> Active
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1 text-red-400 text-xs">
-                        <XCircle size={13} /> Inactive
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-5 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => openEdit(admin)}
-                        className="p-2 rounded-lg hover:bg-white/10 text-slate-300 hover:text-cyan-300 transition-colors"
-                        title="Edit"
-                      >
-                        <Edit2 size={15} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(admin._id)}
-                        className="p-2 rounded-lg hover:bg-white/10 text-slate-300 hover:text-red-400 transition-colors"
-                        title="Delete"
-                      >
-                        <Trash2 size={15} />
-                      </button>
+        <>
+          <div className="grid grid-cols-1 gap-3 md:hidden">
+            {admins.map((admin) => (
+              <div
+                key={admin._id}
+                className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium text-slate-100 break-words">{admin.name}</p>
+                    <p className="text-slate-400 text-xs break-all">{admin.email}</p>
+                  </div>
+                  <span
+                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold flex-shrink-0 ${
+                      admin.role === "super-admin"
+                        ? "bg-amber-400/15 text-amber-300 ring-1 ring-amber-400/30"
+                        : "bg-cyan-400/15 text-cyan-300 ring-1 ring-cyan-400/30"
+                    }`}
+                  >
+                    <ShieldCheck size={11} />
+                    {admin.role === "super-admin" ? "Super Admin" : "Manager"}
+                  </span>
+                </div>
+
+                <div className="mt-3">
+                  <p className="text-[11px] uppercase tracking-wider text-slate-500 mb-1">Permissions</p>
+                  {admin.role === "super-admin" ? (
+                    <span className="text-slate-400 text-xs">All access</span>
+                  ) : admin.permissions?.length ? (
+                    <div className="flex flex-wrap gap-1">
+                      {admin.permissions.map((p) => (
+                        <span
+                          key={p}
+                          className="px-1.5 py-0.5 bg-slate-700 rounded text-xs text-slate-300"
+                        >
+                          {ALL_PERMISSIONS.find((x) => x.key === p)?.label ?? p}
+                        </span>
+                      ))}
                     </div>
-                  </td>
-                </tr>
-              ))}
-              {admins.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="text-center py-12 text-slate-500">
-                    No admins found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                  ) : (
+                    <span className="text-slate-500 text-xs">No permissions</span>
+                  )}
+                </div>
+
+                <div className="mt-3 flex items-center justify-between">
+                  {admin.isActive ? (
+                    <span className="flex items-center gap-1 text-emerald-400 text-xs">
+                      <CheckCircle2 size={13} /> Active
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1 text-red-400 text-xs">
+                      <XCircle size={13} /> Inactive
+                    </span>
+                  )}
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => openEdit(admin)}
+                      className="p-2 rounded-lg hover:bg-white/10 text-slate-300 hover:text-cyan-300 transition-colors"
+                      title="Edit"
+                    >
+                      <Edit2 size={15} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(admin._id)}
+                      className="p-2 rounded-lg hover:bg-white/10 text-slate-300 hover:text-red-400 transition-colors"
+                      title="Delete"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {admins.length === 0 && (
+              <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur text-center py-12 text-slate-500">
+                No admins found.
+              </div>
+            )}
+          </div>
+
+          <div className="hidden md:block rounded-2xl border border-white/10 bg-white/5 backdrop-blur overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-[850px]">
+                <thead>
+                  <tr className="border-b border-white/10 text-slate-400 text-xs uppercase tracking-wider">
+                    <th className="px-5 py-4 text-left">Name / Email</th>
+                    <th className="px-5 py-4 text-left">Role</th>
+                    <th className="px-5 py-4 text-left">Permissions</th>
+                    <th className="px-5 py-4 text-left">Status</th>
+                    <th className="px-5 py-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {admins.map((admin) => (
+                    <tr
+                      key={admin._id}
+                      className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                    >
+                      <td className="px-5 py-4">
+                        <p className="font-medium text-slate-100">{admin.name}</p>
+                        <p className="text-slate-400 text-xs">{admin.email}</p>
+                      </td>
+                      <td className="px-5 py-4">
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                            admin.role === "super-admin"
+                              ? "bg-amber-400/15 text-amber-300 ring-1 ring-amber-400/30"
+                              : "bg-cyan-400/15 text-cyan-300 ring-1 ring-cyan-400/30"
+                          }`}
+                        >
+                          <ShieldCheck size={11} />
+                          {admin.role === "super-admin" ? "Super Admin" : "Manager"}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4">
+                        {admin.role === "super-admin" ? (
+                          <span className="text-slate-400 text-xs">All access</span>
+                        ) : admin.permissions?.length ? (
+                          <div className="flex flex-wrap gap-1">
+                            {admin.permissions.map((p) => (
+                              <span
+                                key={p}
+                                className="px-1.5 py-0.5 bg-slate-700 rounded text-xs text-slate-300"
+                              >
+                                {ALL_PERMISSIONS.find((x) => x.key === p)?.label ?? p}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-slate-500 text-xs">No permissions</span>
+                        )}
+                      </td>
+                      <td className="px-5 py-4">
+                        {admin.isActive ? (
+                          <span className="flex items-center gap-1 text-emerald-400 text-xs">
+                            <CheckCircle2 size={13} /> Active
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-red-400 text-xs">
+                            <XCircle size={13} /> Inactive
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-5 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => openEdit(admin)}
+                            className="p-2 rounded-lg hover:bg-white/10 text-slate-300 hover:text-cyan-300 transition-colors"
+                            title="Edit"
+                          >
+                            <Edit2 size={15} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(admin._id)}
+                            className="p-2 rounded-lg hover:bg-white/10 text-slate-300 hover:text-red-400 transition-colors"
+                            title="Delete"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {admins.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="text-center py-12 text-slate-500">
+                        No admins found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
       )}
 
       {/* ── Modal ─────────────────────────────────────────────────────── */}
@@ -346,7 +430,7 @@ export default function ManageAdminsPage() {
                   <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Permissions
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {ALL_PERMISSIONS.map((p) => (
                       <label
                         key={p.key}
