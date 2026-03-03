@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import DataTable from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/Button";
-import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Search, X } from "lucide-react";
 import MemberForm from "@/components/admin/forms/MemberForm";
 import { useGetMembersQuery, useDeleteMemberMutation } from "@/lib/api/api";
 
@@ -299,15 +299,26 @@ export default function MembersPage() {
 
       {/* FILTERS */}
       <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-        <input
-          className="bg-white/5 border border-white/20 rounded px-3 py-2 text-white placeholder-white/40 focus:ring-2 focus:ring-[#1f8fff] outline-none"
-          placeholder="Search name / email / student ID"
-          value={search}
-          onChange={(e) => {
-            setPagination((prev) => ({ ...prev, page: 1 }));
-            setSearch(e.target.value);
-          }}
-        />
+        <div className="relative">
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none" />
+          <input
+            className="w-full bg-white/5 border border-white/20 rounded px-3 py-2 pl-9 pr-8 text-white placeholder-white/40 focus:ring-2 focus:ring-[#1f8fff] outline-none"
+            placeholder="Search by name, email, ID, phone..."
+            value={search}
+            onChange={(e) => {
+              setPagination((prev) => ({ ...prev, page: 1 }));
+              setSearch(e.target.value);
+            }}
+          />
+          {search && (
+            <button
+              onClick={() => { setPagination((prev) => ({ ...prev, page: 1 })); setSearch(""); }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
+            >
+              <X size={14} />
+            </button>
+          )}
+        </div>
 
         <select
           className="bg-white/5 border border-white/20 rounded px-3 py-2 text-white focus:ring-2 focus:ring-[#1f8fff] outline-none"

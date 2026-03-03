@@ -174,8 +174,20 @@ export default function MemberRegistrationForm() {
         <Card className="bg-green-100/10 border border-green-500/30">
           <CardContent className="p-8 text-center text-green-300">
             <CheckCircle size={64} className="mx-auto mb-4" />
-            <h3 className="text-2xl font-bold">Application Submitted!</h3>
-            <p className="mt-2">We will contact you after review.</p>
+            <h3 className="text-2xl font-bold">Application Submitted! 🎉</h3>
+            <p className="mt-3 text-base">
+              We will review your application and payment details shortly.
+            </p>
+            <div className="mt-4 bg-green-500/10 border border-green-500/20 rounded-xl px-5 py-4 text-sm leading-relaxed">
+              <p className="font-semibold text-green-200 mb-1">📧 Check Your Email Inbox</p>
+              <p className="text-green-300/80">
+                A confirmation email has been sent to your registered email address.
+                Please check your <strong>inbox</strong> (and spam/junk folder) for details.
+              </p>
+            </div>
+            <p className="mt-4 text-green-400/70 text-sm">
+              You will receive a second email once your payment is verified and membership is confirmed.
+            </p>
           </CardContent>
         </Card>
       </motion.div>

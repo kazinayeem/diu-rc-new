@@ -3,6 +3,7 @@ import connectDB from "@/lib/db";
 import MemberRegistration from "@/lib/models/MemberRegistration";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { sendRegistrationReceivedEmail, sendAdminNewRegistrationNotification } from "@/lib/email";
 
 export async function GET(request: NextRequest) {
   try {
@@ -38,6 +39,9 @@ export async function GET(request: NextRequest) {
         { name: { $regex: search, $options: "i" } },
         { email: { $regex: search, $options: "i" } },
         { studentId: { $regex: search, $options: "i" } },
+        { phone: { $regex: search, $options: "i" } },
+        { department: { $regex: search, $options: "i" } },
+        { transactionId: { $regex: search, $options: "i" } },
       ];
     }
 
@@ -107,12 +111,51 @@ export async function POST(request: NextRequest) {
 
     const registration = await MemberRegistration.create(body);
 
+    // Await emails before returning so serverless function doesn't terminate early
+    const emailResults = await Promise.allSettled([
+      sendRegistrationReceivedEmail({
+        name: registration.name,
+        email: registration.email,
+        studentId: registration.studentId,
+        department: registration.department,
+        batch: registration.batch,
+        paymentMethod: registration.paymentMethod,
+        transactionId: registration.transactionId,
+      }),
+      sendAdminNewRegistrationNotification({
+        name: registration.name,
+        email: registration.email,
+        studentId: registration.studentId,
+        department: registration.department,
+        batch: registration.batch,
+        phone: registration.phone,
+        paymentMethod: registration.paymentMethod,
+        transactionId: registration.transactionId,
+      }),
+    ]);
+
+    // Log email results for debugging
+    emailResults.forEach((result, i) => {
+      const label = i === 0 ? "applicant" : "admin";
+      if (result.status === "fulfilled") {
+        console.log(`[Email] ✅ ${label} email sent successfully`);
+      } else {
+        console.error(`[Email] ❌ ${label} email FAILED:`, result.reason?.message || result.reason);
+      }
+    });
+
+    const emailErrors = emailResults
+      .map((r, i) => r.status === "rejected" ? `${i === 0 ? "Applicant" : "Admin"}: ${r.reason?.message}` : null)
+      .filter(Boolean);
+
     return NextResponse.json(
       {
         success: true,
         data: registration,
-        message:
-          "Registration submitted successfully! Your payment is pending verification.",
+        message: "Registration submitted successfully! Your payment is pending verification.",
+        emailStatus: emailErrors.length === 0
+          ? "Confirmation emails sent successfully."
+          : `Registration saved but email error: ${emailErrors.join(" | ")}`,
       },
       { status: 201 }
     );

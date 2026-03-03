@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import DataTable from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/Button";
-import { Eye, Trash2, Upload, Download, Plus, Loader2 } from "lucide-react";
+import { Eye, Trash2, Upload, Download, Plus, Loader2, Search, X } from "lucide-react";
 import { useGetMemberRegistrationsQuery, useUpdateMemberRegistrationMutation, useDeleteMemberRegistrationMutation } from "@/lib/api/api";
 import ImportExportModal from "@/components/admin/ImportExportModal";
 import AddRegistrationModal from "@/components/admin/AddRegistrationModal";
@@ -258,7 +258,7 @@ export default function MemberRegistrationsPage() {
         <span
           className={`px-2 py-1 rounded-full text-xs font-semibold capitalize border 
             ${
-              v === "verified"
+              v === "approved"
                 ? "bg-green-500/20 text-green-300 border-green-400/30"
                 : v === "rejected"
                 ? "bg-red-500/20 text-red-300 border-red-400/30"
@@ -398,16 +398,27 @@ export default function MemberRegistrationsPage() {
         </div>
 
         <div className="flex gap-3">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            className="flex-1 px-4 py-2 bg-white/5 border border-white/20 rounded-lg"
-          />
+          <div className="relative flex-1">
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Search by name, email, ID, phone, department, transaction ID..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              className="w-full pl-9 pr-8 px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-cyan-500 outline-none"
+            />
+            {search && (
+              <button
+                onClick={() => { setSearch(""); setPage(1); }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
 
           <select
             value={selectedStatus}
@@ -584,7 +595,7 @@ export default function MemberRegistrationsPage() {
                       onClick={() =>
                         handlePaymentStatus(
                           selectedRegistration._id,
-                          "verified"
+                          "approved"
                         )
                       }
                       disabled={isUpdating}
