@@ -93,6 +93,17 @@ const Footer = () => {
           <p className="text-xs text-[#90E0EF]/20">
             Built with Next.js · MongoDB · Tailwind CSS
           </p>
+          <p className="text-xs text-[#90E0EF]/30">
+            Made by{' '}
+            <a
+              href="https://bornosoftnr.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#4CC9F0]/60 hover:text-[#00E5FF] transition-colors duration-200"
+            >
+              Bornosoft
+            </a>
+          </p>
         </div>
       </div>
     </footer>
