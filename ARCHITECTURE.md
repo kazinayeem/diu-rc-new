@@ -3,7 +3,7 @@
 ## System Architecture
 
 ### Overview
-The DIU Robotic Club Website is built using a modern full-stack architecture with Next.js 14 App Router, providing both server-side rendering and client-side interactivity.
+The Daffodil International University Robotics Club Website is built using a modern full-stack architecture with Next.js 14 App Router, providing both server-side rendering and client-side interactivity.
 
 ## Technology Stack
 

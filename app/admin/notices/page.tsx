@@ -227,7 +227,7 @@ export default function NoticesPage() {
                   <select
                     value={form.type}
                     onChange={(e) => setForm({ ...form, type: e.target.value as any })}
-                    className="w-full bg-[#071024] border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    className="w-full bg-[#0B1F3A] border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
                   >
                     <option value="general">General</option>
                     <option value="important">Important</option>

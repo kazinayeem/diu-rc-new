@@ -61,7 +61,7 @@ export default function NoticeTickerBar() {
 
   return (
     <div
-      className={`fixed top-0 left-0 right-0 z-50 w-full ${isVisible ? styles.bar : 'bg-transparent'} ${isVisible ? 'border-b' : ''} backdrop-blur-sm flex items-center gap-3 pr-3 overflow-hidden transition-all duration-300`}
+      className={`w-full ${isVisible ? styles.bar : 'bg-transparent'} ${isVisible ? 'border-b' : ''} backdrop-blur-sm flex items-center gap-3 pr-3 overflow-hidden transition-all duration-300`}
       style={{ height: isVisible ? "40px" : "0px" }}
     >
       {isVisible && (
@@ -77,11 +77,11 @@ export default function NoticeTickerBar() {
           {/* Scrolling text */}
           <div className="flex-1 overflow-hidden relative">
             <div className="notice-ticker flex whitespace-nowrap">
-              <span className={`${styles.text} text-sm font-medium pr-20`}>
+              <span className={`${styles.text} text-[13px] font-medium pr-24`}>
                 {ticker}
               </span>
               {/* Duplicate for seamless loop */}
-              <span className={`${styles.text} text-sm font-medium pr-20`} aria-hidden>
+              <span className={`${styles.text} text-[13px] font-medium pr-24`} aria-hidden>
                 {ticker}
               </span>
             </div>

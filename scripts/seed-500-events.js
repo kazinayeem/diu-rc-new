@@ -103,7 +103,7 @@ const locations = [
 ];
 
 const hosts = [
-  "DIU Robotics Club",
+  "Daffodil International University Robotics Club",
   "Tech Community Dhaka",
   "DevOps Bangladesh",
   "AI Research Lab",

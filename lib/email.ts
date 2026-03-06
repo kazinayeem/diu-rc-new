@@ -1,5 +1,5 @@
 /**
- * Email utility for DIU Robotics Club
+ * Email utility for Daffodil International University Robotics Club
  * Reads SMTP settings from the database and sends transactional emails.
  */
 
@@ -58,7 +58,7 @@ function emailWrapper(headerTitle: string, bodyContent: string) {
   <!-- HEADER -->
   <tr>
     <td align="center" style="padding:40px 30px 30px;background:linear-gradient(135deg,#0a1f44 0%,#1c75bc 100%)">
-      <img src="${LOGO_URL}" alt="DIU Robotics Club" width="220" style="display:block;margin:0 auto 16px" />
+      <img src="${LOGO_URL}" alt="Daffodil International University Robotics Club" width="220" style="display:block;margin:0 auto 16px" />
       <div style="color:#ffffff;font-size:26px;font-weight:700;letter-spacing:1.5px;margin-top:8px">${headerTitle}</div>
     </td>
   </tr>
@@ -76,7 +76,7 @@ function emailWrapper(headerTitle: string, bodyContent: string) {
       <img src="${LOGO_URL}" alt="DIURC" width="140" style="display:block;margin:0 auto 10px" />
       <div style="margin:10px 0">${socialIcons}</div>
       <p style="color:#ffffffaa;font-size:12px;margin:10px 0 0">
-        © ${new Date().getFullYear()} DIU Robotics Club · Daffodil International University
+        © ${new Date().getFullYear()} Daffodil International University Robotics Club · Daffodil International University
       </p>
       <p style="color:#ffffff66;font-size:11px;margin:4px 0 0">
         <a href="${SITE_URL}" style="color:#90d4ff;text-decoration:none">${SITE_URL}</a>
@@ -145,7 +145,7 @@ export async function sendRegistrationReceivedEmail(reg: {
         <strong>Dear ${reg.name},</strong>
       </p>
       <p>
-        Thank you for applying to join the <strong>DIU Robotics Club</strong>! 🤖<br/>
+        Thank you for applying to join the <strong>Daffodil International University Robotics Club</strong>! 🤖<br/>
         We have successfully received your membership registration and payment details.
       </p>
       <p>
@@ -176,9 +176,9 @@ export async function sendRegistrationReceivedEmail(reg: {
     `;
 
     await transporter.sendMail({
-      from: `"${from?.name || "DIU Robotics Club"}" <${from?.email}>`,
+      from: `"${from?.name || "Daffodil International University Robotics Club"}" <${from?.email}>`,
       to: reg.email,
-      subject: "Registration Received — DIU Robotics Club 🤖",
+      subject: "Registration Received — Daffodil International University Robotics Club 🤖",
       html: emailWrapper("Registration Received", body),
     });
 
@@ -208,7 +208,7 @@ export async function sendRegistrationApprovedEmail(reg: {
       </p>
       <p>
         We are thrilled to inform you that your membership application to
-        <strong>DIU Robotics Club</strong> has been <span style="color:#1c75bc;font-weight:700">approved and confirmed</span>!
+        <strong>Daffodil International University Robotics Club</strong> has been <span style="color:#1c75bc;font-weight:700">approved and confirmed</span>!
       </p>
       <p>
         Your payment has been verified and you are now an official member of the club.
@@ -236,9 +236,9 @@ export async function sendRegistrationApprovedEmail(reg: {
     `;
 
     await transporter.sendMail({
-      from: `"${from?.name || "DIU Robotics Club"}" <${from?.email}>`,
+      from: `"${from?.name || "Daffodil International University Robotics Club"}" <${from?.email}>`,
       to: reg.email,
-      subject: "🎉 Membership Confirmed — Welcome to DIU Robotics Club!",
+      subject: "🎉 Membership Confirmed — Welcome to Daffodil International University Robotics Club!",
       html: emailWrapper("Membership Confirmed! 🎉", body),
     });
 
@@ -265,7 +265,7 @@ export async function sendRegistrationRejectedEmail(reg: {
         <strong>Dear ${reg.name},</strong>
       </p>
       <p>
-        Thank you for your interest in joining <strong>DIU Robotics Club</strong>.
+        Thank you for your interest in joining <strong>Daffodil International University Robotics Club</strong>.
       </p>
       <p>
         After reviewing your application and payment details for Student ID <strong>${reg.studentId}</strong>,
@@ -284,7 +284,7 @@ export async function sendRegistrationRejectedEmail(reg: {
     `;
 
     await transporter.sendMail({
-      from: `"${from?.name || "DIU Robotics Club"}" <${from?.email}>`,
+      from: `"${from?.name || "Daffodil International University Robotics Club"}" <${from?.email}>`,
       to: reg.email,
       subject: "Update on Your DIURC Membership Application",
       html: emailWrapper("Application Status Update", body),
@@ -317,7 +317,7 @@ export async function sendPaymentVerifiedEmail(reg: {
         <strong>Dear ${reg.name},</strong>
       </p>
       <p>
-        Great news! 🎉 Your payment for <strong>DIU Robotics Club</strong> membership has been
+        Great news! 🎉 Your payment for <strong>Daffodil International University Robotics Club</strong> membership has been
         <span style="color:#16a34a;font-weight:700">successfully verified</span> by our team.
       </p>
       <p>
@@ -347,9 +347,9 @@ export async function sendPaymentVerifiedEmail(reg: {
     `;
 
     await transporter.sendMail({
-      from: `"${from?.name || "DIU Robotics Club"}" <${from?.email}>`,
+      from: `"${from?.name || "Daffodil International University Robotics Club"}" <${from?.email}>`,
       to: reg.email,
-      subject: "✅ Payment Verified — DIU Robotics Club",
+      subject: "✅ Payment Verified — Daffodil International University Robotics Club",
       html: emailWrapper("Payment Verified ✅", body),
     });
 
@@ -380,7 +380,7 @@ export async function sendPaymentRejectedEmail(reg: {
         <strong>Dear ${reg.name},</strong>
       </p>
       <p>
-        We have reviewed your payment submission for <strong>DIU Robotics Club</strong> membership,
+        We have reviewed your payment submission for <strong>Daffodil International University Robotics Club</strong> membership,
         and unfortunately we were <span style="color:#dc2626;font-weight:700">unable to verify your payment</span> at this time.
       </p>
 
@@ -414,9 +414,9 @@ export async function sendPaymentRejectedEmail(reg: {
     `;
 
     await transporter.sendMail({
-      from: `"${from?.name || "DIU Robotics Club"}" <${from?.email}>`,
+      from: `"${from?.name || "Daffodil International University Robotics Club"}" <${from?.email}>`,
       to: reg.email,
-      subject: "❌ Payment Rejected — DIU Robotics Club Membership",
+      subject: "❌ Payment Rejected — Daffodil International University Robotics Club Membership",
       html: emailWrapper("Payment Rejected ❌", body),
     });
 

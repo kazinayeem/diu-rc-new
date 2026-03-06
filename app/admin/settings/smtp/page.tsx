@@ -22,7 +22,7 @@ export default function SMTPSettingsPage() {
       pass: "",
     },
     from: {
-      name: "DIU Robotics Club",
+      name: "Daffodil International University Robotics Club",
       email: "",
     },
   });
@@ -47,7 +47,7 @@ export default function SMTPSettingsPage() {
             pass: result.data.auth?.pass || "",
           },
           from: {
-            name: result.data.from?.name || "DIU Robotics Club",
+            name: result.data.from?.name || "Daffodil International University Robotics Club",
             email: result.data.from?.email || "",
           },
         });
@@ -310,7 +310,7 @@ export default function SMTPSettingsPage() {
                 name="from.name"
                 value={formData.from.name}
                 onChange={handleChange}
-                placeholder="DIU Robotics Club"
+                placeholder="Daffodil International University Robotics Club"
                 className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg"
               />
             </div>

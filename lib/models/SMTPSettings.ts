@@ -50,7 +50,7 @@ const SMTPSettingsSchema = new Schema<ISMTPSettings>(
     from: {
       name: {
         type: String,
-        default: "DIU Robotics Club",
+        default: "Daffodil International University Robotics Club",
       },
       email: {
         type: String,

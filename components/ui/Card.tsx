@@ -14,13 +14,13 @@ export const Card: React.FC<CardProps> = ({
   const variants = {
     // Standard glass card
     default: [
-      'bg-[rgba(2,48,71,0.45)] backdrop-blur-xl',
-      'border border-[rgba(76,201,240,0.18)]',
+      'bg-[rgba(11,31,58,0.45)] backdrop-blur-xl',
+      'border border-[rgba(61,181,216,0.18)]',
     ].join(' '),
     // Elevated glass with subtle glow
     elevated: [
-      'bg-[rgba(2,48,71,0.5)] backdrop-blur-xl',
-      'border border-[rgba(76,201,240,0.18)]',
+      'bg-[rgba(11,31,58,0.5)] backdrop-blur-xl',
+      'border border-[rgba(61,181,216,0.18)]',
       'shadow-[0_8px_32px_rgba(2,24,37,0.6)]',
       'hover:shadow-[0_12px_40px_rgba(0,229,255,0.12)]',
       'transition-shadow duration-300',

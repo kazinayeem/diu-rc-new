@@ -16,7 +16,7 @@ export default function ResearchPublicationsPage() {
       <div className="max-w-6xl mx-auto text-center mb-12">
         <h1 className="text-4xl font-bold text-black dark:text-white">Research Publications</h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Showcasing the research contributions and publications by DIU Robotics
+          Showcasing the research contributions and publications by Daffodil International University Roboticss
           Club members
         </p>
       </div>

@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
           pass: "",
         },
         from: {
-          name: "DIU Robotics Club",
+          name: "Daffodil International University Robotics Club",
           email: "",
         },
         isActive: true,
@@ -82,7 +82,7 @@ export async function PUT(req: NextRequest) {
           pass: auth.pass,
         },
         from: {
-          name: from.name || "DIU Robotics Club",
+          name: from.name || "Daffodil International University Robotics Club",
           email: from.email,
         },
         isActive: true,

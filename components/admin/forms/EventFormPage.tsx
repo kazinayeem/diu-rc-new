@@ -150,7 +150,7 @@ export default function EventFormPage({ itemType = "events" }: EventFormPageProp
   };
 
   return (
-    <div className="bg-[rgba(2,29,46,0.8)] border border-[rgba(76,201,240,0.12)] rounded-xl p-8">
+    <div className="bg-[rgba(11,31,58,0.8)] border border-[rgba(61,181,216,0.12)] rounded-xl p-8">
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
           <div className="bg-red-500/20 border border-red-400/40 text-red-300 px-4 py-3 rounded-lg">
@@ -368,7 +368,7 @@ export default function EventFormPage({ itemType = "events" }: EventFormPageProp
                 <button
                   type="button"
                   onClick={handleAddHost}
-                  className="px-4 py-2 bg-[#4361EE]/20 border border-[#4361EE]/40 text-[#4CC9F0] rounded-lg hover:bg-[#4361EE]/30 transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-[#2F6BFF]/20 border border-[#2F6BFF]/40 text-[#3DB5D8] rounded-lg hover:bg-[#2F6BFF]/30 transition-colors flex items-center gap-2"
                 >
                   <Plus size={16} />
                 </button>
@@ -378,7 +378,7 @@ export default function EventFormPage({ itemType = "events" }: EventFormPageProp
                 {formData.hosts.map((host, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between px-3 py-2 bg-[#4361EE]/10 border border-[#4361EE]/30 rounded-lg text-white/80 text-sm"
+                    className="flex items-center justify-between px-3 py-2 bg-[#2F6BFF]/10 border border-[#2F6BFF]/30 rounded-lg text-white/80 text-sm"
                   >
                     <span>{host}</span>
                     <button
@@ -416,7 +416,7 @@ export default function EventFormPage({ itemType = "events" }: EventFormPageProp
                 <button
                   type="button"
                   onClick={handleAddGuest}
-                  className="px-4 py-2 bg-[#3A0CA3]/20 border border-[#3A0CA3]/40 text-[#00E5FF] rounded-lg hover:bg-[#3A0CA3]/30 transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-[#5B4BFF]/20 border border-[#5B4BFF]/40 text-[#3DB5D8] rounded-lg hover:bg-[#5B4BFF]/30 transition-colors flex items-center gap-2"
                 >
                   <Plus size={16} />
                 </button>
@@ -426,7 +426,7 @@ export default function EventFormPage({ itemType = "events" }: EventFormPageProp
                 {formData.guests.map((guest, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between px-3 py-2 bg-[#3A0CA3]/10 border border-[#3A0CA3]/30 rounded-lg text-white/80 text-sm"
+                    className="flex items-center justify-between px-3 py-2 bg-[#5B4BFF]/10 border border-[#5B4BFF]/30 rounded-lg text-white/80 text-sm"
                   >
                     <span>{guest}</span>
                     <button
@@ -478,7 +478,7 @@ export default function EventFormPage({ itemType = "events" }: EventFormPageProp
                   registrationOpen: e.target.checked,
                 })
               }
-              className="w-4 h-4 accent-[#4CC9F0]"
+              className="w-4 h-4 accent-[#3DB5D8]"
             />
             <label
               htmlFor="registrationOpen"
@@ -499,7 +499,7 @@ export default function EventFormPage({ itemType = "events" }: EventFormPageProp
                   featured: e.target.checked,
                 })
               }
-              className="w-4 h-4 accent-[#4CC9F0]"
+              className="w-4 h-4 accent-[#3DB5D8]"
             />
             <label htmlFor="featured" className="ml-2 text-sm text-white/80">
               Featured
@@ -514,7 +514,7 @@ export default function EventFormPage({ itemType = "events" }: EventFormPageProp
             id="isPaid"
             checked={formData.isPaid}
             onChange={(e) => setFormData({ ...formData, isPaid: e.target.checked })}
-            className="w-4 h-4 accent-[#4CC9F0]"
+            className="w-4 h-4 accent-[#3DB5D8]"
           />
           <label htmlFor="isPaid" className="ml-2 text-sm text-white/80">
             Paid Program
@@ -666,7 +666,7 @@ export default function EventFormPage({ itemType = "events" }: EventFormPageProp
           <Button
             type="submit"
             disabled={loading}
-            className="bg-gradient-to-r from-[#4361EE] to-[#3A0CA3] hover:shadow-lg px-8"
+            className="bg-gradient-to-r from-[#2F6BFF] to-[#5B4BFF] hover:shadow-lg px-8"
           >
             {loading ? "Creating..." : `➕ Create ${formData.type.charAt(0).toUpperCase() + formData.type.slice(1)}`}
           </Button>

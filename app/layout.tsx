@@ -6,12 +6,13 @@ import { SessionProvider } from "@/components/providers/SessionProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import StoreProvider from "./StoreProvider";
 import HideNavbarWrapper from "@/components/HideNavbarWrapper";
+import ScrollUI from "@/components/public/ScrollUI";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://diurc.vercel.app"),
-  title: "DIU Robotic Club - Innovation Through Robotics",
+  title: "Daffodil International University Robotics Club - Innovation Through Robotics",
   description:
     "Empowering the next generation of engineers and innovators through robotics, automation, and cutting-edge technology.",
   manifest: "/manifest.json",
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
     apple: "/diurc_logo.png",
   },
   openGraph: {
-    title: "DIU Robotic Club",
+    title: "Daffodil International University Robotics Club",
     description:
       "Empowering the next generation of engineers and innovators through robotics, automation, and cutting-edge technology.",
     images: [
@@ -34,14 +35,14 @@ export const metadata: Metadata = {
         url: "/diurc_logo.png",
         width: 512,
         height: 512,
-        alt: "DIU Robotics Club Logo",
+        alt: "Daffodil International University Robotics Club Logo",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "DIU Robotic Club",
+    title: "Daffodil International University Robotics Club",
     description:
       "Empowering the next generation of engineers and innovators through robotics, automation, and cutting-edge technology.",
     images: ["/diurc_logo.png"],
@@ -64,10 +65,11 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <script src="/sw-register.js" suppressHydrationWarning></script>
       </head>
-      <body className="bg-white dark:bg-[#071024] text-black dark:text-white">
+      <body className="bg-white dark:bg-[#0B1F3A] text-black dark:text-white">
         <ThemeProvider>
           <SessionProvider>
             <StoreProvider>
+              <ScrollUI />
               <HideNavbarWrapper>
                 {children}
               </HideNavbarWrapper>

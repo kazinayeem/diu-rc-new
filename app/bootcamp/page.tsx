@@ -43,10 +43,10 @@ export default function BootcampPage() {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <h1 className="text-5xl sm:text-6xl font-bold mb-6 bg-gradient-to-r from-[#4CC9F0] via-[#00E5FF] to-[#4361EE] bg-clip-text text-transparent">
+            <h1 className="text-5xl sm:text-6xl font-bold mb-6 bg-gradient-to-r from-[#3DB5D8] via-[#3DB5D8] to-[#2F6BFF] bg-clip-text text-transparent">
               Bootcamps
             </h1>
-            <p className="text-lg sm:text-xl text-[#90E0EF]/80 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-[#8ED6E6]/80 max-w-2xl mx-auto">
               Immersive intensive training programs to accelerate your skills
             </p>
           </motion.div>
@@ -54,7 +54,7 @@ export default function BootcampPage() {
       </section>
 
       {/* SEARCH */}
-      <section className="py-8 px-4 sm:px-6 lg:px-8 border-b border-[rgba(76,201,240,0.1)]">
+      <section className="py-8 px-4 sm:px-6 lg:px-8 border-b border-[rgba(61,181,216,0.1)]">
         <div className="max-w-6xl mx-auto">
           <input
             type="text"
@@ -64,7 +64,7 @@ export default function BootcampPage() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="w-full px-4 py-3 bg-[rgba(76,201,240,0.05)] border border-[rgba(76,201,240,0.2)] rounded-lg text-[#90E0EF] placeholder-[#90E0EF]/40 focus:outline-none focus:ring-2 focus:ring-[#4CC9F0]"
+            className="w-full px-4 py-3 bg-[rgba(61,181,216,0.05)] border border-[rgba(61,181,216,0.2)] rounded-lg text-[#8ED6E6] placeholder-[#8ED6E6]/40 focus:outline-none focus:ring-2 focus:ring-[#3DB5D8]"
           />
         </div>
       </section>
@@ -74,11 +74,11 @@ export default function BootcampPage() {
         <div className="max-w-6xl mx-auto">
           {isLoading ? (
             <div className="text-center py-20">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#4CC9F0]"></div>
-              <p className="text-[#90E0EF]/60 mt-4">Loading bootcamps...</p>
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#3DB5D8]"></div>
+              <p className="text-[#8ED6E6]/60 mt-4">Loading bootcamps...</p>
             </div>
           ) : bootcamps.length === 0 ? (
-            <div className="text-center py-20 text-[#90E0EF]/60">
+            <div className="text-center py-20 text-[#8ED6E6]/60">
               No bootcamps found
             </div>
           ) : (
@@ -91,9 +91,9 @@ export default function BootcampPage() {
               {bootcamps.map((bootcamp: any) => (
                 <motion.div key={bootcamp._id} variants={itemVariants}>
                   <Link href={`/bootcamp/${bootcamp.slug}`}>
-                    <div className="group h-full bg-[rgba(2,29,46,0.8)] border border-[rgba(76,201,240,0.12)] rounded-xl overflow-hidden hover:border-[rgba(76,201,240,0.3)] transition-all duration-300 cursor-pointer hover:shadow-lg hover:shadow-[#4CC9F0]/10">
+                    <div className="group h-full bg-[rgba(11,31,58,0.8)] border border-[rgba(61,181,216,0.12)] rounded-xl overflow-hidden hover:border-[rgba(61,181,216,0.3)] transition-all duration-300 cursor-pointer hover:shadow-lg hover:shadow-[#3DB5D8]/10">
                       {/* IMAGE */}
-                      <div className="relative h-48 overflow-hidden bg-[rgba(76,201,240,0.05)]">
+                      <div className="relative h-48 overflow-hidden bg-[rgba(61,181,216,0.05)]">
                         {bootcamp.image ? (
                           <Image
                             src={bootcamp.image}
@@ -106,8 +106,8 @@ export default function BootcampPage() {
                             }}
                           />
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-[#4361EE]/20 to-[#3A0CA3]/20 flex items-center justify-center">
-                            <Users size={48} className="text-[#90E0EF]/30" />
+                          <div className="w-full h-full bg-gradient-to-br from-[#2F6BFF]/20 to-[#5B4BFF]/20 flex items-center justify-center">
+                            <Users size={48} className="text-[#8ED6E6]/30" />
                           </div>
                         )}
                       </div>
@@ -115,15 +115,15 @@ export default function BootcampPage() {
                       {/* CONTENT */}
                       <div className="p-5 space-y-3">
                         {/* TITLE */}
-                        <h3 className="font-semibold text-[#4CC9F0] group-hover:text-[#00E5FF] line-clamp-2 transition-colors">
+                        <h3 className="font-semibold text-[#3DB5D8] group-hover:text-[#3DB5D8] line-clamp-2 transition-colors">
                           {bootcamp.title}
                         </h3>
 
                         {/* META INFO */}
-                        <div className="space-y-2 text-sm text-[#90E0EF]/70">
+                        <div className="space-y-2 text-sm text-[#8ED6E6]/70">
                           {bootcamp.eventDate && (
                             <div className="flex items-center gap-2">
-                              <Calendar size={16} className="text-[#4CC9F0]" />
+                              <Calendar size={16} className="text-[#3DB5D8]" />
                               <span>
                                 {new Date(bootcamp.eventDate).toLocaleDateString(
                                   "en-US",
@@ -135,7 +135,7 @@ export default function BootcampPage() {
 
                           {bootcamp.location && (
                             <div className="flex items-center gap-2">
-                              <MapPin size={16} className="text-[#4CC9F0]" />
+                              <MapPin size={16} className="text-[#3DB5D8]" />
                               <span className="truncate">{bootcamp.location}</span>
                             </div>
                           )}
@@ -143,9 +143,9 @@ export default function BootcampPage() {
 
                         {/* HOST/GUEST */}
                         {bootcamp.host && bootcamp.host.length > 0 && (
-                          <div className="pt-2 border-t border-[rgba(76,201,240,0.1)]">
-                            <p className="text-xs text-[#90E0EF]/60 mb-1">Host:</p>
-                            <p className="text-xs text-[#4CC9F0]">
+                          <div className="pt-2 border-t border-[rgba(61,181,216,0.1)]">
+                            <p className="text-xs text-[#8ED6E6]/60 mb-1">Host:</p>
+                            <p className="text-xs text-[#3DB5D8]">
                               {Array.isArray(bootcamp.host)
                                 ? bootcamp.host.slice(0, 2).join(", ")
                                 : bootcamp.host}
@@ -172,7 +172,7 @@ export default function BootcampPage() {
                           </span>
                           <ChevronRight
                             size={16}
-                            className="text-[#4CC9F0] group-hover:translate-x-1 transition-transform"
+                            className="text-[#3DB5D8] group-hover:translate-x-1 transition-transform"
                           />
                         </div>
                       </div>
@@ -189,17 +189,17 @@ export default function BootcampPage() {
               <button
                 onClick={() => setPage(Math.max(1, page - 1))}
                 disabled={page === 1}
-                className="px-4 py-2 bg-[rgba(76,201,240,0.1)] border border-[rgba(76,201,240,0.2)] rounded-lg text-[#4CC9F0] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[rgba(76,201,240,0.2)] transition-colors"
+                className="px-4 py-2 bg-[rgba(61,181,216,0.1)] border border-[rgba(61,181,216,0.2)] rounded-lg text-[#3DB5D8] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[rgba(61,181,216,0.2)] transition-colors"
               >
                 Previous
               </button>
-              <span className="px-4 py-2 text-[#90E0EF]/80">
+              <span className="px-4 py-2 text-[#8ED6E6]/80">
                 Page {page} of {totalPages}
               </span>
               <button
                 onClick={() => setPage(Math.min(totalPages, page + 1))}
                 disabled={page === totalPages}
-                className="px-4 py-2 bg-[rgba(76,201,240,0.1)] border border-[rgba(76,201,240,0.2)] rounded-lg text-[#4CC9F0] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[rgba(76,201,240,0.2)] transition-colors"
+                className="px-4 py-2 bg-[rgba(61,181,216,0.1)] border border-[rgba(61,181,216,0.2)] rounded-lg text-[#3DB5D8] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[rgba(61,181,216,0.2)] transition-colors"
               >
                 Next
               </button>

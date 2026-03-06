@@ -36,7 +36,7 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#0d1b2a] to-[#1a2f4a] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4CC9F0]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3DB5D8]"></div>
       </div>
     );
   }
@@ -44,8 +44,8 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
   if (!seminar) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#0d1b2a] to-[#1a2f4a] flex flex-col items-center justify-center px-4">
-        <h1 className="text-2xl font-bold text-[#4CC9F0] mb-4">Seminar Not Found</h1>
-        <Link href="/seminars" className="text-[#90E0EF] hover:text-[#4CC9F0]">
+        <h1 className="text-2xl font-bold text-[#3DB5D8] mb-4">Seminar Not Found</h1>
+        <Link href="/seminars" className="text-[#8ED6E6] hover:text-[#3DB5D8]">
           Back to Seminars
         </Link>
       </div>
@@ -55,11 +55,11 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0d1b2a] to-[#1a2f4a]">
       {/* BACK BUTTON */}
-      <div className="sticky top-0 z-10 bg-[rgba(13,27,42,0.8)] border-b border-[rgba(76,201,240,0.1)] backdrop-blur-sm">
+      <div className="sticky top-0 z-10 bg-[rgba(13,27,42,0.8)] border-b border-[rgba(61,181,216,0.1)] backdrop-blur-sm">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <Link
             href="/seminars"
-            className="inline-flex items-center gap-2 text-[#4CC9F0] hover:text-[#00E5FF] transition-colors"
+            className="inline-flex items-center gap-2 text-[#3DB5D8] hover:text-[#3DB5D8] transition-colors"
           >
             <ChevronLeft size={20} />
             Back to Seminars
@@ -72,7 +72,7 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="relative h-96 bg-[rgba(76,201,240,0.05)]"
+        className="relative h-96 bg-[rgba(61,181,216,0.05)]"
       >
         {seminar.image ? (
           <Image
@@ -86,8 +86,8 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
             }}
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-[#4361EE]/20 to-[#3A0CA3]/20 flex items-center justify-center">
-            <Users size={64} className="text-[#90E0EF]/30" />
+          <div className="w-full h-full bg-gradient-to-br from-[#2F6BFF]/20 to-[#5B4BFF]/20 flex items-center justify-center">
+            <Users size={64} className="text-[#8ED6E6]/30" />
           </div>
         )}
       </motion.div>
@@ -103,7 +103,7 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
             className="lg:col-span-2"
           >
             {/* TITLE */}
-            <h1 className="text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-[#4CC9F0] to-[#4361EE] bg-clip-text text-transparent">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-[#3DB5D8] to-[#2F6BFF] bg-clip-text text-transparent">
               {seminar.title}
             </h1>
 
@@ -123,13 +123,13 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
             </div>
 
             {/* META INFO */}
-            <div className="space-y-4 mb-8 pb-8 border-b border-[rgba(76,201,240,0.1)]">
+            <div className="space-y-4 mb-8 pb-8 border-b border-[rgba(61,181,216,0.1)]">
               {seminar.eventDate && (
                 <div className="flex items-start gap-3">
-                  <Calendar size={20} className="text-[#4CC9F0] mt-1 flex-shrink-0" />
+                  <Calendar size={20} className="text-[#3DB5D8] mt-1 flex-shrink-0" />
                   <div>
-                    <p className="text-[#90E0EF]/60 text-sm">Date & Time</p>
-                    <p className="text-[#4CC9F0] font-medium">
+                    <p className="text-[#8ED6E6]/60 text-sm">Date & Time</p>
+                    <p className="text-[#3DB5D8] font-medium">
                       {new Date(seminar.eventDate).toLocaleDateString("en-US", {
                         weekday: "long",
                         year: "numeric",
@@ -144,16 +144,16 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
 
               {seminar.location && (
                 <div className="flex items-start gap-3">
-                  <MapPin size={20} className="text-[#4CC9F0] mt-1 flex-shrink-0" />
+                  <MapPin size={20} className="text-[#3DB5D8] mt-1 flex-shrink-0" />
                   <div>
-                    <p className="text-[#90E0EF]/60 text-sm">Location</p>
-                    <p className="text-[#4CC9F0] font-medium">{seminar.location}</p>
+                    <p className="text-[#8ED6E6]/60 text-sm">Location</p>
+                    <p className="text-[#3DB5D8] font-medium">{seminar.location}</p>
                     {seminar.mode === "online" && seminar.eventLink && (
                       <a
                         href={seminar.eventLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[#00E5FF] hover:underline mt-1 text-sm"
+                        className="text-[#3DB5D8] hover:underline mt-1 text-sm"
                       >
                         Join online →
                       </a>
@@ -164,21 +164,21 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
 
               {seminar.host && seminar.host.length > 0 && (
                 <div className="flex items-start gap-3">
-                  <Users size={20} className="text-[#4CC9F0] mt-1 flex-shrink-0" />
+                  <Users size={20} className="text-[#3DB5D8] mt-1 flex-shrink-0" />
                   <div>
-                    <p className="text-[#90E0EF]/60 text-sm">Hosts</p>
+                    <p className="text-[#8ED6E6]/60 text-sm">Hosts</p>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {Array.isArray(seminar.host) ? (
                         seminar.host.map((h: string, idx: number) => (
                           <span
                             key={idx}
-                            className="px-3 py-1 bg-[rgba(76,201,240,0.1)] text-[#4CC9F0] rounded-full text-sm"
+                            className="px-3 py-1 bg-[rgba(61,181,216,0.1)] text-[#3DB5D8] rounded-full text-sm"
                           >
                             {h}
                           </span>
                         ))
                       ) : (
-                        <span className="px-3 py-1 bg-[rgba(76,201,240,0.1)] text-[#4CC9F0] rounded-full text-sm">
+                        <span className="px-3 py-1 bg-[rgba(61,181,216,0.1)] text-[#3DB5D8] rounded-full text-sm">
                           {seminar.host}
                         </span>
                       )}
@@ -189,21 +189,21 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
 
               {seminar.guest && seminar.guest.length > 0 && (
                 <div className="flex items-start gap-3">
-                  <Zap size={20} className="text-[#00E5FF] mt-1 flex-shrink-0" />
+                  <Zap size={20} className="text-[#3DB5D8] mt-1 flex-shrink-0" />
                   <div>
-                    <p className="text-[#90E0EF]/60 text-sm">Guest Speakers</p>
+                    <p className="text-[#8ED6E6]/60 text-sm">Guest Speakers</p>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {Array.isArray(seminar.guest) ? (
                         seminar.guest.map((g: string, idx: number) => (
                           <span
                             key={idx}
-                            className="px-3 py-1 bg-[rgba(0,229,255,0.1)] text-[#00E5FF] rounded-full text-sm"
+                            className="px-3 py-1 bg-[rgba(0,229,255,0.1)] text-[#3DB5D8] rounded-full text-sm"
                           >
                             {g}
                           </span>
                         ))
                       ) : (
-                        <span className="px-3 py-1 bg-[rgba(0,229,255,0.1)] text-[#00E5FF] rounded-full text-sm">
+                        <span className="px-3 py-1 bg-[rgba(0,229,255,0.1)] text-[#3DB5D8] rounded-full text-sm">
                           {seminar.guest}
                         </span>
                       )}
@@ -215,8 +215,8 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
 
             {/* DESCRIPTION */}
             <div className="prose prose-invert max-w-none">
-              <h2 className="text-2xl font-bold text-[#4CC9F0] mb-4">About</h2>
-              <p className="text-[#90E0EF]/80 leading-relaxed whitespace-pre-wrap">
+              <h2 className="text-2xl font-bold text-[#3DB5D8] mb-4">About</h2>
+              <p className="text-[#8ED6E6]/80 leading-relaxed whitespace-pre-wrap">
                 {seminar.description || "No description available"}
               </p>
             </div>
@@ -230,9 +230,9 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
             className="lg:col-span-1"
           >
             {/* PRICING CARD */}
-            <div className="sticky top-24 bg-[rgba(2,29,46,0.8)] border border-[rgba(76,201,240,0.2)] rounded-xl p-6 space-y-6">
+            <div className="sticky top-24 bg-[rgba(11,31,58,0.8)] border border-[rgba(61,181,216,0.2)] rounded-xl p-6 space-y-6">
               <div>
-                <p className="text-[#90E0EF]/60 text-sm mb-2">Registration</p>
+                <p className="text-[#8ED6E6]/60 text-sm mb-2">Registration</p>
                 {seminar.registrationOpen ? (
                   <p className="text-xl font-bold text-green-400">Open</p>
                 ) : (
@@ -242,15 +242,15 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
 
               {seminar.isPaid && (
                 <div>
-                  <p className="text-[#90E0EF]/60 text-sm mb-2">Fee</p>
-                  <p className="text-2xl font-bold text-[#4CC9F0]">
+                  <p className="text-[#8ED6E6]/60 text-sm mb-2">Fee</p>
+                  <p className="text-2xl font-bold text-[#3DB5D8]">
                     ৳{seminar.registrationFee}
                   </p>
-                  <p className="text-xs text-[#90E0EF]/60 mt-1">
+                  <p className="text-xs text-[#8ED6E6]/60 mt-1">
                     Payment: {seminar.paymentMethod === "both" ? "bKash & Nagad" : seminar.paymentMethod === "bkash" ? "bKash" : "Nagad"}
                   </p>
                   {seminar.paymentNumber && (
-                    <p className="text-xs text-[#90E0EF]/60 mt-1">
+                    <p className="text-xs text-[#8ED6E6]/60 mt-1">
                       @{seminar.paymentNumber}
                     </p>
                   )}
@@ -259,8 +259,8 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
 
               {seminar.registrationLimit > 0 && (
                 <div>
-                  <p className="text-[#90E0EF]/60 text-sm mb-2">Seats Available</p>
-                  <p className="text-lg font-bold text-[#4CC9F0]">
+                  <p className="text-[#8ED6E6]/60 text-sm mb-2">Seats Available</p>
+                  <p className="text-lg font-bold text-[#3DB5D8]">
                     {seminar.registrationLimit}
                   </p>
                 </div>
@@ -274,7 +274,7 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
                     placeholder="Full Name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-2 bg-[rgba(76,201,240,0.05)] border border-[rgba(76,201,240,0.2)] rounded-lg text-[#90E0EF] placeholder-[#90E0EF]/40 focus:outline-none focus:ring-2 focus:ring-[#4CC9F0] text-sm"
+                    className="w-full px-3 py-2 bg-[rgba(61,181,216,0.05)] border border-[rgba(61,181,216,0.2)] rounded-lg text-[#8ED6E6] placeholder-[#8ED6E6]/40 focus:outline-none focus:ring-2 focus:ring-[#3DB5D8] text-sm"
                     required
                   />
                   <input
@@ -282,7 +282,7 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
                     placeholder="Email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3 py-2 bg-[rgba(76,201,240,0.05)] border border-[rgba(76,201,240,0.2)] rounded-lg text-[#90E0EF] placeholder-[#90E0EF]/40 focus:outline-none focus:ring-2 focus:ring-[#4CC9F0] text-sm"
+                    className="w-full px-3 py-2 bg-[rgba(61,181,216,0.05)] border border-[rgba(61,181,216,0.2)] rounded-lg text-[#8ED6E6] placeholder-[#8ED6E6]/40 focus:outline-none focus:ring-2 focus:ring-[#3DB5D8] text-sm"
                     required
                   />
                   <input
@@ -290,7 +290,7 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
                     placeholder="Phone"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-3 py-2 bg-[rgba(76,201,240,0.05)] border border-[rgba(76,201,240,0.2)] rounded-lg text-[#90E0EF] placeholder-[#90E0EF]/40 focus:outline-none focus:ring-2 focus:ring-[#4CC9F0] text-sm"
+                    className="w-full px-3 py-2 bg-[rgba(61,181,216,0.05)] border border-[rgba(61,181,216,0.2)] rounded-lg text-[#8ED6E6] placeholder-[#8ED6E6]/40 focus:outline-none focus:ring-2 focus:ring-[#3DB5D8] text-sm"
                     required
                   />
 
@@ -305,7 +305,7 @@ export default function SeminarDetailPage({ params }: { params: { slug: string }
                   <button
                     type="submit"
                     disabled={isRegistering}
-                    className="w-full px-4 py-3 bg-gradient-to-r from-[#4CC9F0] to-[#4361EE] text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-[#4CC9F0]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                    className="w-full px-4 py-3 bg-gradient-to-r from-[#3DB5D8] to-[#2F6BFF] text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-[#3DB5D8]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                   >
                     <Send size={16} />
                     {isRegistering ? "Registering..." : "Register Now"}

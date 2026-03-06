@@ -10,9 +10,8 @@ interface ClubVideoPreviewProps {
 
 const ClubVideoPreview: React.FC<ClubVideoPreviewProps> = ({
   videoUrl,
-  title = "DIU Robotics Club - Dreaming of building the future",
+  title = "Daffodil International University Robotics Club - Dreaming of building the future",
 }) => {
-  // Extract YouTube video ID from URL
   const getYouTubeVideoId = (url: string): string | null => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
@@ -20,73 +19,43 @@ const ClubVideoPreview: React.FC<ClubVideoPreviewProps> = ({
   };
 
   const videoId = getYouTubeVideoId(videoUrl);
-
-  if (!videoId) {
-    return null;
-  }
-
-  const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+  if (!videoId) return null;
 
   return (
-    <section className="relative py-20 bg-gradient-to-br from-[#071024] via-[#082135] to-[#0e2840] overflow-hidden">
-      {/* Background Grid */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage:
-            "linear-gradient(#12324b 1px, transparent 1px), linear-gradient(90deg, #12324b 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
+    <section className="relative py-14 bg-[#0B1F3A] overflow-hidden">
+      <div className="relative max-w-3xl mx-auto px-4 sm:px-6">
 
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-cyan-500/10 backdrop-blur-md px-4 py-2 rounded-full mb-4 border border-cyan-500/20">
-            <Play size={18} className="text-cyan-400 animate-pulse" />
-            <span className="text-sm font-medium text-cyan-300 tracking-wide">
+        <div className="text-center mb-7">
+          <div className="inline-flex items-center gap-2 bg-cyan-500/8 border border-cyan-500/15 px-3.5 py-1.5 rounded-full mb-4">
+            <Play size={13} className="text-cyan-400" fill="currentColor" />
+            <span className="text-xs font-semibold text-cyan-400 tracking-[0.12em] uppercase">
               Watch Our Journey
             </span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
-            {title}
+          <h2 className="text-xl sm:text-2xl font-bold text-white leading-snug mb-2">
+            Dreaming of Building the Future
           </h2>
-          <p className="text-cyan-200/80 text-lg max-w-2xl mx-auto">
-            Discover how we're shaping the future through innovation, collaboration, and cutting-edge robotics
+          <p className="text-sm text-white/40 max-w-md mx-auto">
+            Discover how we're shaping the future through innovation, collaboration, and cutting-edge robotics.
           </p>
         </div>
 
-        {/* Video Container */}
-        <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-xl blur opacity-25 group-hover:opacity-40 transition duration-500"></div>
-          <div className="relative bg-black/50 backdrop-blur-sm rounded-xl overflow-hidden border border-cyan-500/20 shadow-2xl">
-            <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-              <iframe
-                className="absolute top-0 left-0 w-full h-full"
-                src={embedUrl}
-                title={title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
+        {/* Video */}
+        <div className="relative rounded-2xl overflow-hidden border border-white/8 shadow-[0_8px_40px_rgba(0,0,0,0.5)]">
+          {/* Subtle glow border */}
+          <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-cyan-500/20 via-transparent to-blue-500/10 pointer-events-none z-10" />
+          <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+            <iframe
+              className="absolute top-0 left-0 w-full h-full"
+              src={`https://www.youtube.com/embed/${videoId}`}
+              title={title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
           </div>
         </div>
 
-        {/* Stats or CTA (Optional) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12 text-center">
-          <div className="bg-white/5 backdrop-blur-sm rounded-lg p-6 border border-white/10">
-            <div className="text-3xl font-bold text-cyan-400 mb-2">500+</div>
-            <div className="text-white/70 text-sm">Active Members</div>
-          </div>
-          <div className="bg-white/5 backdrop-blur-sm rounded-lg p-6 border border-white/10">
-            <div className="text-3xl font-bold text-cyan-400 mb-2">50+</div>
-            <div className="text-white/70 text-sm">Projects Completed</div>
-          </div>
-          <div className="bg-white/5 backdrop-blur-sm rounded-lg p-6 border border-white/10">
-            <div className="text-3xl font-bold text-cyan-400 mb-2">20+</div>
-            <div className="text-white/70 text-sm">Competitions Won</div>
-          </div>
-        </div>
       </div>
     </section>
   );

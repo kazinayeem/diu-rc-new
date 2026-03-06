@@ -19,7 +19,7 @@ export default function LatestEvents() {
   if (events.length === 0) return null;
 
   return (
-    <section className="py-16 bg-[#071024]">
+    <section className="py-16 bg-[#0B1F3A]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-cyan-200">Latest Events</h2>

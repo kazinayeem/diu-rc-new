@@ -109,13 +109,13 @@ export default function CreateProgramPage() {
             onClick={() => router.back()}
             className="p-2 hover:bg-white/10 rounded-lg transition-colors"
           >
-            <ArrowLeft size={20} className="text-[#4CC9F0]" />
+            <ArrowLeft size={20} className="text-[#3DB5D8]" />
           </button>
           <div>
-            <h1 className="text-3xl font-bold text-[#4CC9F0]">
+            <h1 className="text-3xl font-bold text-[#3DB5D8]">
               Add {type.charAt(0).toUpperCase() + type.slice(1)}
             </h1>
-            <p className="text-[#90E0EF]/60 text-sm mt-1">
+            <p className="text-[#8ED6E6]/60 text-sm mt-1">
               Create new {type} with rich text editor support
             </p>
           </div>
@@ -135,7 +135,7 @@ export default function CreateProgramPage() {
         {/* LIST SECTION */}
         <div className="mt-12">
           <div className="mb-6 flex justify-between items-center">
-            <h2 className="text-xl font-bold text-[#4CC9F0]">
+            <h2 className="text-xl font-bold text-[#3DB5D8]">
               All {type.charAt(0).toUpperCase() + type.slice(1)}
             </h2>
             <input
@@ -146,11 +146,11 @@ export default function CreateProgramPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="px-4 py-2 bg-[rgba(76,201,240,0.05)] border border-[rgba(76,201,240,0.1)] rounded-lg text-[#90E0EF] placeholder-[#90E0EF]/40 focus:outline-none focus:ring-2 focus:ring-[#3FB6D6]/40"
+              className="px-4 py-2 bg-[rgba(61,181,216,0.05)] border border-[rgba(61,181,216,0.1)] rounded-lg text-[#8ED6E6] placeholder-[#8ED6E6]/40 focus:outline-none focus:ring-2 focus:ring-[#3DB5D8]/40"
             />
           </div>
 
-          <div className="bg-[rgba(2,29,46,0.8)] border border-[rgba(76,201,240,0.12)] rounded-xl overflow-hidden">
+          <div className="bg-[rgba(11,31,58,0.8)] border border-[rgba(61,181,216,0.12)] rounded-xl overflow-hidden">
             <DataTable
               columns={columns}
               data={filteredData}

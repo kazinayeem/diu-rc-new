@@ -26,6 +26,7 @@ const ALL_PERMISSIONS = [
   { key: "notices", label: "Notices" },
   { key: "payment", label: "Payment" },
   { key: "sponsors", label: "Sponsors & Partners" },
+  { key: "hall-of-fame", label: "Hall of Fame" },
 ];
 
 type AdminRecord = {
@@ -161,7 +162,7 @@ export default function ManageAdminsPage() {
         </div>
         <button
           onClick={openCreate}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-[#071024] font-semibold rounded-xl transition-colors"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-[#0B1F3A] font-semibold rounded-xl transition-colors"
         >
           <Plus size={18} />
           Add Admin
@@ -454,7 +455,7 @@ export default function ManageAdminsPage() {
                           }`}
                         >
                           {form.permissions.includes(p.key) && (
-                            <CheckCircle2 size={10} className="text-[#071024]" />
+                            <CheckCircle2 size={10} className="text-[#0B1F3A]" />
                           )}
                         </span>
                         {p.label}
@@ -493,7 +494,7 @@ export default function ManageAdminsPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-[#071024] font-semibold transition-colors text-sm disabled:opacity-60 flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-[#0B1F3A] font-semibold transition-colors text-sm disabled:opacity-60 flex items-center justify-center gap-2"
                 >
                   {saving && <Loader2 size={15} className="animate-spin" />}
                   {editId ? "Save Changes" : "Create Admin"}

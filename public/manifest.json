@@ -1,7 +1,7 @@
 {
-  "name": "DIU Robotics Club",
+  "name": "Daffodil International University Robotics Club",
   "short_name": "DIU RC",
-  "description": "DIU Robotics Club - robotics, automation, research, workshops, and competitions at Daffodil International University",
+  "description": "Daffodil International University Robotics Club - robotics, automation, research, workshops, and competitions at Daffodil International University",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -39,7 +39,7 @@
     {
       "name": "Apply for Membership",
       "short_name": "Join",
-      "description": "Apply to join DIU Robotics Club",
+      "description": "Apply to join Daffodil International University Robotics Club",
       "url": "/join",
       "icons": [{ "src": "/diurc_logo.png", "sizes": "192x192" }]
     },

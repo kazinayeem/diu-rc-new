@@ -23,10 +23,10 @@ interface EventCardProps {
 
 const EventCard: React.FC<EventCardProps> = ({ event }) => {
   const statusColors: Record<string, string> = {
-    upcoming:  'bg-[rgba(76,201,240,0.15)] text-[#4CC9F0] border border-[rgba(76,201,240,0.3)]',
-    ongoing:   'bg-[rgba(67,97,238,0.2)] text-[#90E0EF] border border-[rgba(67,97,238,0.4)]',
-    completed: 'bg-[rgba(144,224,239,0.08)] text-[#90E0EF]/50 border border-[rgba(144,224,239,0.15)]',
-    cancelled: 'bg-[rgba(58,12,163,0.2)] text-[#90E0EF]/60 border border-[rgba(58,12,163,0.3)]',
+    upcoming:  'bg-[rgba(61,181,216,0.15)] text-[#3DB5D8] border border-[rgba(61,181,216,0.3)]',
+    ongoing:   'bg-[rgba(67,97,238,0.2)] text-[#8ED6E6] border border-[rgba(67,97,238,0.4)]',
+    completed: 'bg-[rgba(144,224,239,0.08)] text-[#8ED6E6]/50 border border-[rgba(144,224,239,0.15)]',
+    cancelled: 'bg-[rgba(58,12,163,0.2)] text-[#8ED6E6]/60 border border-[rgba(58,12,163,0.3)]',
   };
 
   return (
@@ -43,7 +43,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
           {/* gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#021825]/90 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B1F3A]/90 via-transparent to-transparent" />
           {/* status badge */}
           <div className="absolute top-3 right-3">
             <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statusColors[event.status] ?? statusColors.completed}`}>
@@ -54,24 +54,24 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
       )}
 
       <CardContent className="p-5">
-        <h3 className="text-base font-bold text-white mb-2 group-hover:text-[#4CC9F0] transition-colors leading-snug">
+        <h3 className="text-base font-bold text-white mb-2 group-hover:text-[#3DB5D8] transition-colors leading-snug">
           {event.title}
         </h3>
 
-        <p className="text-[#90E0EF]/60 text-xs mb-4 line-clamp-2">{event.description}</p>
+        <p className="text-[#8ED6E6]/60 text-xs mb-4 line-clamp-2">{event.description}</p>
 
         <div className="space-y-1.5 mb-4">
-          <div className="flex items-center gap-2 text-xs text-[#90E0EF]/60">
-            <Calendar size={12} className="text-[#3FB6D6] flex-shrink-0" />
+          <div className="flex items-center gap-2 text-xs text-[#8ED6E6]/60">
+            <Calendar size={12} className="text-[#3DB5D8] flex-shrink-0" />
             <span>{formatDate(event.eventDate)} · {event.eventTime}</span>
           </div>
-          <div className="flex items-center gap-2 text-xs text-[#90E0EF]/60">
-            <MapPin size={12} className="text-[#3FB6D6] flex-shrink-0" />
+          <div className="flex items-center gap-2 text-xs text-[#8ED6E6]/60">
+            <MapPin size={12} className="text-[#3DB5D8] flex-shrink-0" />
             <span>{event.location}</span>
           </div>
           {event.attendees !== undefined && (
-            <div className="flex items-center gap-2 text-xs text-[#90E0EF]/60">
-              <Users size={12} className="text-[#3FB6D6] flex-shrink-0" />
+            <div className="flex items-center gap-2 text-xs text-[#8ED6E6]/60">
+              <Users size={12} className="text-[#3DB5D8] flex-shrink-0" />
               <span>{event.attendees} attendees</span>
             </div>
           )}

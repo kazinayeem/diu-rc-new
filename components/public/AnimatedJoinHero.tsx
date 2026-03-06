@@ -19,7 +19,7 @@ export default function AnimatedJoinHero() {
           transition={{ delay: 0.2, duration: 0.7 }}
           className="text-5xl md:text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-300"
         >
-          Join DIU Robotic Club
+          Join Daffodil International University Robotics Club
         </motion.h1>
 
         <motion.p

@@ -21,23 +21,23 @@ function SponsorCard({ s }: { s: Sponsor }) {
   const inner = (
     <div className="flex flex-col items-center gap-3 px-8 py-5 mx-3 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-cyan-500/30 transition-all duration-300 min-w-[140px] group cursor-pointer">
       {s.logoUrl ? (
-        <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+        <div className="w-16 h-10 rounded-lg bg-white flex items-center justify-center overflow-hidden p-1.5">
           <img
             src={s.logoUrl}
             alt={s.name}
-            className="w-full h-full object-contain p-1"
+            className="max-w-full max-h-full object-contain"
             onError={(e) => {
               const t = e.target as HTMLImageElement;
               t.style.display = "none";
               const parent = t.parentElement;
               if (parent) {
-                parent.innerHTML = `<span class="text-cyan-400/60 text-xs font-bold">${s.name.slice(0, 2).toUpperCase()}</span>`;
+                parent.innerHTML = `<span class="text-slate-700 text-xs font-bold">${s.name.slice(0, 2).toUpperCase()}</span>`;
               }
             }}
           />
         </div>
       ) : (
-        <div className="w-14 h-14 rounded-xl bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center">
+        <div className="w-16 h-10 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center">
           <span className="text-cyan-400/80 text-sm font-bold">
             {s.name.slice(0, 2).toUpperCase()}
           </span>
@@ -67,9 +67,9 @@ export default function SponsorsMarquee({ sponsors }: { sponsors: Sponsor[] }) {
   return (
     <div className="sponsors-marquee relative w-full overflow-hidden">
       {/* Left fade */}
-      <div className="pointer-events-none absolute left-0 top-0 h-full w-24 z-10 bg-gradient-to-r from-[#021825] to-transparent" />
+      <div className="pointer-events-none absolute left-0 top-0 h-full w-24 z-10 bg-gradient-to-r from-[#0B1F3A] to-transparent" />
       {/* Right fade */}
-      <div className="pointer-events-none absolute right-0 top-0 h-full w-24 z-10 bg-gradient-to-l from-[#021825] to-transparent" />
+      <div className="pointer-events-none absolute right-0 top-0 h-full w-24 z-10 bg-gradient-to-l from-[#0B1F3A] to-transparent" />
 
       <div className="flex animate-marquee">
         {repeated.map((s, i) => (

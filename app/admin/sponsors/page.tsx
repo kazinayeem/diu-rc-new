@@ -130,7 +130,7 @@ export default function AdminSponsorsPage() {
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-[#071024] font-semibold rounded-xl transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-[#0B1F3A] font-semibold rounded-xl transition-colors"
         >
           <Plus size={18} /> Add Sponsor
         </button>
@@ -359,7 +359,7 @@ export default function AdminSponsorsPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-[#071024] font-semibold transition-colors text-sm disabled:opacity-60 flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-[#0B1F3A] font-semibold transition-colors text-sm disabled:opacity-60 flex items-center justify-center gap-2"
                 >
                   {saving && <Loader2 size={15} className="animate-spin" />}
                   {editId ? "Save Changes" : "Add Sponsor"}

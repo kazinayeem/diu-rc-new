@@ -132,7 +132,7 @@ export default function TeamPage() {
           Team &amp; Members
         </motion.h1>
         <p className="text-gray-600 dark:text-gray-300 mt-3">
-          Meet the people behind DIU Robotics Club
+          Meet the people behind Daffodil International University Robotics Club
         </p>
       </section>
 
@@ -171,7 +171,7 @@ export default function TeamPage() {
             <div className="w-full border-t border-white/10" />
           </div>
           <div className="relative flex justify-center">
-            <span className="bg-[#071024] px-6 text-gray-400 text-sm font-semibold uppercase tracking-widest">
+            <span className="bg-[#0B1F3A] px-6 text-gray-400 text-sm font-semibold uppercase tracking-widest">
               All Members
             </span>
           </div>

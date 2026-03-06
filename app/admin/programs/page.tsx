@@ -168,8 +168,8 @@ export default function ProgramsPage() {
         {/* HEADER */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-[#4CC9F0]">Programs</h1>
-            <p className="text-[#90E0EF]/60 text-sm mt-1">
+            <h1 className="text-3xl font-bold text-[#3DB5D8]">Programs</h1>
+            <p className="text-[#8ED6E6]/60 text-sm mt-1">
               Manage events, seminars, bootcamps, and workshops
             </p>
           </div>
@@ -178,7 +178,7 @@ export default function ProgramsPage() {
               onClick={() => {
                 router.push(`/admin/programs/create?type=${programType}`);
               }}
-              className="px-6 py-2.5 bg-gradient-to-r from-[#3A0CA3] to-[#4361EE] hover:shadow-lg text-white font-semibold rounded-lg transition-all flex items-center gap-2"
+              className="px-6 py-2.5 bg-gradient-to-r from-[#5B4BFF] to-[#2F6BFF] hover:shadow-lg text-white font-semibold rounded-lg transition-all flex items-center gap-2"
             >
               <Plus size={18} /> Create New
             </button>
@@ -186,7 +186,7 @@ export default function ProgramsPage() {
         </div>
 
         {/* FILTERS */}
-        <div className="bg-[rgba(2,29,46,0.8)] border border-[rgba(76,201,240,0.12)] rounded-xl p-6 mb-6">
+        <div className="bg-[rgba(11,31,58,0.8)] border border-[rgba(61,181,216,0.12)] rounded-xl p-6 mb-6">
           {/* Program Type Tabs */}
           <div className="flex flex-wrap gap-2 mb-6">
             {(["events", "seminars", "bootcamp", "workshops"] as ProgramType[]).map(
@@ -199,8 +199,8 @@ export default function ProgramsPage() {
                   }}
                   className={
                     programType === type
-                      ? "px-4 py-2 rounded-lg font-medium transition-all bg-gradient-to-r from-[#4361EE]/20 to-[#3A0CA3]/10 text-[#4CC9F0] ring-1 ring-[#4361EE]/30"
-                      : "px-4 py-2 rounded-lg font-medium transition-all bg-[rgba(76,201,240,0.05)] text-[#90E0EF]/60 hover:text-[#90E0EF]"
+                      ? "px-4 py-2 rounded-lg font-medium transition-all bg-gradient-to-r from-[#2F6BFF]/20 to-[#5B4BFF]/10 text-[#3DB5D8] ring-1 ring-[#2F6BFF]/30"
+                      : "px-4 py-2 rounded-lg font-medium transition-all bg-[rgba(61,181,216,0.05)] text-[#8ED6E6]/60 hover:text-[#8ED6E6]"
                   }
                 >
                   {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -220,7 +220,7 @@ export default function ProgramsPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="px-3 py-2 bg-[rgba(76,201,240,0.05)] border border-[rgba(76,201,240,0.1)] rounded-lg text-[#90E0EF] placeholder-[#90E0EF]/40 focus:outline-none focus:ring-2 focus:ring-[#3FB6D6]/40 text-sm"
+              className="px-3 py-2 bg-[rgba(61,181,216,0.05)] border border-[rgba(61,181,216,0.1)] rounded-lg text-[#8ED6E6] placeholder-[#8ED6E6]/40 focus:outline-none focus:ring-2 focus:ring-[#3DB5D8]/40 text-sm"
             />
 
             {/* Status */}
@@ -230,7 +230,7 @@ export default function ProgramsPage() {
                 setStatus(e.target.value);
                 setPage(1);
               }}
-              className="px-3 py-2 bg-[rgba(76,201,240,0.05)] border border-[rgba(76,201,240,0.1)] rounded-lg text-[#90E0EF] focus:outline-none focus:ring-2 focus:ring-[#3FB6D6]/40 text-sm"
+              className="px-3 py-2 bg-[rgba(61,181,216,0.05)] border border-[rgba(61,181,216,0.1)] rounded-lg text-[#8ED6E6] focus:outline-none focus:ring-2 focus:ring-[#3DB5D8]/40 text-sm"
             >
               <option value="">All Status</option>
               <option value="upcoming">Upcoming</option>
@@ -243,7 +243,7 @@ export default function ProgramsPage() {
             <select
               value={locationType}
               onChange={(e) => setLocationType(e.target.value as LocationType)}
-              className="px-3 py-2 bg-[rgba(76,201,240,0.05)] border border-[rgba(76,201,240,0.1)] rounded-lg text-[#90E0EF] focus:outline-none focus:ring-2 focus:ring-[#3FB6D6]/40 text-sm"
+              className="px-3 py-2 bg-[rgba(61,181,216,0.05)] border border-[rgba(61,181,216,0.1)] rounded-lg text-[#8ED6E6] focus:outline-none focus:ring-2 focus:ring-[#3DB5D8]/40 text-sm"
             >
               <option value="all">All Locations</option>
               <option value="online">Online</option>
@@ -261,7 +261,7 @@ export default function ProgramsPage() {
                 setSearch("");
                 setPage(1);
               }}
-              className="mt-4 px-3 py-1.5 text-xs text-[#90E0EF]/60 hover:text-[#4CC9F0] flex items-center gap-1 transition-colors"
+              className="mt-4 px-3 py-1.5 text-xs text-[#8ED6E6]/60 hover:text-[#3DB5D8] flex items-center gap-1 transition-colors"
             >
               <FilterX size={14} /> Clear Filters
             </button>
@@ -269,14 +269,14 @@ export default function ProgramsPage() {
         </div>
 
         {/* DATA TABLE */}
-        <div className="bg-[rgba(2,29,46,0.8)] border border-[rgba(76,201,240,0.12)] rounded-xl overflow-hidden">
+        <div className="bg-[rgba(11,31,58,0.8)] border border-[rgba(61,181,216,0.12)] rounded-xl overflow-hidden">
           {isLoading ? (
             <div className="p-8 text-center">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#4CC9F0]"></div>
-              <p className="text-[#90E0EF]/60 mt-4">Loading {programType}...</p>
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#3DB5D8]"></div>
+              <p className="text-[#8ED6E6]/60 mt-4">Loading {programType}...</p>
             </div>
           ) : filteredData.length === 0 ? (
-            <div className="p-8 text-center text-[#90E0EF]/60">
+            <div className="p-8 text-center text-[#8ED6E6]/60">
               No {programType} found. Try adjusting your filters or create a new one.
             </div>
           ) : (

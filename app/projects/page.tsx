@@ -17,7 +17,7 @@ export default function ProjectsPage() {
       <div className="text-center mb-14">
         <h1 className="text-4xl font-bold tracking-tight text-black dark:text-white">Our Projects</h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm md:text-base">
-          Innovative robotics & AI projects developed by DIU Robotics Club
+          Innovative robotics & AI projects developed by Daffodil International University Robotics Club
           members
         </p>
       </div>

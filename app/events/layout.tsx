@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "DIU Robotics Club | Events",
+  title: "Daffodil International University Robotics Club | Events",
   description: "Explore the latest robotics events, meetups, and competitions.",
   openGraph: {
-    title: "DIU Robotics Club | Events",
+    title: "Daffodil International University Robotics Club | Events",
     description: "Explore the latest robotics events, meetups, and competitions.",
     images: ["/diurc_logo.png"],
   },
   twitter: {
     card: "summary",
-    title: "DIU Robotics Club | Events",
+    title: "Daffodil International University Robotics Club | Events",
     description: "Explore the latest robotics events, meetups, and competitions.",
     images: ["/diurc_logo.png"],
   },

@@ -16,7 +16,7 @@ function AchievementSlideImage({ src, alt }: { src: string; alt: string }) {
   const [imageFailed, setImageFailed] = useState(false);
 
   return (
-    <div className="relative h-56 sm:h-64 md:h-full md:min-h-[340px] bg-gradient-to-br from-cyan-900/20 to-[#071024] flex items-center justify-center overflow-hidden">
+    <div className="relative h-56 sm:h-64 md:h-full md:min-h-[340px] bg-gradient-to-br from-cyan-900/20 to-[#0B1F3A] flex items-center justify-center overflow-hidden">
       {!imageFailed ? (
         <img
           src={src}
@@ -102,7 +102,7 @@ export default function AnimatedAchievements({
   if (!items.length) return null;
 
   return (
-    <section className="py-16 bg-[#071024]">
+    <section className="py-16 bg-[#0B1F3A]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* HEADER */}
         <motion.div

@@ -6,20 +6,20 @@ import AnimatedBenefits from "@/components/public/AnimatedBenefits";
 import AnimatedFormSection from "@/components/public/AnimatedFormSection";
 
 export const metadata: Metadata = {
-  title: "Join DIU Robotic Club",
+  title: "Join Daffodil International University Robotics Club",
   description:
-    "Apply for membership in DIU Robotics Club. Join workshops, research, and competitions.",
+    "Apply for membership in Daffodil International University Robotics Club. Join workshops, research, and competitions.",
   openGraph: {
-    title: "Join DIU Robotic Club",
+    title: "Join Daffodil International University Robotics Club",
     description:
-      "Apply for membership in DIU Robotics Club. Join workshops, research, and competitions.",
+      "Apply for membership in Daffodil International University Robotics Club. Join workshops, research, and competitions.",
     images: ["/diurc_logo.png"],
   },
   twitter: {
     card: "summary",
-    title: "Join DIU Robotic Club",
+    title: "Join Daffodil International University Robotics Club",
     description:
-      "Apply for membership in DIU Robotics Club. Join workshops, research, and competitions.",
+      "Apply for membership in Daffodil International University Robotics Club. Join workshops, research, and competitions.",
     images: ["/diurc_logo.png"],
   },
 };

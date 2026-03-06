@@ -219,7 +219,7 @@ async function seedMembers() {
         department: departments[Math.floor(Math.random() * departments.length)],
         batch: batches[Math.floor(Math.random() * batches.length)],
         image: "https://diurc.vercel.app/sh.jpg",
-        bio: `${name} is an enthusiastic member of DIU Robotics Club, passionate about technology and innovation.`,
+        bio: `${name} is an enthusiastic member of Daffodil International University Robotics Club, passionate about technology and innovation.`,
         isActive: true,
         socialLinks: {
           linkedin: `https://linkedin.com/in/${name.toLowerCase().replace(/\s+/g, "-")}`,

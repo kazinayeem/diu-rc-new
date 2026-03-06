@@ -48,7 +48,7 @@ const ALL_MENU_ITEMS: MenuItem[] = [
   { href: "/admin/notices", label: "Notices", icon: Megaphone, permission: "notices" },
   { href: "/admin/payment", label: "Payment", icon: CreditCard, permission: "payment" },
   { href: "/admin/sponsors", label: "Sponsors", icon: Star, permission: "sponsors" },
-  { href: "/admin/hall-of-fame", label: "Hall of Fame", icon: GraduationCap, permission: "sponsors" },
+  { href: "/admin/hall-of-fame", label: "Hall of Fame", icon: GraduationCap, permission: "hall-of-fame" },
   { href: "/admin/settings/homepage", label: "Homepage Content", icon: ImageIcon, superAdminOnly: true },
   { href: "/admin/settings/smtp", label: "SMTP Config", icon: Mail, superAdminOnly: true },
   { href: "/admin/settings/admins", label: "Manage Admins", icon: ShieldCheck, superAdminOnly: true },
@@ -76,7 +76,7 @@ export default function Sidebar() {
       {/* ─── Mobile Toggle Button ─────────────────────────────────────────── */}
       <button
         onClick={() => setOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-50 bg-[rgba(2,29,46,0.85)] backdrop-blur-lg p-3 rounded-xl border border-[rgba(76,201,240,0.15)] shadow-lg"
+        className="md:hidden fixed top-4 left-4 z-50 bg-[rgba(11,31,58,0.85)] backdrop-blur-lg p-3 rounded-xl border border-[rgba(61,181,216,0.15)] shadow-lg"
       >
         <Menu size={22} className="text-slate-100" />
       </button>
@@ -93,7 +93,7 @@ export default function Sidebar() {
       <aside
         className={cn(
           "fixed left-0 top-0 w-64 h-full text-slate-100 z-50 transition-transform duration-300",
-          "bg-[rgba(2,29,46,0.92)] border-r border-[rgba(76,201,240,0.12)] backdrop-blur-xl shadow-2xl",
+          "bg-[rgba(11,31,58,0.92)] border-r border-[rgba(61,181,216,0.12)] backdrop-blur-xl shadow-2xl",
           open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
@@ -102,17 +102,17 @@ export default function Sidebar() {
           <div className="p-6 pb-3 flex-shrink-0">
             <div className="flex items-center justify-between mb-5">
               <Link href="/admin" className="flex items-center space-x-2">
-                <div className="w-10 h-10 rounded-lg bg-[rgba(63,182,214,0.1)] border border-[rgba(76,201,240,0.2)] flex items-center justify-center shadow-lg shadow-[rgba(0,229,255,0.1)]">
+                <div className="w-10 h-10 rounded-lg bg-[rgba(61,181,216,0.1)] border border-[rgba(61,181,216,0.2)] flex items-center justify-center shadow-lg shadow-[rgba(0,229,255,0.1)]">
                   <Image
                     src="/diurc_logo.png"
-                    alt="DIU Robotics Club"
+                    alt="Daffodil International University Robotics Club"
                     width={32}
                     height={32}
                     className="object-contain"
                     priority
                   />
                 </div>
-                <span className="text-xl font-semibold tracking-wide bg-gradient-to-r from-[#4CC9F0] to-[#3FB6D6] bg-clip-text text-transparent">
+                <span className="text-xl font-semibold tracking-wide bg-gradient-to-r from-[#3DB5D8] to-[#3DB5D8] bg-clip-text text-transparent">
                   DIU RC Admin
                 </span>
               </Link>
@@ -131,8 +131,8 @@ export default function Sidebar() {
               <span className={cn(
                 "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold",
                 isSuperAdmin
-                  ? "bg-[rgba(0,229,255,0.12)] text-[#00E5FF] ring-1 ring-[rgba(0,229,255,0.3)]"
-                  : "bg-[rgba(63,182,214,0.12)] text-[#4CC9F0] ring-1 ring-[rgba(76,201,240,0.3)]"
+                  ? "bg-[rgba(0,229,255,0.12)] text-[#3DB5D8] ring-1 ring-[rgba(0,229,255,0.3)]"
+                  : "bg-[rgba(61,181,216,0.12)] text-[#3DB5D8] ring-1 ring-[rgba(61,181,216,0.3)]"
               )}>
                 <ShieldCheck size={12} />
                 {isSuperAdmin ? "Super Admin" : "Manager"}
@@ -155,8 +155,8 @@ export default function Sidebar() {
                   className={cn(
                     "flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors",
                     isActive
-                      ? "bg-gradient-to-r from-[#4361EE]/15 to-[#3A0CA3]/10 text-[#4CC9F0] ring-1 ring-[#4361EE]/30"
-                      : "text-[#90E0EF]/60 hover:bg-[rgba(76,201,240,0.06)] hover:text-[#90E0EF]"
+                      ? "bg-gradient-to-r from-[#2F6BFF]/15 to-[#5B4BFF]/10 text-[#3DB5D8] ring-1 ring-[#2F6BFF]/30"
+                      : "text-[#8ED6E6]/60 hover:bg-[rgba(61,181,216,0.06)] hover:text-[#8ED6E6]"
                   )}
                 >
                   <Icon size={20} />

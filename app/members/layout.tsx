@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "DIU Robotics Club | Members",
-  description: "Meet the innovators and members of DIU Robotics Club.",
+  title: "Daffodil International University Robotics Club | Members",
+  description: "Meet the innovators and members of Daffodil International University Robotics Club.",
   openGraph: {
-    title: "DIU Robotics Club | Members",
-    description: "Meet the innovators and members of DIU Robotics Club.",
+    title: "Daffodil International University Robotics Club | Members",
+    description: "Meet the innovators and members of Daffodil International University Robotics Club.",
     images: ["/diurc_logo.png"],
   },
   twitter: {
     card: "summary",
-    title: "DIU Robotics Club | Members",
-    description: "Meet the innovators and members of DIU Robotics Club.",
+    title: "Daffodil International University Robotics Club | Members",
+    description: "Meet the innovators and members of Daffodil International University Robotics Club.",
     images: ["/diurc_logo.png"],
   },
 };

@@ -124,7 +124,7 @@ export default function HomepageSettingsPage() {
         <button
           onClick={handleSave}
           disabled={saving || loading}
-          className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-400 disabled:opacity-60 text-[#071024] font-semibold rounded-xl transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-400 disabled:opacity-60 text-[#0B1F3A] font-semibold rounded-xl transition-colors"
         >
           {saving ? <Loader2 size={17} className="animate-spin" /> : <Save size={17} />}
           Save Changes

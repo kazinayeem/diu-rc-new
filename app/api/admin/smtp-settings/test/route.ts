@@ -62,11 +62,11 @@ export async function POST(req: NextRequest) {
     await transporter.sendMail({
       from: `"DIURC Portal" <${settings.from?.email || settings.auth.user}>`,
       to: recipient,
-      subject: "✅ SMTP Test — DIU Robotics Club",
+      subject: "✅ SMTP Test — Daffodil International University Robotics Club",
       html: `
         <div style="font-family:sans-serif;padding:32px;background:#f4f7fb;border-radius:12px;max-width:500px;margin:auto">
           <h2 style="color:#0a1f44">✅ SMTP is Working!</h2>
-          <p style="color:#333">Your SMTP configuration for <strong>DIU Robotics Club</strong> is correctly set up.</p>
+          <p style="color:#333">Your SMTP configuration for <strong>Daffodil International University Robotics Club</strong> is correctly set up.</p>
           <hr style="border:none;border-top:1px solid #ddd;margin:20px 0"/>
           <p style="color:#666;font-size:13px">Host: <strong>${settings.host}</strong></p>
           <p style="color:#666;font-size:13px">Port: <strong>${settings.port}</strong></p>

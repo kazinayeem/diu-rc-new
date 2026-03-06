@@ -52,7 +52,7 @@ export default function AnimatedBenefits() {
             Why Join Us?
           </h2>
           <p className="text-white/70 max-w-2xl mx-auto text-lg">
-            Unlock opportunities and grow your skills with DIU Robotics Club.
+            Unlock opportunities and grow your skills with Daffodil International University Robotics Club.
           </p>
         </motion.div>
 

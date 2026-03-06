@@ -20,8 +20,12 @@ export default function HideNavbarWrapper({
 
   return (
     <>
-      {!hideNavbar && <NoticeTickerBar />}
-      {!hideNavbar && <Navbar />}
+      {!hideNavbar && (
+        <div className="sticky top-0 z-50">
+          <NoticeTickerBar />
+          <Navbar />
+        </div>
+      )}
       {children}
       {!hideFooter && <Footer />}
     </>

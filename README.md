@@ -1,6 +1,6 @@
-# DIU Robotic Club Website
+# Daffodil International University Robotics Club Website
 
-A comprehensive, fully dynamic website for the DIU Robotic Club built with Next.js 14 (App Router), Tailwind CSS, MongoDB/Mongoose, and NextAuth.
+A comprehensive, fully dynamic website for the Daffodil International University Robotics Club built with Next.js 14 (App Router), Tailwind CSS, MongoDB/Mongoose, and NextAuth.
 
 ## 🚀 Features
 
@@ -367,7 +367,7 @@ The application uses NextAuth.js for authentication:
 
 ## 📝 License
 
-This project is created for DIU Robotic Club.
+This project is created for Daffodil International University Robotics Club.
 
 ## 🤝 Contributing
 
@@ -378,9 +378,9 @@ This project is created for DIU Robotic Club.
 
 ## 📧 Contact
 
-For questions or support, contact the DIU Robotic Club.
+For questions or support, contact the Daffodil International University Robotics Club.
 
 ---
 
-Built with ❤️ for DIU Robotic Club
+Built with ❤️ for Daffodil International University Robotics Club
 

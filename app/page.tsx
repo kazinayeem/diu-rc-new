@@ -32,20 +32,20 @@ const HeroWithRobot = dynamic(() => import("@/components/public/With3drobot"), {
 });
 
 export const metadata: Metadata = {
-  title: "DIU Robotic Club | Home",
+  title: "Daffodil International University Robotics Club | Home",
   description:
-    "DIU Robotics Club - robotics, automation, research, workshops, and competitions at DIU.",
+    "Daffodil International University Robotics Club - robotics, automation, research, workshops, and competitions at DIU.",
   openGraph: {
-    title: "DIU Robotic Club | Home",
+    title: "Daffodil International University Robotics Club | Home",
     description:
-      "DIU Robotics Club - robotics, automation, research, workshops, and competitions at DIU.",
+      "Daffodil International University Robotics Club - robotics, automation, research, workshops, and competitions at DIU.",
     images: ["/diurc_logo.png"],
   },
   twitter: {
     card: "summary",
-    title: "DIU Robotic Club | Home",
+    title: "Daffodil International University Robotics Club | Home",
     description:
-      "DIU Robotics Club - robotics, automation, research, workshops, and competitions at DIU.",
+      "Daffodil International University Robotics Club - robotics, automation, research, workshops, and competitions at DIU.",
     images: ["/diurc_logo.png"],
   },
 };
@@ -115,7 +115,7 @@ export default async function HomePage() {
   } catch {}
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#071024] text-white">
+    <div className="min-h-screen flex flex-col bg-[#0B1F3A] text-white">
       {/* Prefetch all page data on load */}
       <DataPrefetcher />
 
@@ -125,13 +125,14 @@ export default async function HomePage() {
           className="absolute inset-0 opacity-10 pointer-events-none"
           style={{
             backgroundImage:
-              "linear-gradient(#12324b 1px, transparent 1px), linear-gradient(90deg, #12324b 1px, transparent 1px)",
+              "linear-gradient(#1a3a5c 1px, transparent 1px), linear-gradient(90deg, #1a3a5c 1px, transparent 1px)",
             backgroundSize: "40px 40px",
           }}
         />
 
         <HeroWithRobot />
         <HomeImageSlider slides={heroSlides} />
+        <AnimatedCTA />
         <ClubVideoPreview videoUrl="https://youtu.be/ZBL3rCvjtQU" />
         <AnimatedMissionVision />
         <AnimatedWhatWeDo />
@@ -165,69 +166,143 @@ export default async function HomePage() {
         )}
 
         {/* Campus Labs + Impact */}
-        <AnimatedSection className="py-16">
+        <AnimatedSection className="py-20">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid lg:grid-cols-2 gap-8">
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur">
-                <h2 className="text-3xl font-bold text-cyan-200 mb-4">
-                  Labs & Facilities
-                </h2>
-                <p className="text-white/70 leading-relaxed mb-6">
-                  Hands-on learning happens in our dedicated robotics lab. Members
-                  explore embedded systems, rapid prototyping, and AI-driven
-                  perception using real hardware and guided mentorship.
-                </p>
-                <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                  {[
-                    "Electronics workbench",
-                    "3D printing & prototyping",
-                    "Vision & sensor kits",
-                    "Competition prep zone",
-                  ].map((item) => (
-                    <div
-                      key={item}
-                      className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white/80"
-                    >
-                      {item}
+
+            {/* Section header */}
+            <div className="mb-12">
+              <div className="inline-flex items-center gap-2 bg-cyan-500/8 border border-cyan-500/15 px-3.5 py-1.5 rounded-full mb-5">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                <span className="text-[11px] font-bold text-cyan-400 tracking-[0.14em] uppercase">Environment</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
+                Where We{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+                  Learn &amp; Grow
+                </span>
+              </h2>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-6">
+
+              {/* Labs Card */}
+              <div
+                className="group relative rounded-2xl overflow-hidden"
+                style={{
+                  background: "linear-gradient(145deg, #0c1f3a 0%, #0B1F3A 100%)",
+                  border: "1px solid rgba(34,211,238,0.18)",
+                }}
+              >
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
+                  style={{ boxShadow: "inset 0 0 50px rgba(34,211,238,0.06)" }} />
+
+                <div className="p-7 sm:p-8">
+                  {/* Header */}
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center"
+                      style={{ boxShadow: "0 0 16px rgba(34,211,238,0.1)" }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-400"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
                     </div>
-                  ))}
+                    <h3 className="text-xl font-bold text-white">Labs &amp; Facilities</h3>
+                  </div>
+
+                  <p className="text-white/50 text-sm leading-relaxed mb-7">
+                    Hands-on learning happens in our dedicated robotics lab. Members explore embedded systems,
+                    rapid prototyping, and AI-driven perception using real hardware and guided mentorship.
+                  </p>
+
+                  <div className="h-px w-full bg-gradient-to-r from-transparent via-cyan-500/15 to-transparent mb-7" />
+
+                  {/* Facility grid */}
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {[
+                      { icon: "⚡", label: "Electronics workbench", desc: "Full soldering & PCB station" },
+                      { icon: "🖨️", label: "3D printing & prototyping", desc: "FDM printers & laser cutter" },
+                      { icon: "👁️", label: "Vision & sensor kits", desc: "OpenCV, LiDAR, depth cameras" },
+                      { icon: "🏆", label: "Competition prep zone", desc: "Dedicated arena & test tracks" },
+                    ].map((f) => (
+                      <div
+                        key={f.label}
+                        className="rounded-xl px-4 py-3.5 border border-white/6 bg-white/3 hover:bg-white/6 hover:border-cyan-500/20 transition-all duration-200"
+                      >
+                        <p className="text-sm font-semibold text-white/85 mb-0.5">{f.icon} {f.label}</p>
+                        <p className="text-xs text-white/35">{f.desc}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur">
-                <h2 className="text-3xl font-bold text-cyan-200 mb-4">
-                  Community & Impact
-                </h2>
-                <p className="text-white/70 leading-relaxed mb-6">
-                  We build a supportive community around robotics, research, and
-                  innovation. From workshops to national competitions, we grow
-                  skills that matter beyond campus.
-                </p>
-                <div className="space-y-4">
-                  {[
-                    {
-                      title: "Workshops",
-                      desc: "Weekly sessions on Arduino, ROS, and ML basics.",
-                    },
-                    {
-                      title: "Research",
-                      desc: "Guided projects with faculty and peer review.",
-                    },
-                    {
-                      title: "Competitions",
-                      desc: "Team-based challenges that build real confidence.",
-                    },
-                  ].map((item) => (
-                    <div key={item.title} className="flex gap-4">
-                      <div className="h-9 w-1 rounded-full bg-cyan-400/70" />
-                      <div>
-                        <p className="text-white font-semibold">{item.title}</p>
-                        <p className="text-white/70 text-sm">{item.desc}</p>
-                      </div>
+              {/* Community Card */}
+              <div
+                className="group relative rounded-2xl overflow-hidden"
+                style={{
+                  background: "linear-gradient(145deg, #130d2e 0%, #0B1F3A 100%)",
+                  border: "1px solid rgba(167,139,250,0.18)",
+                }}
+              >
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-violet-400 to-transparent" />
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
+                  style={{ boxShadow: "inset 0 0 50px rgba(167,139,250,0.06)" }} />
+
+                <div className="p-7 sm:p-8">
+                  {/* Header */}
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center"
+                      style={{ boxShadow: "0 0 16px rgba(167,139,250,0.1)" }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-violet-400"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     </div>
-                  ))}
+                    <h3 className="text-xl font-bold text-white">Community &amp; Impact</h3>
+                  </div>
+
+                  <p className="text-white/50 text-sm leading-relaxed mb-7">
+                    We build a supportive community around robotics, research, and innovation.
+                    From workshops to national competitions, we grow skills that matter beyond campus.
+                  </p>
+
+                  <div className="h-px w-full bg-gradient-to-r from-transparent via-violet-500/15 to-transparent mb-7" />
+
+                  {/* Pillars */}
+                  <div className="space-y-4">
+                    {[
+                      {
+                        color: "#a78bfa",
+                        glow: "rgba(167,139,250,0.12)",
+                        title: "Workshops",
+                        desc: "Weekly sessions on Arduino, ROS, and ML basics."
+                      },
+                      {
+                        color: "#60a5fa",
+                        glow: "rgba(96,165,250,0.12)",
+                        title: "Research",
+                        desc: "Guided projects with faculty and peer review."
+                      },
+                      {
+                        color: "#34d399",
+                        glow: "rgba(52,211,153,0.12)",
+                        title: "Competitions",
+                        desc: "Team-based challenges that build real confidence."
+                      },
+                    ].map((item) => (
+                      <div
+                        key={item.title}
+                        className="flex items-start gap-4 rounded-xl px-4 py-3.5 border border-white/6 bg-white/3 hover:bg-white/6 transition-all duration-200"
+                      >
+                        <div
+                          className="mt-0.5 w-1.5 h-1.5 rounded-full flex-shrink-0 mt-2"
+                          style={{ background: item.color, boxShadow: `0 0 8px ${item.glow}` }}
+                        />
+                        <div>
+                          <p className="text-sm font-semibold text-white/85">{item.title}</p>
+                          <p className="text-xs text-white/40 mt-0.5">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
+
             </div>
           </div>
         </AnimatedSection>
@@ -271,52 +346,6 @@ export default async function HomePage() {
                 >
                   <p className="text-white font-semibold mb-2">{item.title}</p>
                   <p className="text-white/70 text-sm">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </AnimatedSection>
-
-        {/* Team Highlights */}
-        <AnimatedSection className="py-16">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="flex items-end justify-between gap-6 mb-8 flex-wrap">
-              <div>
-                <h2 className="text-3xl font-bold text-cyan-200">
-                  Team Highlights
-                </h2>
-                <p className="text-white/60 mt-2">
-                  Core leaders and active contributors driving club initiatives.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                {
-                  name: "Team Lead",
-                  role: "Robotics Systems",
-                },
-                {
-                  name: "Research Lead",
-                  role: "AI & Vision",
-                },
-                {
-                  name: "Operations Lead",
-                  role: "Events & Community",
-                },
-                {
-                  name: "Build Lead",
-                  role: "Embedded & Prototyping",
-                },
-              ].map((member) => (
-                <div
-                  key={member.name}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/10 transition"
-                >
-                  <div className="h-14 w-14 rounded-full bg-cyan-400/20 border border-cyan-300/30 mb-4" />
-                  <p className="text-white font-semibold">{member.name}</p>
-                  <p className="text-white/70 text-sm">{member.role}</p>
                 </div>
               ))}
             </div>
@@ -387,71 +416,6 @@ export default async function HomePage() {
           }))} />
         </AnimatedSection>
 
-        {/* FAQ */}
-        <AnimatedSection className="py-16">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold text-cyan-200">FAQ</h2>
-              <p className="text-white/60 mt-2">
-                Answers to the most common questions.
-              </p>
-            </div>
-
-            <FAQAccordion
-              items={[
-                {
-                  q: "How do I join the club? / ক্লাবে কীভাবে যোগ দেব?",
-                  a: "Apply through the Join page and attend the orientation session. / Join পেজে আবেদন করুন এবং ওরিয়েন্টেশনে অংশ নিন।",
-                },
-                {
-                  q: "Do I need prior robotics experience? / আগে থেকে অভিজ্ঞতা দরকার?",
-                  a: "No. We run beginner tracks and pair new members with mentors. / না, শুরু করার জন্য বেসিক ট্র্যাক ও মেন্টরশিপ আছে।",
-                },
-                {
-                  q: "What projects can I work on? / কী ধরনের প্রজেক্ট করব?",
-                  a: "You can join ongoing research, build competition bots, or start a new idea. / রিসার্চ, কম্পিটিশন বট বা নতুন আইডিয়ায় কাজ করতে পারবেন।",
-                },
-                {
-                  q: "How often are workshops held? / ওয়ার্কশপ কত ঘন ঘন হয়?",
-                  a: "Weekly sessions with focused topics, plus seasonal bootcamps. / সাপ্তাহিক সেশন এবং মৌসুমি বুটক্যাম্প হয়।",
-                },
-                {
-                  q: "Is there any membership fee? / সদস্যপদ ফি আছে কি?",
-                  a: "There is no fixed fee; some events may have small participation costs. / নির্দিষ্ট ফি নেই, তবে কিছু ইভেন্টে ছোট ফি থাকতে পারে।",
-                },
-                {
-                  q: "Can first-year students apply? / প্রথম বর্ষের শিক্ষার্থীরা কি আবেদন করতে পারে?",
-                  a: "Yes, we welcome students from all years and departments. / হ্যাঁ, সব বর্ষ ও বিভাগের শিক্ষার্থীরা আবেদন করতে পারে।",
-                },
-                {
-                  q: "Do I need to own hardware? / নিজস্ব হার্ডওয়্যার লাগবে?",
-                  a: "No, lab resources are provided for learning and projects. / না, ল্যাব রিসোর্স দিয়ে কাজ করা যায়।",
-                },
-                {
-                  q: "How are teams formed? / টিম কীভাবে গঠন হয়?",
-                  a: "Teams are formed by interest and skill balance after onboarding. / আগ্রহ ও দক্ষতা অনুযায়ী টিম গঠন করা হয়।",
-                },
-                {
-                  q: "Can I switch tracks later? / পরে ট্র্যাক বদলাতে পারব?",
-                  a: "Yes, you can move between tracks after completing basics. / বেসিক শেষ হলে ট্র্যাক বদলানো যায়।",
-                },
-                {
-                  q: "What is the time commitment? / সময় কতটা দিতে হয়?",
-                  a: "Most members spend 2-4 hours per week, more during competitions. / সাধারণত সপ্তাহে ২-৪ ঘণ্টা, কম্পিটিশনের সময়ে বেশি লাগে।",
-                },
-                {
-                  q: "How do I get updates? / আপডেট কীভাবে পাব?",
-                  a: "Follow the club pages and announcements on the website. / ক্লাবের পেজ ও ওয়েবসাইটে ঘোষণা দেখুন।",
-                },
-                {
-                  q: "Who can I contact for help? / সাহায্যের জন্য কাকে যোগাযোগ করব?",
-                  a: "Use the Contact section or message the club on social media. / Contact সেকশনে অথবা সোশ্যাল মিডিয়ায় যোগাযোগ করুন।",
-                },
-              ]}
-            />
-          </div>
-        </AnimatedSection>
-
         {/* Featured Seminars */}
         {seminars.length > 0 && (
           <AnimatedSection className="py-16">
@@ -488,7 +452,63 @@ export default async function HomePage() {
         <LatestEvents />
         <LatestWorkshops />
 
-        <AnimatedCTA />
+        {/* FAQ */}
+        <AnimatedSection className="py-20">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid lg:grid-cols-[1fr_2fr] gap-12 lg:gap-16 items-start">
+
+              {/* Left: sticky heading block */}
+              <div className="lg:sticky lg:top-28">
+                <div className="inline-flex items-center gap-2 bg-cyan-500/8 border border-cyan-500/15 px-3.5 py-1.5 rounded-full mb-5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                  <span className="text-[11px] font-bold text-cyan-400 tracking-[0.14em] uppercase">FAQ</span>
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight mb-4">
+                  Frequently<br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+                    Asked Questions
+                  </span>
+                </h2>
+                <p className="text-white/45 text-sm leading-relaxed mb-8">
+                  Answers to the most common questions about joining, participating, and growing with the club.
+                </p>
+                <div className="flex flex-col gap-3">
+                  {[
+                    { n: "12", label: "Questions answered" },
+                    { n: "200 BDT", label: "Membership fee" },
+                    { n: "Open", label: "All years & departments" },
+                  ].map((s) => (
+                    <div key={s.label} className="flex items-center gap-3">
+                      <span className="text-sm font-bold text-cyan-400 min-w-[60px]">{s.n}</span>
+                      <span className="text-xs text-white/40">{s.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right: accordion */}
+              <div>
+                <FAQAccordion
+                  items={[
+                    { q: "How do I join the club?", a: "Apply through the Join page and attend the orientation session." },
+                    { q: "Do I need prior robotics experience?", a: "No. We run beginner tracks and pair new members with mentors." },
+                    { q: "What projects can I work on?", a: "You can join ongoing research, build competition bots, or start a new idea." },
+                    { q: "How often are workshops held?", a: "Weekly sessions with focused topics, plus seasonal bootcamps." },
+                    { q: "Is there any membership fee?", a: "Yes, the membership fee is 200 BDT. Some events may have additional small participation costs." },
+                    { q: "Can first-year students apply?", a: "Yes, we welcome students from all years and departments." },
+                    { q: "Do I need to own hardware?", a: "No, lab resources are provided for learning and projects." },
+                    { q: "How are teams formed?", a: "Teams are formed by interest and skill balance after onboarding." },
+                    { q: "Can I switch tracks later?", a: "Yes, you can move between tracks after completing basics." },
+                    { q: "What is the time commitment?", a: "Most members spend 2-4 hours per week, more during competitions." },
+                    { q: "How do I get updates?", a: "Follow the club pages and announcements on the website." },
+                    { q: "Who can I contact for help?", a: "Use the Contact section or message the club on social media." },
+                  ]}
+                />
+              </div>
+
+            </div>
+          </div>
+        </AnimatedSection>
       </main>
     </div>
   );
