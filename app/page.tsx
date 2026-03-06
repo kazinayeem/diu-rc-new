@@ -17,7 +17,9 @@ import DataPrefetcher from "@/components/DataPrefetcher";
 import connectDB from "@/lib/db";
 import Sponsor from "@/lib/models/Sponsor";
 import HomeContent from "@/lib/models/HomeContent";
+import HallOfFame from "@/lib/models/HallOfFame";
 import SponsorsMarquee from "@/components/public/SponsorsMarquee";
+import HallOfFameCarousel from "@/components/public/HallOfFameCarousel";
 
 import dynamic from "next/dynamic";
 
@@ -105,6 +107,13 @@ export default async function HomePage() {
     sponsors = await Sponsor.find({ isVisible: true }).sort({ order: 1, createdAt: 1 }).lean();
   } catch {}
 
+  // Fetch Hall of Fame entries
+  let hallOfFame: any[] = [];
+  try {
+    await connectDB();
+    hallOfFame = await HallOfFame.find({ isVisible: true }).sort({ order: 1, createdAt: 1 }).lean();
+  } catch {}
+
   return (
     <div className="min-h-screen flex flex-col bg-[#071024] text-white">
       {/* Prefetch all page data on load */}
@@ -127,6 +136,33 @@ export default async function HomePage() {
         <AnimatedMissionVision />
         <AnimatedWhatWeDo />
         <AnimatedAchievements achievements={achievements} />
+
+        {/* Hall of Fame */}
+        {hallOfFame.length > 0 && (
+          <AnimatedSection className="py-16">
+            <div className="max-w-3xl mx-auto px-6">
+              <div className="text-center mb-10">
+                <h2 className="text-3xl font-bold text-cyan-200">🎓 Hall of Fame</h2>
+                <p className="text-white/60 mt-2">
+                  Meet our distinguished alumni who have made remarkable achievements in their careers
+                </p>
+              </div>
+              <div className="pb-10">
+                <HallOfFameCarousel
+                  entries={hallOfFame.map((e: any) => ({
+                    _id: e._id.toString(),
+                    name: e.name,
+                    imageUrl: e.imageUrl,
+                    achievement: e.achievement,
+                    position: e.position,
+                    year: e.year,
+                    linkedinUrl: e.linkedinUrl,
+                  }))}
+                />
+              </div>
+            </div>
+          </AnimatedSection>
+        )}
 
         {/* Campus Labs + Impact */}
         <AnimatedSection className="py-16">

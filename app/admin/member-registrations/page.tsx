@@ -181,7 +181,12 @@ export default function MemberRegistrationsPage() {
       if (deleteResult.success) {
         setSelectedIds([]);
         alert(deleteResult.message);
-        setPage(1);
+        // If already on page 1, setPage won't trigger a refetch — call refetch() explicitly
+        if (page !== 1) {
+          setPage(1);
+        } else {
+          refetch();
+        }
       } else {
         alert(deleteResult.message || "Failed to delete all registrations");
       }
