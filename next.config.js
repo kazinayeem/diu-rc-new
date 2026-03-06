@@ -25,7 +25,7 @@ const nextConfig = {
   experimental: {
     serverActions: {
       bodySizeLimit: '50mb',
-      maxDuration: 60,
+      maxDuration: 600,
     },
   },
 }
