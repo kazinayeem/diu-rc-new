@@ -259,20 +259,40 @@ export default function ImportExportModal({
 
             const result = await response.json();
             
-            // Get importId and start polling for real-time progress
-            if (result.importId) {
-              setImportId(result.importId);
-              setImportProgress(5);
-              // Start polling for progress
-              await pollImportProgress(result.importId);
+            setImportProgress(100);
+            setImportTotal(result.total || 0);
+            setImportProcessed(result.processed || result.total || 0);
+            setImportInserted(result.inserted || 0);
+            setImportFailed(result.failed || 0);
+            setImporting(false);
+            onImportComplete();
+
+            if (result.failed === 0 && result.success) {
+              // All records succeeded – show brief success banner then auto-close
+              setImportCompletedData({
+                total: result.total,
+                inserted: result.inserted,
+                failed: result.failed,
+                successRate: result.successRate,
+                message: `✅ Import completed: ${result.inserted} succeeded, ${result.failed} failed out of ${result.total} records`,
+              });
+              setTimeout(() => {
+                setImportCompletedData(null);
+                onClose();
+              }, 3000);
             } else {
-              // Fallback: show result immediately
-              setImportProgress(100);
-              setImportResult(result);
-              setImporting(false);
-              if (result.success) {
-                onImportComplete();
-              }
+              // Some failures – keep modal open with error details
+              setImportErrors(result.errors || []);
+              setImportResult({
+                success: result.success,
+                total: result.total,
+                processed: result.processed,
+                inserted: result.inserted,
+                failed: result.failed,
+                successRate: result.successRate,
+                errors: result.errors || [],
+                message: result.message,
+              });
             }
           } catch (err: any) {
             clearTimeout(timeoutId);

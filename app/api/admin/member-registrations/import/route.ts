@@ -3,17 +3,18 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/db";
 import MemberRegistration from "@/lib/models/MemberRegistration";
-import { initializeImport, updateProgress, completeImport, failImport } from "@/lib/importProgress";
+
+// Vercel: allow up to 60 seconds for this route
+export const maxDuration = 60;
 
 // Helper function for safe string trimming - handles any data type
 const safeTrim = (v: any): string => String(v ?? "").trim();
 
 export async function POST(req: NextRequest) {
-  let session;
   const importId = `import_${Date.now()}`;
 
   try {
-    session = await getServerSession(authOptions);
+    const session = await getServerSession(authOptions);
     if (!session || (session.user.role !== "admin" && session.user.role !== "super-admin")) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
@@ -30,137 +31,109 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let successCount = 0;
-    let failedCount = 0;
-    const errors: any[] = [];
     const totalRows = data.length;
-    let processed = 0;
+    const errors: any[] = [];
+    const now = new Date();
 
-    // Initialize progress tracker
-    initializeImport(importId, totalRows);
+    // ── Step 1: Parse all rows in memory ────────────────────────────────────
+    const parsed: Array<{ rowNumber: number; record: any }> = [];
+    const seenInBatch = new Set<string>(); // catch duplicates within the uploaded file itself
 
-    // Process each row individually with per-row error handling and real-time progress
     for (let i = 0; i < data.length; i++) {
-      try {
-        const row = data[i];
-        const rowNumber = i + 2; // Row numbers start at 2 (1 is header, 0-indexed array)
+      const row = data[i];
+      const rowNumber = i + 2;
 
-        // Extract and safely convert all fields
-        const name = safeTrim(row.name || row["Full Name"]);
-        let studentId = safeTrim(row.studentId || row["Student ID"]);
-        let email = safeTrim(row.email || row["DIU Email"]).toLowerCase();
-        const phone = safeTrim(row.phone || row["Mobile Phone"]);
-        let department = safeTrim(row.department || row.Department);
-        const batch = safeTrim(row.batch || row.Batch);
-        const currentYear = safeTrim(row.currentYear || row["Current Year"]);
-        const cgpa = Number(row.cgpa || row.CGPA) || 0; // Default to 0 if empty
-        const previousExperience = safeTrim(row.previousExperience || row["Previous Experience"]);
-        const whyJoin = safeTrim(row.whyJoin || row["Why Join"]);
-        const skills = safeTrim(row.skills || row.Skills)
-          .split(",")
-          .map((s: string) => s.trim())
-          .filter((s: string) => s);
-        const paymentMethod = safeTrim(row.paymentMethod || row["Payment Method"]) || "bkash";
-        const paymentNumber = safeTrim(row.paymentNumber || row["Payment Number"]);
-        const transactionId = safeTrim(row.transactionId || row["Transaction ID"]);
+      let studentId = safeTrim(row.studentId || row["Student ID"]);
+      let email = safeTrim(row.email || row["DIU Email"]).toLowerCase();
+      let department = safeTrim(row.department || row.Department);
+      const name = safeTrim(row.name || row["Full Name"]);
 
-        // Apply defaults for missing critical fields - DO NOT FAIL
-        if (!studentId) {
-          // Generate unique ID for missing studentId: 0000-{timestamp}-{random}
-          const timestamp = Date.now();
-          const random = Math.floor(Math.random() * 10000);
-          studentId = `0000-${timestamp}-${random}`;
-        }
-        if (!department) {
-          department = "None"; // Default department if missing
-        }
+      // Defaults for missing critical fields
+      if (!studentId) {
+        studentId = `0000-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+      }
+      if (!department) department = "None";
+      if (!email) {
+        email = `noemail-${Date.now()}-${Math.floor(Math.random() * 100000)}@noreply.local`;
+      }
 
-        // Apply default for missing email - generate unique placeholder email
-        if (!email) {
-          const timestamp = Date.now();
-          const random = Math.floor(Math.random() * 100000);
-          email = `noemail-${timestamp}-${random}@noreply.local`.toLowerCase();
-        }
+      const finalName = name || `User-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
-        // Apply default for missing name
-        const finalName = name || `User-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+      // Deduplicate within the uploaded batch
+      if (seenInBatch.has(studentId)) {
+        errors.push({ row: rowNumber, error: "Duplicate Student ID within uploaded file" });
+        continue;
+      }
+      seenInBatch.add(studentId);
 
-        // Skip email format validation - allow any email or none at all
+      const skills = safeTrim(row.skills || row.Skills)
+        .split(",")
+        .map((s: string) => s.trim())
+        .filter((s: string) => s);
 
-        // Check if registration already exists in database
-        // Only check studentId duplicates (allow duplicate emails)
-        const existingRecord = await MemberRegistration.findOne({
-          studentId
-        }).lean();
-
-        if (existingRecord) {
-          failedCount++;
-          processed++;
-          errors.push({
-            row: rowNumber,
-            error: "Student ID already exists in database",
-          });
-          
-          // Update progress tracker
-          updateProgress(importId, processed, successCount, failedCount, errors);
-          continue;
-        }
-
-        // Create record object with ALL fields explicitly set
-        const recordToInsert = {
+      parsed.push({
+        rowNumber,
+        record: {
           name: finalName,
           studentId,
           email,
-          phone,
+          phone: safeTrim(row.phone || row["Mobile Phone"]),
           department,
-          batch: batch || "",
-          currentYear: currentYear || "",
-          cgpa: cgpa || 0,
-          previousExperience: previousExperience || "",
-          whyJoin: whyJoin || "",
-          skills: skills && skills.length > 0 ? skills : [],
+          batch: safeTrim(row.batch || row.Batch) || "",
+          currentYear: safeTrim(row.currentYear || row["Current Year"]) || "",
+          cgpa: Number(row.cgpa || row.CGPA) || 0,
+          previousExperience: safeTrim(row.previousExperience || row["Previous Experience"]) || "",
+          whyJoin: safeTrim(row.whyJoin || row["Why Join"]) || "",
+          skills: skills.length > 0 ? skills : [],
           portfolio: "",
           linkedin: "",
           github: "",
           paymentOptionId: "",
-          paymentNumber: paymentNumber || "",
-          paymentMethod: paymentMethod || "bkash",
-          transactionId: transactionId || "",
+          paymentNumber: safeTrim(row.paymentNumber || row["Payment Number"]) || "",
+          paymentMethod: safeTrim(row.paymentMethod || row["Payment Method"]) || "bkash",
+          transactionId: safeTrim(row.transactionId || row["Transaction ID"]) || "",
           paymentStatus: "approved",
           status: "approved",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
+          createdAt: now,
+          updatedAt: now,
+        },
+      });
+    }
 
-        // Insert directly to bypass validation
-        await MemberRegistration.collection.insertOne(recordToInsert);
+    // ── Step 2: ONE query to find all already-existing studentIds ────────────
+    const allStudentIds = parsed.map((p) => p.record.studentId);
+    const existingDocs = await MemberRegistration.find(
+      { studentId: { $in: allStudentIds } },
+      { studentId: 1, _id: 0 }
+    ).lean() as Array<{ studentId: string }>;
 
-        successCount++;
-        processed++;
+    const existingSet = new Set(existingDocs.map((d) => d.studentId));
 
-        // Update progress tracker
-        updateProgress(importId, processed, successCount, failedCount, errors);
-      } catch (rowError: any) {
-        failedCount++;
-        processed++;
-        errors.push({
-          row: i + 2,
-          error: rowError.message || "Unknown error during record creation",
-        });
+    const toInsert: any[] = [];
 
-        // Update progress tracker
-        updateProgress(importId, processed, successCount, failedCount, errors);
-        
-        // Continue processing next row instead of stopping
-        continue;
+    for (const { rowNumber, record } of parsed) {
+      if (existingSet.has(record.studentId)) {
+        errors.push({ row: rowNumber, error: "Student ID already exists in database" });
+      } else {
+        toInsert.push(record);
       }
     }
 
-    const successRate = ((successCount / totalRows) * 100).toFixed(2);
+    // ── Step 3: Bulk insert in one shot ─────────────────────────────────────
+    let successCount = 0;
+    let failedCount = errors.length;
 
-    // Mark import as completed in progress tracker
-    completeImport(importId);
-    
+    if (toInsert.length > 0) {
+      // ordered: false → continue on duplicate key errors, don't abort the batch
+      const result = await MemberRegistration.collection.insertMany(toInsert, { ordered: false });
+      successCount = result.insertedCount;
+      // Any records that failed at DB level (e.g. race-condition duplicate)
+      failedCount += toInsert.length - successCount;
+    }
+
+    const processed = successCount + failedCount;
+    const successRate = totalRows > 0 ? ((successCount / totalRows) * 100).toFixed(2) : "0.00";
+
     return NextResponse.json({
       success: successCount > 0,
       importId,
@@ -170,19 +143,14 @@ export async function POST(req: NextRequest) {
       failed: failedCount,
       successRate: `${successRate}%`,
       progressPercentage: 100,
+      status: "completed",
       errors,
       message: `Import completed: ${successCount} succeeded, ${failedCount} failed out of ${totalRows} records`,
     });
   } catch (error: any) {
-    // Import error handled above
-    failImport(importId, error.message);
-
     let errorMessage = error.message || "Import failed";
-    if (error.name === "SyntaxError") {
-      errorMessage = "Invalid JSON format in request body";
-    } else if (error.name === "ValidationError") {
-      errorMessage = `Validation error: ${error.message}`;
-    }
+    if (error.name === "SyntaxError") errorMessage = "Invalid JSON format in request body";
+    else if (error.name === "ValidationError") errorMessage = `Validation error: ${error.message}`;
 
     return NextResponse.json(
       {

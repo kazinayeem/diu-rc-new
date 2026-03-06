@@ -152,45 +152,28 @@ export default function MemberRegistrationsPage() {
   };
 
   const handleDeleteAll = async () => {
-    if (registrations.length === 0) {
+    if (totalRecords === 0) {
       alert("No registrations to delete");
       return;
     }
 
-    // Fetch ALL registration IDs (not just current page)
+    const confirmMsg = selectedStatus || search
+      ? `Are you sure you want to delete all ${totalRecords} filtered registration(s)?`
+      : `⚠️ WARNING: This will delete ALL ${totalRecords} registration(s) from the database! This action cannot be undone!`;
+
+    if (!confirm(confirmMsg)) return;
+
     setDeletingBulk(true);
 
     try {
-      const params = new URLSearchParams({
-        page: "1",
-        limit: "999999", // Get all registrations
-        ...(selectedStatus ? { status: selectedStatus } : {}),
-        ...(search ? { search } : {}),
-      }).toString();
-
-      const response = await fetch(`/api/member-registrations?${params}`);
-      const result = await response.json();
-
-      if (!result.success || !result.data) {
-        throw new Error("Failed to fetch all registrations");
-      }
-
-      const totalCount = result.data.length;
-      const allIds = result.data.map((reg: any) => reg._id);
-
-      const confirmMsg = selectedStatus || search
-        ? `Are you sure you want to delete all ${totalCount} filtered registration(s)?`
-        : `⚠️ WARNING: This will delete ALL ${totalCount} registration(s) from the database! This action cannot be undone!`;
-
-      if (!confirm(confirmMsg)) {
-        setDeletingBulk(false);
-        return;
-      }
-
-      const deleteResponse = await fetch("/api/admin/member-registrations/bulk-delete", {
+      // Call delete-all endpoint directly with optional filters — no need to fetch IDs first
+      const deleteResponse = await fetch("/api/admin/member-registrations/delete-all", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids: allIds }),
+        body: JSON.stringify({
+          ...(selectedStatus ? { status: selectedStatus } : {}),
+          ...(search ? { search } : {}),
+        }),
       });
 
       const deleteResult = await deleteResponse.json();
@@ -198,7 +181,6 @@ export default function MemberRegistrationsPage() {
       if (deleteResult.success) {
         setSelectedIds([]);
         alert(deleteResult.message);
-        // Trigger refetch
         setPage(1);
       } else {
         alert(deleteResult.message || "Failed to delete all registrations");

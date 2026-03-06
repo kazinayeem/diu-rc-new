@@ -4,6 +4,9 @@ import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/db";
 import MemberRegistration from "@/lib/models/MemberRegistration";
 
+// Vercel: allow up to 60 seconds for this route
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
