@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import StoreProvider from "./StoreProvider";
 import HideNavbarWrapper from "@/components/HideNavbarWrapper";
 import ScrollUI from "@/components/public/ScrollUI";
+import CookieConsent from "@/components/public/CookieConsent";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -73,6 +74,7 @@ export default function RootLayout({
               <HideNavbarWrapper>
                 {children}
               </HideNavbarWrapper>
+              <CookieConsent />
             </StoreProvider>
           </SessionProvider>
         </ThemeProvider>
