@@ -21,13 +21,30 @@ export async function GET(request: NextRequest) {
     const isAdmin = !!session;
 
     if (!isAdmin) {
-      const stats = await MemberRegistration.aggregate([
-        { $group: { _id: "$status", count: { $sum: 1 } } },
-      ]);
+      // Public: paginated approved members with optional name search
+      const publicQuery: any = { status: "approved" };
+      if (search.trim()) {
+        publicQuery.name = { $regex: search.trim(), $options: "i" };
+      }
+
+      const registrations = await MemberRegistration.find(publicQuery)
+        .sort({ createdAt: -1 })
+        .select("name department batch")
+        .skip(skip)
+        .limit(limit)
+        .lean();
+
+      const total = await MemberRegistration.countDocuments(publicQuery);
 
       return NextResponse.json({
         success: true,
-        data: { stats },
+        data: registrations,
+        pagination: {
+          page,
+          limit,
+          total,
+          pages: Math.ceil(total / limit),
+        },
       });
     }
 

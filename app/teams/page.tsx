@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MemberCard from "@/components/public/MemberCard";
 import { useGetMembersQuery, useGetMemberRegistrationsQuery } from "@/lib/api/api";
@@ -12,16 +12,29 @@ export default function TeamPage() {
   const [teamLoading, setTeamLoading] = useState(true);
 
   // ── Registered members ──
-  const [allMembers, setAllMembers] = useState<any[]>([]);
   const [regLoading, setRegLoading] = useState(true);
 
   const [selected, setSelected] = useState<any>(null);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 20;
 
+  // Debounce search → reset to page 1 on new search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const regQuery = `page=${currentPage}&limit=${ITEMS_PER_PAGE}&status=approved${
+    debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : ""
+  }`;
+
   const { data: teamData, isFetching: teamFetching } = useGetMembersQuery({ query: "limit=10000" });
-  const { data: regData, isFetching: regFetching } = useGetMemberRegistrationsQuery({ query: "limit=10000&status=approved" });
+  const { data: regData, isFetching: regFetching } = useGetMemberRegistrationsQuery({ query: regQuery });
 
   useEffect(() => {
     setTeamLoading(teamFetching);
@@ -30,8 +43,12 @@ export default function TeamPage() {
 
   useEffect(() => {
     setRegLoading(regFetching);
-    if (regData?.success) setAllMembers(regData.data || []);
-  }, [regData, regFetching]);
+  }, [regFetching]);
+
+  const regMembers = regData?.data || [];
+  const regPagination = regData?.pagination;
+  const totalPages = regPagination?.pages || 0;
+  const totalCount = regPagination?.total || 0;
 
   // Position hierarchy for sorting
   const positionOrder: Record<string, number> = {
@@ -75,22 +92,7 @@ export default function TeamPage() {
     general:   teamMembers.filter((m) => m.role === "general").sort(sortByPosition),
   };
 
-  // ── Registered members: search + pagination ──
-  const filteredReg = useMemo(
-    () => allMembers.filter((m) => (m?.name || "").toLowerCase().includes(search.toLowerCase())),
-    [allMembers, search]
-  );
-
-  // Pagination logic
-  const totalPages = Math.ceil(filteredReg.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedMembers = filteredReg.slice(startIndex, endIndex);
-
-  // Reset to page 1 when search changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [search]);
 
   const Skeleton = () => <div className="animate-pulse bg-white/10 rounded-xl h-56 w-full" />;
 
@@ -191,14 +193,9 @@ export default function TeamPage() {
               </h2>
               {!regLoading && (
                 <p className="text-white/60 text-sm mt-1">
-                  Showing {filteredReg.length > 0 ? startIndex + 1 : 0}-{Math.min(endIndex, filteredReg.length)} of {filteredReg.length}
-                  <span className="ml-2 text-cyan-400">
-                    (Total: {allMembers.length})
-                  </span>
-                  {search && filteredReg.length !== allMembers.length && (
-                    <span className="ml-2 text-yellow-400">
-                      - Filtered: {filteredReg.length}
-                    </span>
+                  Showing {totalCount > 0 ? startIndex + 1 : 0}–{Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount}
+                  {debouncedSearch && (
+                    <span className="ml-2 text-yellow-400">matching "{debouncedSearch}"</span>
                   )}
                 </p>
               )}
@@ -229,7 +226,7 @@ export default function TeamPage() {
           >
             {regLoading
               ? Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} />)
-              : paginatedMembers.map((m, idx) => (
+              : regMembers.map((m, idx) => (
                   <motion.div
                     key={m._id}
                     initial={{ opacity: 0, y: 10 }}
@@ -243,12 +240,14 @@ export default function TeamPage() {
                 ))}
           </motion.div>
 
-          {!regLoading && filteredReg.length === 0 && (
-            <p className="text-center py-16 text-gray-500 dark:text-gray-400">No members found matching "{search}".</p>
+          {!regLoading && regMembers.length === 0 && (
+            <p className="text-center py-16 text-gray-500 dark:text-gray-400">
+              {debouncedSearch ? `No members found matching "${debouncedSearch}".` : "No registered members found."}
+            </p>
           )}
 
           {/* Pagination Controls */}
-          {!regLoading && filteredReg.length > 0 && totalPages > 1 && (
+          {!regLoading && totalCount > 0 && totalPages > 1 && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
