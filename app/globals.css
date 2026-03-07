@@ -256,7 +256,8 @@
   100% { transform: translateX(-50%); }
 }
 .notice-ticker {
-  animation: notice-ticker 6s linear infinite;
+  animation: notice-ticker 30s linear infinite;
+  will-change: transform;
 }
 .notice-ticker:hover {
   animation-play-state: paused;
