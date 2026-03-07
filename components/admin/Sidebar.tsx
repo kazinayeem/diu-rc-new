@@ -26,6 +26,7 @@ import {
   Megaphone,
   Star,
   Mail,
+  Palette,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -53,6 +54,7 @@ const ALL_MENU_ITEMS: MenuItem[] = [
   { href: "/admin/settings/smtp", label: "SMTP Config", icon: Mail, superAdminOnly: true },
   { href: "/admin/settings/admins", label: "Manage Admins", icon: ShieldCheck, superAdminOnly: true },
   { href: "/admin/settings", label: "Settings", icon: Settings, superAdminOnly: true },
+  { href: "/admin/photo-templates", label: "Photo Templates", icon: Palette, permission: "members" },
 ];
 
 export default function Sidebar() {
