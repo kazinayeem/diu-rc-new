@@ -32,21 +32,44 @@ const HeroWithRobot = dynamic(() => import("@/components/public/With3drobot"), {
 });
 
 export const metadata: Metadata = {
-  title: "Daffodil International University Robotics Club | Home",
+  title: "Home | DIU Robotics Club — Innovation Through Robotics",
   description:
-    "Daffodil International University Robotics Club - robotics, automation, research, workshops, and competitions at DIU.",
+    "Welcome to the Daffodil International University Robotics Club (DIU RC). Join us to explore robotics, automation, AI, participate in workshops, seminars, hackathons, and competitions. Open to all DIU students.",
+  keywords: [
+    "DIU Robotics Club",
+    "Daffodil International University Robotics",
+    "robotics Bangladesh",
+    "DIU RC membership",
+    "robotics workshop Dhaka",
+    "automation club DIU",
+    "engineering students Bangladesh",
+    "STEM Bangladesh",
+    "robotics seminar DIU",
+    "university robotics competition Bangladesh",
+  ],
+  alternates: { canonical: "https://diu-rc-new.vercel.app" },
   openGraph: {
-    title: "Daffodil International University Robotics Club | Home",
+    type: "website",
+    url: "https://diu-rc-new.vercel.app",
+    title: "DIU Robotics Club — Innovation Through Robotics",
     description:
-      "Daffodil International University Robotics Club - robotics, automation, research, workshops, and competitions at DIU.",
-    images: ["/diurc_logo.png"],
+      "Join DIU Robotics Club to explore robotics, automation, AI, workshops, seminars and competitions at Daffodil International University, Bangladesh.",
+    images: [
+      {
+        url: "https://diu-rc-new.vercel.app/diurc_logo.png",
+        width: 512,
+        height: 512,
+        alt: "Daffodil International University Robotics Club",
+      },
+    ],
+    siteName: "DIU Robotics Club",
   },
   twitter: {
-    card: "summary",
-    title: "Daffodil International University Robotics Club | Home",
+    card: "summary_large_image",
+    title: "DIU Robotics Club — Innovation Through Robotics",
     description:
-      "Daffodil International University Robotics Club - robotics, automation, research, workshops, and competitions at DIU.",
-    images: ["/diurc_logo.png"],
+      "Join DIU Robotics Club to explore robotics, automation, AI, workshops, seminars and competitions at Daffodil International University.",
+    images: ["https://diu-rc-new.vercel.app/diurc_logo.png"],
   },
 };
 
@@ -116,6 +139,38 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0B1F3A] text-white">
+      {/* Structured Data — WebSite with SearchAction */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "DIU Robotics Club",
+            "url": "https://diu-rc-new.vercel.app",
+            "description":
+              "Daffodil International University Robotics Club — Bangladesh's leading student robotics community for workshops, automation, AI, and competitions.",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://diu-rc-new.vercel.app/members?search={search_term_string}",
+              },
+              "query-input": "required name=search_term_string",
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Daffodil International University Robotics Club",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://diu-rc-new.vercel.app/diurc_logo.png",
+                "width": 512,
+                "height": 512,
+              },
+            },
+          }),
+        }}
+      />
       {/* Prefetch all page data on load */}
       <DataPrefetcher />
 

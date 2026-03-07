@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/Button";
-import { Loader2, Send, ChevronDown, ChevronUp, CheckCircle2, XCircle, Mail, Copy, Check } from "lucide-react";
+import { Loader2, Send, ChevronDown, ChevronUp, CheckCircle2, XCircle, Mail, Copy, Check, Code2, X } from "lucide-react";
 import Link from "next/link";
 import "react-quill-new/dist/quill.snow.css";
 
@@ -125,6 +125,8 @@ export default function CreateMailPage() {
   const [result, setResult] = useState<any>(null);
   const [showTemplates, setShowTemplates] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showHtmlPaste, setShowHtmlPaste] = useState(false);
+  const [pasteHtml, setPasteHtml] = useState("");
 
   const copyHtml = async (html: string, id: string) => {
     try {
@@ -279,15 +281,73 @@ export default function CreateMailPage() {
         <div>
           <div className="flex items-center justify-between mb-1">
             <label className="text-xs text-white/50">Email Body *</label>
-            {body && (
+            <div className="flex items-center gap-2">
               <button
-                onClick={() => copyHtml(body, "__body__")}
-                className="flex items-center gap-1.5 px-3 py-1 text-xs font-medium bg-white/5 hover:bg-white/10 border border-white/15 text-white/60 hover:text-white rounded-lg transition-colors"
+                onClick={() => { setShowHtmlPaste(v => !v); if (!showHtmlPaste) setPasteHtml(""); }}
+                className={`flex items-center gap-1.5 px-3 py-1 text-xs font-medium border rounded-lg transition-colors ${
+                  showHtmlPaste
+                    ? "bg-purple-500/20 border-purple-400/40 text-purple-300"
+                    : "bg-white/5 hover:bg-white/10 border-white/15 text-white/60 hover:text-white"
+                }`}
+                title="Paste raw HTML into editor"
               >
-                {copiedId === "__body__" ? <><Check size={12} className="text-green-400" />Copied!</> : <><Copy size={12} />Copy HTML</>}
+                <Code2 size={12} />
+                {showHtmlPaste ? "Close HTML" : "Paste HTML"}
               </button>
-            )}
+              {body && (
+                <button
+                  onClick={() => copyHtml(body, "__body__")}
+                  className="flex items-center gap-1.5 px-3 py-1 text-xs font-medium bg-white/5 hover:bg-white/10 border border-white/15 text-white/60 hover:text-white rounded-lg transition-colors"
+                >
+                  {copiedId === "__body__" ? <><Check size={12} className="text-green-400" />Copied!</> : <><Copy size={12} />Copy HTML</>}
+                </button>
+              )}
+            </div>
           </div>
+
+          {/* HTML Paste Panel */}
+          {showHtmlPaste && (
+            <div className="mb-3 bg-purple-900/20 border border-purple-400/30 rounded-xl p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-semibold text-purple-300 flex items-center gap-1.5">
+                  <Code2 size={13} /> Paste your custom HTML template below
+                </p>
+                <button
+                  onClick={() => setShowHtmlPaste(false)}
+                  className="text-white/30 hover:text-white/70 transition-colors"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+              <textarea
+                value={pasteHtml}
+                onChange={e => setPasteHtml(e.target.value)}
+                rows={10}
+                placeholder="<h1>Hello {{name}}</h1><p>Your custom HTML here...</p>"
+                className="w-full px-3 py-2.5 bg-[#0a1120] border border-white/10 rounded-lg text-white/90 text-xs font-mono placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-y"
+              />
+              <div className="flex items-center gap-2">
+                <button
+                  disabled={!pasteHtml.trim()}
+                  onClick={() => {
+                    setBody(pasteHtml.trim());
+                    setShowHtmlPaste(false);
+                    setPasteHtml("");
+                  }}
+                  className="flex-1 py-2 text-xs font-bold bg-purple-600 hover:bg-purple-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+                >
+                  ✓ Apply to Editor
+                </button>
+                <button
+                  onClick={() => { setPasteHtml(""); setShowHtmlPaste(false); }}
+                  className="px-4 py-2 text-xs font-medium bg-white/5 hover:bg-white/10 text-white/60 rounded-lg transition-colors border border-white/10"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="quill-dark rounded-xl overflow-hidden border border-white/15">
             <ReactQuill
               theme="snow"
