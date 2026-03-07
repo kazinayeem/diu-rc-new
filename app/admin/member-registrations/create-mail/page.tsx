@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/Button";
-import { Loader2, Send, ChevronDown, ChevronUp, CheckCircle2, XCircle, Mail } from "lucide-react";
+import { Loader2, Send, ChevronDown, ChevronUp, CheckCircle2, XCircle, Mail, Copy, Check } from "lucide-react";
 import Link from "next/link";
 import "react-quill-new/dist/quill.snow.css";
 
@@ -124,6 +124,25 @@ export default function CreateMailPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [showTemplates, setShowTemplates] = useState(true);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const copyHtml = async (html: string, id: string) => {
+    try {
+      await navigator.clipboard.writeText(html);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      // fallback for older browsers
+      const el = document.createElement("textarea");
+      el.value = html;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    }
+  };
 
   const applyTemplate = (t: (typeof TEMPLATES)[0]) => {
     setSubject(t.subject);
@@ -186,14 +205,30 @@ export default function CreateMailPage() {
         {showTemplates && (
           <div className="px-5 pb-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {TEMPLATES.map((t) => (
-              <button
+              <div
                 key={t.label}
-                onClick={() => applyTemplate(t)}
-                className="text-left p-4 bg-white/5 border border-white/10 rounded-xl hover:border-cyan-400/40 hover:bg-cyan-400/5 transition-all group"
+                className="bg-white/5 border border-white/10 rounded-xl hover:border-cyan-400/40 hover:bg-cyan-400/5 transition-all group p-4 flex flex-col gap-3"
               >
-                <p className="font-semibold text-sm group-hover:text-cyan-300 transition-colors">{t.label}</p>
-                <p className="text-white/40 text-xs mt-1 truncate">{t.subject}</p>
-              </button>
+                <div>
+                  <p className="font-semibold text-sm group-hover:text-cyan-300 transition-colors">{t.label}</p>
+                  <p className="text-white/40 text-xs mt-1 truncate">{t.subject}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => applyTemplate(t)}
+                    className="flex-1 py-1.5 text-xs font-semibold bg-cyan-500/15 hover:bg-cyan-500/30 text-cyan-300 rounded-lg transition-colors"
+                  >
+                    Use Template
+                  </button>
+                  <button
+                    onClick={() => copyHtml(t.body, t.label)}
+                    className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold bg-white/5 hover:bg-white/10 text-white/60 hover:text-white rounded-lg transition-colors border border-white/10"
+                    title="Copy HTML"
+                  >
+                    {copiedId === t.label ? <><Check size={12} className="text-green-400" /> Copied!</> : <><Copy size={12} /> HTML</>}
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -242,7 +277,17 @@ export default function CreateMailPage() {
 
         {/* Rich Text Editor */}
         <div>
-          <label className="block text-xs text-white/50 mb-1">Email Body *</label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-xs text-white/50">Email Body *</label>
+            {body && (
+              <button
+                onClick={() => copyHtml(body, "__body__")}
+                className="flex items-center gap-1.5 px-3 py-1 text-xs font-medium bg-white/5 hover:bg-white/10 border border-white/15 text-white/60 hover:text-white rounded-lg transition-colors"
+              >
+                {copiedId === "__body__" ? <><Check size={12} className="text-green-400" />Copied!</> : <><Copy size={12} />Copy HTML</>}
+              </button>
+            )}
+          </div>
           <div className="quill-dark rounded-xl overflow-hidden border border-white/15">
             <ReactQuill
               theme="snow"
