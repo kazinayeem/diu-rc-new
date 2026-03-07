@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
       const registrations = await MemberRegistration.find(publicQuery)
         .sort({ createdAt: -1 })
-        .select("name department batch")
+        .select("name studentId email department batch")
         .skip(skip)
         .limit(limit)
         .lean();

@@ -9,12 +9,14 @@ interface MemberCardProps {
   member: {
     _id: string;
     name: string;
-    role: string;
+    role?: string;
     position?: string;
     department: string;
     batch: string;
     image?: string;
     bio?: string;
+    studentId?: string;
+    email?: string;
   };
 }
 
@@ -74,7 +76,17 @@ const MemberCard: React.FC<MemberCardProps> = ({ member }) => {
             </div>
 
             {/* Department */}
-            <p className="text-xs text-[#8ED6E6]/50 mb-3">{member.department}</p>
+            <p className="text-xs text-[#8ED6E6]/50 mb-1">{member.department}</p>
+
+            {/* Student ID */}
+            {member.studentId && (
+              <p className="text-xs text-[#3DB5D8]/70 font-mono mb-0.5">{member.studentId}</p>
+            )}
+
+            {/* Email */}
+            {member.email && (
+              <p className="text-xs text-[#8ED6E6]/40 truncate mb-2">{member.email}</p>
+            )}
           </div>
         </CardContent>
       </Card>
