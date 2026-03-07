@@ -1,17 +1,31 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { Bell, Search, User } from "lucide-react";
+import React, { useEffect, useState, useRef } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { Bell, Search, User, LogOut, UserCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function Topbar() {
   const { data: session } = useSession();
   const [query, setQuery] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const event = new CustomEvent("admin-search", { detail: query });
     window.dispatchEvent(event);
   }, [query]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   return (
     <header className="hidden md:block sticky top-0 z-40 bg-[rgba(2,24,37,0.85)] backdrop-blur-xl border-b border-[rgba(61,181,216,0.1)] shadow-lg">
@@ -42,22 +56,49 @@ export default function Topbar() {
               <span className="absolute top-1 right-1 w-2 h-2 bg-[#3DB5D8] rounded-full"></span>
             </button>
 
-            {/* USER PROFILE */}
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#3DB5D8] to-[#2F6BFF] rounded-full flex items-center justify-center text-[#0B1F3A] font-semibold shadow-lg shadow-black/40">
-                {session?.user?.name?.charAt(0)?.toUpperCase() || (
-                  <User size={20} />
-                )}
-              </div>
+            {/* USER PROFILE DROPDOWN */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen((v) => !v)}
+                className="flex items-center space-x-3 focus:outline-none group"
+              >
+                <div className="w-10 h-10 bg-gradient-to-br from-[#3DB5D8] to-[#2F6BFF] rounded-full flex items-center justify-center text-[#0B1F3A] font-semibold shadow-lg shadow-black/40 group-hover:ring-2 group-hover:ring-cyan-400/50 transition-all">
+                  {session?.user?.name?.charAt(0)?.toUpperCase() || (
+                    <User size={20} />
+                  )}
+                </div>
 
-              <div className="hidden lg:block">
-                <p className="text-sm font-semibold text-slate-100">
-                  {session?.user?.name || "Admin"}
-                </p>
-                <p className="text-xs text-slate-400">
-                  {session?.user?.email || ""}
-                </p>
-              </div>
+                <div className="hidden lg:block text-left">
+                  <p className="text-sm font-semibold text-slate-100">
+                    {session?.user?.name || "Admin"}
+                  </p>
+                  <p className="text-xs text-slate-400">
+                    {session?.user?.email || ""}
+                  </p>
+                </div>
+              </button>
+
+              {/* Dropdown */}
+              {dropdownOpen && (
+                <div className="absolute right-0 top-12 w-48 bg-[#0f1c2e] border border-white/10 rounded-xl shadow-2xl shadow-black/50 overflow-hidden z-50">
+                  <Link
+                    href="/admin/profile"
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 text-sm text-slate-200 hover:bg-white/5 transition-colors"
+                  >
+                    <UserCircle size={16} className="text-cyan-400" />
+                    Profile
+                  </Link>
+                  <div className="border-t border-white/10" />
+                  <button
+                    onClick={() => signOut({ callbackUrl: "/login" })}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                  >
+                    <LogOut size={16} />
+                    Sign Out
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

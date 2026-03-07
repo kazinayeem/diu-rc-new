@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import DataTable from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/Button";
-import { Eye, Trash2, Upload, Download, Plus, Loader2, Search, X, Pencil, Save } from "lucide-react";
+import { Eye, Trash2, Upload, Download, Plus, Loader2, Search, X, Pencil, Save, Mail } from "lucide-react";
+import Link from "next/link";
 import { useGetMemberRegistrationsQuery, useUpdateMemberRegistrationMutation, useDeleteMemberRegistrationMutation } from "@/lib/api/api";
 import ImportExportModal from "@/components/admin/ImportExportModal";
 import AddRegistrationModal from "@/components/admin/AddRegistrationModal";
@@ -388,8 +389,14 @@ export default function MemberRegistrationsPage() {
           </div>
 
           <div className="flex gap-3">
-            {selectedIds.length > 0 && (
-              <Button
+            <Link href="/admin/member-registrations/create-mail">
+              <Button className="bg-purple-600 hover:bg-purple-700">
+                <Mail size={18} className="mr-2" />
+                Send Mail
+              </Button>
+            </Link>
+
+            {selectedIds.length > 0 && (              <Button
                 onClick={handleBulkDelete}
                 disabled={deletingBulk}
                 className="bg-red-600 hover:bg-red-700"

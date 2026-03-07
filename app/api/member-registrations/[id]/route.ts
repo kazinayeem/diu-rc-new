@@ -55,6 +55,16 @@ export async function PUT(
     await connectDB();
 
     const body = await request.json();
+
+    // Fetch the existing record BEFORE updating so we can detect actual changes
+    const existing = await MemberRegistration.findById(params.id).lean() as any;
+    if (!existing) {
+      return NextResponse.json(
+        { success: false, error: "Registration not found" },
+        { status: 404 }
+      );
+    }
+
     const updateData: any = {
       ...body,
       reviewedAt: new Date(),
@@ -73,11 +83,14 @@ export async function PUT(
       );
     }
 
-    // Await all emails before returning so serverless function doesn't terminate early
+    // Only send emails when the relevant field actually changed value
     const reg = registration as any;
     const emailQueue: Promise<any>[] = [];
 
-    if (body.paymentStatus === "approved") {
+    const paymentChanged = body.paymentStatus && body.paymentStatus !== existing.paymentStatus;
+    const statusChanged = body.status && body.status !== existing.status;
+
+    if (paymentChanged && body.paymentStatus === "approved") {
       emailQueue.push(
         sendPaymentVerifiedEmail({
           name: reg.name,
@@ -97,7 +110,7 @@ export async function PUT(
       );
     }
 
-    if (body.paymentStatus === "rejected") {
+    if (paymentChanged && body.paymentStatus === "rejected") {
       emailQueue.push(
         sendPaymentRejectedEmail({
           name: reg.name,
@@ -117,7 +130,7 @@ export async function PUT(
       );
     }
 
-    if (body.status === "approved") {
+    if (statusChanged && body.status === "approved") {
       emailQueue.push(
         sendRegistrationApprovedEmail({
           name: reg.name,
@@ -133,7 +146,7 @@ export async function PUT(
           status: "approved",
         })
       );
-    } else if (body.status === "rejected") {
+    } else if (statusChanged && body.status === "rejected") {
       emailQueue.push(
         sendRegistrationRejectedEmail({
           name: reg.name,

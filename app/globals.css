@@ -281,3 +281,39 @@
   border-radius: 8px 8px 0 0;
 }
 
+/* ── Quill dark overrides for create-mail page ─────── */
+.quill-dark .ql-container {
+  min-height: 340px !important;
+  background: rgba(11, 31, 58, 0.6) !important;
+  color: #e2f3f8 !important;
+  border-color: transparent !important;
+  border-radius: 0 0 10px 10px;
+}
+.quill-dark .ql-editor {
+  min-height: 340px;
+  color: #e2f3f8 !important;
+  font-size: 15px;
+  line-height: 1.7;
+}
+.quill-dark .ql-toolbar {
+  background: rgba(5, 15, 35, 0.85) !important;
+  border-color: transparent !important;
+  border-bottom: 1px solid rgba(61,181,216,0.15) !important;
+  border-radius: 10px 10px 0 0;
+}
+.quill-dark .ql-toolbar button,
+.quill-dark .ql-toolbar .ql-picker-label {
+  color: #8ed6e6 !important;
+  filter: invert(0.8) !important;
+}
+.quill-dark .ql-toolbar button:hover,
+.quill-dark .ql-toolbar .ql-picker-label:hover {
+  color: #ffffff !important;
+  filter: invert(1) !important;
+}
+.quill-dark .ql-picker-options {
+  background: #0f192d !important;
+  border-color: rgba(61,181,216,0.2) !important;
+  color: #e2f3f8 !important;
+}
+
