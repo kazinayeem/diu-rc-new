@@ -29,6 +29,7 @@ export default function CertificateDisplayPage() {
   const [error, setError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [printing, setPrinting] = useState(false);
+  const [previewScale, setPreviewScale] = useState(1);
 
   useEffect(() => {
     const fetchCertificate = async () => {
@@ -60,6 +61,18 @@ export default function CertificateDisplayPage() {
 
     fetchCertificate();
   }, [params.certificateId]);
+
+  useEffect(() => {
+    const updatePreviewScale = () => {
+      const availableWidth = Math.max(320, window.innerWidth - 32);
+      const nextScale = Math.min(1, availableWidth / CERT_WIDTH);
+      setPreviewScale(nextScale);
+    };
+
+    updatePreviewScale();
+    window.addEventListener("resize", updatePreviewScale);
+    return () => window.removeEventListener("resize", updatePreviewScale);
+  }, []);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -253,32 +266,50 @@ export default function CertificateDisplayPage() {
         <div className="print-root">
           <div className="certificate-stage">
             <div
-              ref={certificateRef}
-              className="certificate-container"
+              className="certificate-preview-frame"
               style={{
-                width: `${CERT_WIDTH}px`,
-                height: `${CERT_HEIGHT}px`,
-                backgroundImage: "url('/ce.png')",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
+                width: `${CERT_WIDTH * previewScale}px`,
+                height: `${CERT_HEIGHT * previewScale}px`,
               }}
             >
-              <div className="field-appreciation">of appreciation</div>
+              <div
+                className="certificate-preview-scale"
+                style={{
+                  width: `${CERT_WIDTH}px`,
+                  height: `${CERT_HEIGHT}px`,
+                  transform: `scale(${previewScale})`,
+                  transformOrigin: "top left",
+                }}
+              >
+                <div
+                  ref={certificateRef}
+                  className="certificate-container"
+                  style={{
+                    width: `${CERT_WIDTH}px`,
+                    height: `${CERT_HEIGHT}px`,
+                    backgroundImage: "url('/ce.png')",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                >
+                  <div className="field-appreciation">of appreciation</div>
 
-              <div className="field-certify-line">This is to certify that</div>
+                  <div className="field-certify-line">This is to certify that</div>
 
-              <div className={`field-recipient ${signatureFont.className}`} style={{ fontSize: `${recipientFontSize}px` }}>
-                {certificate.recipientName}
+                  <div className={`field-recipient ${signatureFont.className}`} style={{ fontSize: `${recipientFontSize}px` }}>
+                    {certificate.recipientName}
+                  </div>
+
+                  <div className="field-description" style={{ fontSize: `${descriptionFontSize}px` }}>
+                    {descriptionText}
+                  </div>
+
+                  <div className="field-certificate-id">ID: {certificate.id}</div>
+
+                  <div className="field-issue-date">DATE: {formatDate(certificate.issueDate)}</div>
+                </div>
               </div>
-
-              <div className="field-description" style={{ fontSize: `${descriptionFontSize}px` }}>
-                {descriptionText}
-              </div>
-
-              <div className="field-certificate-id">ID: {certificate.id}</div>
-
-              <div className="field-issue-date">DATE: {formatDate(certificate.issueDate)}</div>
             </div>
           </div>
         </div>
@@ -316,8 +347,19 @@ export default function CertificateDisplayPage() {
         .certificate-stage {
           display: flex;
           justify-content: center;
-          overflow-x: auto;
+          overflow: hidden;
           padding: 8px;
+        }
+
+        .certificate-preview-frame {
+          position: relative;
+          overflow: hidden;
+          margin: 0 auto;
+        }
+
+        .certificate-preview-scale {
+          position: relative;
+          will-change: transform;
         }
 
         .certificate-container {
