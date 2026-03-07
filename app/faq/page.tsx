@@ -15,7 +15,7 @@ const faqs = [
       },
       {
         q: "How much is the membership fee?",
-        a: "Membership fees vary by semester. Please check the Join page for the current fee structure and payment methods.",
+        a: "The membership fee is ৳200 BDT (Bangladeshi Taka). Payment is made through the designated mobile banking methods (bKash / Nagad) listed on the registration form.",
       },
       {
         q: "How long does approval take?",
