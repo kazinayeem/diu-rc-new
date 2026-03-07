@@ -844,22 +844,23 @@ function drawGiftBox(ctx: CanvasRenderingContext2D, x: number, y: number, size: 
 
 // ── Component ─────────────────────────────────────────────────────────────────
 function loadImg(src: string): Promise<HTMLImageElement> {
-  return new Promise((res, rej) => { const img = new window.Image(); img.crossOrigin = "anonymous"; img.onload = () => res(img); img.onerror = rej; img.src = src; });
+  return new Promise((res, rej) => { 
+    if (typeof window === 'undefined') {
+      rej(new Error('Window not available'));
+      return;
+    }
+    const img = new window.Image(); 
+    img.crossOrigin = "anonymous"; 
+    img.onload = () => res(img); 
+    img.onerror = rej; 
+    img.src = src; 
+  });
 }
 
 export default function PhotoTemplatesPage() {
   const { data: session } = useSession();
   const permissions = (session?.user as any)?.permissions ?? [];
   const hasAccess = permissions.includes("photo-templates") || (session?.user as any)?.role === "super-admin";
-
-  if (!hasAccess) {
-    return (
-      <div className="text-white max-w-7xl mx-auto p-8 text-center">
-        <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
-        <p className="text-white/70">You don't have permission to access this page.</p>
-      </div>
-    );
-  }
 
   const [selected, setSelected] = useState<Template>(TEMPLATES[0]);
   const [values, setValues] = useState<Record<string, string>>(() => { const v: Record<string, string> = {}; TEMPLATES[0].fields.forEach((f) => (v[f.key] = f.default)); return v; });
@@ -873,6 +874,7 @@ export default function PhotoTemplatesPage() {
   const [logoOffsetY, setLogoOffsetY] = useState(0);
   const [rendering, setRendering] = useState(false);
   const [openCat, setOpenCat] = useState<string | null>("Celebration");
+  const [mounted, setMounted] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const cats = Array.from(new Set(TEMPLATES.map((t) => t.category)));
@@ -883,6 +885,7 @@ export default function PhotoTemplatesPage() {
   };
 
   const render = useCallback(async () => {
+    if (!mounted) return;
     const canvas = canvasRef.current; if (!canvas) return;
     setRendering(true); canvas.width = selected.width; canvas.height = selected.height;
     const ctx = canvas.getContext("2d")!; ctx.clearRect(0, 0, selected.width, selected.height);
@@ -892,9 +895,34 @@ export default function PhotoTemplatesPage() {
     _logoOpts = { size: logoSize, ox: logoOffsetX, oy: logoOffsetY };
     selected.draw(ctx, values, photos, photoZoom, photoAlignX, photoAlignY, logoImg);
     setRendering(false);
-  }, [selected, values, photoSrcs, photoZoom, photoAlignX, photoAlignY, logoUrl, logoSize, logoOffsetX, logoOffsetY]);
+  }, [mounted, selected, values, photoSrcs, photoZoom, photoAlignX, photoAlignY, logoUrl, logoSize, logoOffsetX, logoOffsetY]);
 
-  useEffect(() => { render(); }, [render]);
+  useEffect(() => { 
+    setMounted(true);
+  }, []);
+
+  useEffect(() => { 
+    if (mounted) {
+      render(); 
+    }
+  }, [mounted, render]);
+
+  if (!hasAccess) {
+    return (
+      <div className="text-white max-w-7xl mx-auto p-8 text-center">
+        <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
+        <p className="text-white/70">You don't have permission to access this page.</p>
+      </div>
+    );
+  }
+
+  if (!mounted) {
+    return (
+      <div className="text-white max-w-7xl mx-auto p-8 text-center">
+        <div className="animate-pulse">Loading photo templates...</div>
+      </div>
+    );
+  }
 
   const download = () => {
     const canvas = canvasRef.current; if (!canvas) return;
