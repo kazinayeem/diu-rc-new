@@ -256,7 +256,7 @@
   100% { transform: translateX(-50%); }
 }
 .notice-ticker {
-  animation: notice-ticker 30s linear infinite;
+  animation: notice-ticker 15s linear infinite;
   will-change: transform;
 }
 .notice-ticker:hover {
