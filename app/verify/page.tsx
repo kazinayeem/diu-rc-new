@@ -1,48 +1,44 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import {
   ShieldCheck,
   Search,
-  CheckCircle2,
-  XCircle,
-  Loader2,
-  Award,
-  User,
-  Calendar,
-  Tag,
   Hash,
+  Loader2,
+  XCircle,
 } from "lucide-react";
 
-interface CertificateResult {
-  valid: boolean;
-  id?: string;
-  recipientName?: string;
-  event?: string;
-  category?: string;
-  issueDate?: string;
-  message?: string;
-}
-
 export default function VerifyCertificatePage() {
+  const router = useRouter();
   const [certId, setCertId] = useState("");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<CertificateResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!certId.trim()) return;
+    
     setLoading(true);
-    setResult(null);
+    setError(null);
+    
     try {
       const res = await fetch(`/api/certificates/verify?id=${encodeURIComponent(certId.trim())}`);
       const data = await res.json();
-      setResult(data);
+      
+      if (data.valid) {
+        // Redirect to certificate display page
+        router.push(`/verify/${encodeURIComponent(certId.trim().toUpperCase())}`);
+      } else {
+        // Show error message
+        setError(data.message || "Certificate not found");
+        setLoading(false);
+      }
     } catch {
-      setResult({ valid: false, message: "Unable to reach verification server. Please try again." });
-    } finally {
+      setError("Unable to reach verification server. Please try again.");
       setLoading(false);
     }
   };
@@ -50,7 +46,7 @@ export default function VerifyCertificatePage() {
   const handleInput = (val: string) => {
     setCertId(val);
     setTouched(true);
-    if (result) setResult(null);
+    if (error) setError(null);
   };
 
   return (
@@ -160,70 +156,30 @@ export default function VerifyCertificatePage() {
           </form>
         </motion.div>
 
-        {/* Result */}
-        <AnimatePresence>
-          {result && (
-            <motion.div
-              key="result"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="mt-6 rounded-2xl p-7"
-              style={{
-                background: result.valid
-                  ? "linear-gradient(145deg, rgba(16,42,32,0.9) 0%, rgba(11,31,58,0.9) 100%)"
-                  : "linear-gradient(145deg, rgba(42,14,20,0.9) 0%, rgba(11,31,58,0.9) 100%)",
-                border: result.valid
-                  ? "1px solid rgba(34,197,94,0.25)"
-                  : "1px solid rgba(239,68,68,0.25)",
-                boxShadow: result.valid
-                  ? "0 8px 40px rgba(34,197,94,0.08)"
-                  : "0 8px 40px rgba(239,68,68,0.08)",
-              }}
-            >
-              {result.valid ? (
-                <div className="space-y-5">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 size={26} className="text-emerald-400 flex-shrink-0" />
-                    <div>
-                      <h2 className="text-lg font-black text-white">Certificate Verified</h2>
-                      <p className="text-sm text-emerald-400/80">This certificate is authentic and valid.</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                    {result.id && (
-                      <InfoRow icon={<Hash size={15} />} label="Certificate ID" value={result.id} />
-                    )}
-                    {result.recipientName && (
-                      <InfoRow icon={<User size={15} />} label="Recipient" value={result.recipientName} />
-                    )}
-                    {result.event && (
-                      <InfoRow icon={<Award size={15} />} label="Event / Program" value={result.event} />
-                    )}
-                    {result.category && (
-                      <InfoRow icon={<Tag size={15} />} label="Category" value={result.category} />
-                    )}
-                    {result.issueDate && (
-                      <InfoRow icon={<Calendar size={15} />} label="Issue Date" value={result.issueDate} />
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-start gap-3">
-                  <XCircle size={26} className="text-red-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h2 className="text-lg font-black text-white">Certificate Not Found</h2>
-                    <p className="text-sm text-red-400/80 mt-0.5">
-                      {result.message || "No certificate matches this ID. Please check and try again."}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Error Message */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="mt-6 rounded-2xl p-7"
+            style={{
+              background: "linear-gradient(145deg, rgba(42,14,20,0.9) 0%, rgba(11,31,58,0.9) 100%)",
+              border: "1px solid rgba(239,68,68,0.25)",
+              boxShadow: "0 8px 40px rgba(239,68,68,0.08)",
+            }}
+          >
+            <div className="flex items-start gap-3">
+              <XCircle size={26} className="text-red-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <h2 className="text-lg font-black text-white">Certificate Not Found</h2>
+                <p className="text-sm text-red-400/80 mt-0.5">
+                  {error}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Info note */}
         <motion.p
@@ -239,28 +195,5 @@ export default function VerifyCertificatePage() {
         </motion.p>
       </div>
     </main>
-  );
-}
-
-function InfoRow({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div
-      className="flex items-start gap-2.5 px-4 py-3 rounded-xl"
-      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}
-    >
-      <span className="mt-0.5 text-white/40">{icon}</span>
-      <div className="min-w-0">
-        <p className="text-xs text-white/40 font-medium">{label}</p>
-        <p className="text-sm text-white font-semibold truncate">{value}</p>
-      </div>
-    </div>
   );
 }

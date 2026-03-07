@@ -27,6 +27,7 @@ import {
   Star,
   Mail,
   Palette,
+  Award,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -47,6 +48,7 @@ const ALL_MENU_ITEMS: MenuItem[] = [
   { href: "/admin/projects", label: "Projects", icon: Layers, permission: "projects" },
   { href: "/admin/posts", label: "Posts", icon: FileText, permission: "posts" },
   { href: "/admin/notices", label: "Notices", icon: Megaphone, permission: "notices" },
+  { href: "/admin/certificates", label: "Certificates", icon: Award, permission: "certificates" },
   { href: "/admin/payment", label: "Payment", icon: CreditCard, permission: "payment" },
   { href: "/admin/sponsors", label: "Sponsors", icon: Star, permission: "sponsors" },
   { href: "/admin/hall-of-fame", label: "Hall of Fame", icon: GraduationCap, permission: "hall-of-fame" },
