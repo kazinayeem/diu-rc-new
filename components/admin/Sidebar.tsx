@@ -54,7 +54,7 @@ const ALL_MENU_ITEMS: MenuItem[] = [
   { href: "/admin/settings/smtp", label: "SMTP Config", icon: Mail, superAdminOnly: true },
   { href: "/admin/settings/admins", label: "Manage Admins", icon: ShieldCheck, superAdminOnly: true },
   { href: "/admin/settings", label: "Settings", icon: Settings, superAdminOnly: true },
-  { href: "/admin/photo-templates", label: "Photo Templates", icon: Palette, permission: "members" },
+  { href: "/admin/photo-templates", label: "Photo Templates", icon: Palette, permission: "photo-templates" },
 ];
 
 export default function Sidebar() {

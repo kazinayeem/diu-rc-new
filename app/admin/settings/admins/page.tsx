@@ -27,6 +27,7 @@ const ALL_PERMISSIONS = [
   { key: "payment", label: "Payment" },
   { key: "sponsors", label: "Sponsors & Partners" },
   { key: "hall-of-fame", label: "Hall of Fame" },
+  { key: "photo-templates", label: "Photo Templates / Posters" },
 ];
 
 type AdminRecord = {

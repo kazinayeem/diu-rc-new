@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Download, RefreshCw, Palette, ChevronDown, ChevronUp, ZoomIn } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 type FieldType = "text" | "textarea" | "color" | "image" | "select";
 interface Field { key: string; label: string; type: FieldType; default: string; placeholder?: string; options?: string[]; }
@@ -847,6 +848,19 @@ function loadImg(src: string): Promise<HTMLImageElement> {
 }
 
 export default function PhotoTemplatesPage() {
+  const { data: session } = useSession();
+  const permissions = (session?.user as any)?.permissions ?? [];
+  const hasAccess = permissions.includes("photo-templates") || (session?.user as any)?.role === "super-admin";
+
+  if (!hasAccess) {
+    return (
+      <div className="text-white max-w-7xl mx-auto p-8 text-center">
+        <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
+        <p className="text-white/70">You don't have permission to access this page.</p>
+      </div>
+    );
+  }
+
   const [selected, setSelected] = useState<Template>(TEMPLATES[0]);
   const [values, setValues] = useState<Record<string, string>>(() => { const v: Record<string, string> = {}; TEMPLATES[0].fields.forEach((f) => (v[f.key] = f.default)); return v; });
   const [photoSrcs, setPhotoSrcs] = useState<Record<string, string>>({});
