@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import DataTable from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/Button";
-import { Eye, Trash2, Upload, Download, Plus, Loader2, Search, X } from "lucide-react";
+import { Eye, Trash2, Upload, Download, Plus, Loader2, Search, X, Pencil, Save } from "lucide-react";
 import { useGetMemberRegistrationsQuery, useUpdateMemberRegistrationMutation, useDeleteMemberRegistrationMutation } from "@/lib/api/api";
 import ImportExportModal from "@/components/admin/ImportExportModal";
 import AddRegistrationModal from "@/components/admin/AddRegistrationModal";
@@ -25,6 +25,51 @@ export default function MemberRegistrationsPage() {
   const [totalRecords, setTotalRecords] = useState(0);
 
   const [selectedRegistration, setSelectedRegistration] = useState<any>(null);
+  const [editingRegistration, setEditingRegistration] = useState<any>(null);
+  const [editForm, setEditForm] = useState<any>({});
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
+
+  const openEdit = (row: any) => {
+    setEditingRegistration(row);
+    setEditForm({
+      name: row.name || "",
+      studentId: row.studentId || "",
+      email: row.email || "",
+      phone: row.phone || "",
+      department: row.department || "",
+      batch: row.batch || "",
+      currentYear: row.currentYear || "",
+      cgpa: row.cgpa || "",
+      previousExperience: row.previousExperience || "",
+      whyJoin: row.whyJoin || "",
+      skills: (row.skills || []).join(", "),
+      paymentMethod: row.paymentMethod || "",
+      paymentNumber: row.paymentNumber || "",
+      transactionId: row.transactionId || "",
+      paymentStatus: row.paymentStatus || "pending",
+      status: row.status || "pending",
+    });
+  };
+
+  const handleEditSave = async () => {
+    if (!editingRegistration) return;
+    setIsSavingEdit(true);
+    try {
+      const body = {
+        ...editForm,
+        skills: editForm.skills
+          ? editForm.skills.split(",").map((s: string) => s.trim()).filter(Boolean)
+          : [],
+      };
+      await updateMemberRegistration({ id: editingRegistration._id, body }).unwrap();
+      setEditingRegistration(null);
+    } catch (err) {
+      console.error("Edit save error:", err);
+      alert("Failed to save changes");
+    } finally {
+      setIsSavingEdit(false);
+    }
+  };
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -233,7 +278,20 @@ export default function MemberRegistrationsPage() {
         />
       ),
     },
-    { key: "name", label: "Name" },
+    {
+      key: "name",
+      label: "Name",
+      render: (value: string, row: any) => (
+        <span
+          onDoubleClick={() => openEdit(row)}
+          className="cursor-pointer group inline-flex items-center gap-1 hover:text-cyan-300 transition-colors"
+          title="Double-click to edit"
+        >
+          {value}
+          <Pencil size={11} className="opacity-0 group-hover:opacity-50 transition-opacity flex-shrink-0" />
+        </span>
+      ),
+    },
     { key: "studentId", label: "Student ID" },
     { key: "email", label: "Email" },
     { key: "department", label: "Department" },
@@ -456,7 +514,134 @@ export default function MemberRegistrationsPage() {
         </div>
       </div>
 
-      {/* MODAL */}
+      {/* EDIT MODAL */}
+      {editingRegistration && (
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-6 z-50"
+          onClick={(e) => { if (e.target === e.currentTarget && !isSavingEdit) setEditingRegistration(null); }}
+        >
+          <div className="bg-[#0f192d] border border-white/10 rounded-xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-5">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <Pencil size={18} className="text-cyan-400" />
+                Edit Registration
+              </h2>
+              <button
+                onClick={() => setEditingRegistration(null)}
+                disabled={isSavingEdit}
+                className="text-2xl hover:text-red-400 disabled:opacity-50 transition-colors"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {([
+                ["name", "Name"],
+                ["studentId", "Student ID"],
+                ["email", "Email"],
+                ["phone", "Phone"],
+                ["department", "Department"],
+                ["batch", "Batch"],
+                ["currentYear", "Current Year"],
+                ["cgpa", "CGPA"],
+                ["paymentMethod", "Payment Method"],
+                ["paymentNumber", "Sender Number"],
+                ["transactionId", "Transaction ID"],
+              ] as [string, string][]).map(([field, label]) => (
+                <div key={field} className={field === "email" ? "col-span-2" : ""}>
+                  <label className="block text-xs text-white/50 mb-1">{label}</label>
+                  <input
+                    value={editForm[field]}
+                    onChange={(e) => setEditForm((prev: any) => ({ ...prev, [field]: e.target.value }))}
+                    className="w-full px-3 py-2 bg-white/5 border border-white/15 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                </div>
+              ))}
+
+              <div>
+                <label className="block text-xs text-white/50 mb-1">Status</label>
+                <select
+                  value={editForm.status}
+                  onChange={(e) => setEditForm((prev: any) => ({ ...prev, status: e.target.value }))}
+                  className="w-full px-3 py-2 bg-[#0f192d] border border-white/15 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                >
+                  {["pending","reviewed","approved","rejected"].map(s => (
+                    <option key={s} value={s} className="text-black bg-white">{s}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs text-white/50 mb-1">Payment Status</label>
+                <select
+                  value={editForm.paymentStatus}
+                  onChange={(e) => setEditForm((prev: any) => ({ ...prev, paymentStatus: e.target.value }))}
+                  className="w-full px-3 py-2 bg-[#0f192d] border border-white/15 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                >
+                  {["pending","approved","rejected"].map(s => (
+                    <option key={s} value={s} className="text-black bg-white">{s}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="col-span-2">
+                <label className="block text-xs text-white/50 mb-1">Previous Experience</label>
+                <textarea
+                  rows={2}
+                  value={editForm.previousExperience}
+                  onChange={(e) => setEditForm((prev: any) => ({ ...prev, previousExperience: e.target.value }))}
+                  className="w-full px-3 py-2 bg-white/5 border border-white/15 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label className="block text-xs text-white/50 mb-1">Why Join?</label>
+                <textarea
+                  rows={3}
+                  value={editForm.whyJoin}
+                  onChange={(e) => setEditForm((prev: any) => ({ ...prev, whyJoin: e.target.value }))}
+                  className="w-full px-3 py-2 bg-white/5 border border-white/15 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label className="block text-xs text-white/50 mb-1">Skills (comma-separated)</label>
+                <input
+                  value={editForm.skills}
+                  onChange={(e) => setEditForm((prev: any) => ({ ...prev, skills: e.target.value }))}
+                  placeholder="e.g. Python, Arduino, CAD"
+                  className="w-full px-3 py-2 bg-white/5 border border-white/15 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6 pt-4 border-t border-white/10">
+              <Button
+                onClick={handleEditSave}
+                disabled={isSavingEdit}
+                className="flex-1 bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSavingEdit ? (
+                  <><Loader2 size={16} className="mr-2 animate-spin" />Saving...</>
+                ) : (
+                  <><Save size={16} className="mr-2" />Save Changes</>
+                )}
+              </Button>
+              <Button
+                onClick={() => setEditingRegistration(null)}
+                disabled={isSavingEdit}
+                variant="outline"
+                className="flex-1 border-white/20 text-white/70 hover:bg-white/5 disabled:opacity-50"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* VIEW MODAL */}
       {selectedRegistration && (
         <div 
           className={`fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-6 z-50 transition-opacity duration-200 ${
