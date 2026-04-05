@@ -37,212 +37,133 @@ export default function MemberRegistrationsPage() {
   const [deleteAllData, setDeleteAllData] = useState<any>(null);
   const [verificationError, setVerificationError] = useState("");
 
-  // Generate random math problem
+  // Generate random math problem (expert-only for Delete All safety)
   const generateMathProblem = () => {
+    const factorial = (n: number): number => {
+      let result = 1;
+      for (let i = 2; i <= n; i++) result *= i;
+      return result;
+    };
+
+    const fibonacci = (n: number): number => {
+      if (n <= 1) return n;
+      let a = 0;
+      let b = 1;
+      for (let i = 2; i <= n; i++) {
+        const next = a + b;
+        a = b;
+        b = next;
+      }
+      return b;
+    };
+
+    const permutation = (n: number, r: number): number => {
+      let result = 1;
+      for (let i = 0; i < r; i++) result *= n - i;
+      return result;
+    };
+
+    const combination = (n: number, r: number): number => {
+      const rr = Math.min(r, n - r);
+      let numerator = 1;
+      let denominator = 1;
+      for (let i = 1; i <= rr; i++) {
+        numerator *= n - rr + i;
+        denominator *= i;
+      }
+      return Math.round(numerator / denominator);
+    };
+
     const operations = [
-      // Simple operations (easy)
+      // Factorials: 3!, 4!, 5! (+ a bit harder variants)
       () => {
-        const a = Math.floor(Math.random() * 50) + 1;
-        const b = Math.floor(Math.random() * 50) + 1;
-        return { problem: `${a} + ${b}`, answer: a + b };
-      },
-      
-      // Medium difficulty
-      () => {
-        const a = Math.floor(Math.random() * 100) + 50;
-        const b = Math.floor(Math.random() * a);
-        return { problem: `${a} - ${b}`, answer: a - b };
-      },
-      () => {
-        const a = Math.floor(Math.random() * 12) + 2;
-        const b = Math.floor(Math.random() * 12) + 2;
-        return { problem: `${a} × ${b}`, answer: a * b };
-      },
-      
-      // Hard: Complex expressions
-      () => {
-        const a = Math.floor(Math.random() * 20) + 2;
-        const b = Math.floor(Math.random() * 3) + 2;
-        return { problem: `${a}² - ${b}²`, answer: a * a - b * b };
-      },
-      () => {
-        const a = Math.floor(Math.random() * 15) + 1;
-        const b = Math.floor(Math.random() * 10) + 1;
-        const c = Math.floor(Math.random() * a);
-        return { problem: `(${a} + ${b}) × ${c}`, answer: (a + b) * c };
+        const options = [3, 4, 5, 6, 7];
+        const n = options[Math.floor(Math.random() * options.length)];
+        return { problem: `${n}!`, answer: factorial(n) };
       },
 
-      // Very Hard: Cubic operations
+      // Factorial division: like 7! / 4!
       () => {
-        const a = Math.floor(Math.random() * 8) + 2;
-        const b = Math.floor(Math.random() * 8) + 1;
-        return { problem: `${a}³ - ${b}³`, answer: a * a * a - b * b * b };
-      },
-      () => {
-        const a = Math.floor(Math.random() * 10) + 1;
-        const b = Math.floor(Math.random() * 10) + 1;
-        const c = Math.floor(Math.random() * 5) + 2;
-        return { problem: `(${a} + ${b})² - ${c}²`, answer: (a + b) * (a + b) - c * c };
+        const n = Math.floor(Math.random() * 3) + 7; // 7..9
+        const r = Math.floor(Math.random() * 3) + 3; // 3..5
+        return { problem: `${n}! / ${r}!`, answer: Math.round(factorial(n) / factorial(r)) };
       },
 
-      // Very Hard: Multiple operations
+      // Fibonacci sequences: Fib(8) .. Fib(12)
       () => {
-        const a = Math.floor(Math.random() * 15) + 1;
-        const b = Math.floor(Math.random() * 12) + 1;
-        const c = Math.floor(Math.random() * 10) + 1;
-        return { problem: `(${a} × ${b}) + (${c} × ${a})`, answer: (a * b) + (c * a) };
-      },
-      () => {
-        const a = Math.floor(Math.random() * 20) + 5;
-        const b = Math.floor(Math.random() * 8) + 2;
-        const c = Math.floor(Math.random() * 8) + 1;
-        return { problem: `(${a} - ${c}) × (${b} + ${c})`, answer: (a - c) * (b + c) };
+        const n = Math.floor(Math.random() * 5) + 8;
+        return { problem: `Fib(${n})`, answer: fibonacci(n) };
       },
 
-      // Expert: Factorial problems
+      // Power operations: 2^5, 3^6, etc.
       () => {
-        const factorial = (n: number): number => {
-          let result = 1;
-          for (let i = 2; i <= n; i++) result *= i;
-          return result;
-        };
-        const a = Math.floor(Math.random() * 5) + 3; // 3! to 7!
-        return { problem: `${a}!`, answer: factorial(a) };
-      },
-      () => {
-        const factorial = (n: number): number => {
-          let result = 1;
-          for (let i = 2; i <= n; i++) result *= i;
-          return result;
-        };
-        const a = Math.floor(Math.random() * 4) + 4; // 4! to 7!
-        const b = Math.floor(Math.random() * 4) + 1;
-        return { problem: `${a}! ÷ ${b}!`, answer: Math.floor(factorial(a) / factorial(b)) };
+        const base = Math.floor(Math.random() * 4) + 2; // 2..5
+        const exp = Math.floor(Math.random() * 3) + 5; // 5..7
+        return { problem: `${base}^${exp}`, answer: Math.pow(base, exp) };
       },
 
-      // Expert: Fibonacci-like sequences
+      // Exponential division: a^m / a^n
       () => {
-        const fib = (n: number): number => {
-          if (n <= 1) return n;
-          let a = 0, b = 1;
-          for (let i = 2; i <= n; i++) [a, b] = [b, a + b];
-          return b;
-        };
-        const n = Math.floor(Math.random() * 5) + 8; // Fib(8) to Fib(12)
-        return { problem: `Fibonacci(${n})`, answer: fib(n) };
+        const base = Math.floor(Math.random() * 4) + 2; // 2..5
+        const high = Math.floor(Math.random() * 3) + 6; // 6..8
+        const low = Math.floor(Math.random() * 3) + 2; // 2..4
+        return { problem: `${base}^${high} / ${base}^${low}`, answer: Math.pow(base, high - low) };
       },
 
-      // Expert: Power operations
+      // Algebraic expressions: ax + b where x substituted
       () => {
-        const a = Math.floor(Math.random() * 6) + 2;
-        const b = Math.floor(Math.random() * 4) + 3;
-        return { problem: `${a}^${b}`, answer: Math.pow(a, b) };
-      },
-      () => {
-        const a = Math.floor(Math.random() * 8) + 2;
-        const b = Math.floor(Math.random() * 6) + 2;
-        const c = Math.floor(Math.random() * 3) + 1;
-        return { problem: `${a}^${b} ÷ ${a}^${c}`, answer: Math.pow(a, b - c) };
+        const a = Math.floor(Math.random() * 15) + 6;
+        const b = Math.floor(Math.random() * 30) + 5;
+        const x = Math.floor(Math.random() * 9) + 2;
+        return { problem: `${a}x + ${b} (x=${x})`, answer: a * x + b };
       },
 
-      // Expert: Algebraic expressions
+      // Quadratic: ax^2 - bx with x substituted
       () => {
-        const a = Math.floor(Math.random() * 15) + 2;
-        const b = Math.floor(Math.random() * 12) + 1;
-        const c = Math.floor(Math.random() * 10) + 1;
-        const x = Math.floor(Math.random() * 8) + 2;
-        return { problem: `${a}x + ${b} (where x=${x})`, answer: a * x + b };
+        const a = Math.floor(Math.random() * 8) + 3;
+        const b = Math.floor(Math.random() * 12) + 4;
+        const x = Math.floor(Math.random() * 7) + 3;
+        return { problem: `${a}x^2 - ${b}x (x=${x})`, answer: a * x * x - b * x };
       },
+
+      // Cubic polynomials: ax^3 + bx - c
       () => {
-        const a = Math.floor(Math.random() * 10) + 1;
-        const b = Math.floor(Math.random() * 8) + 1;
+        const a = Math.floor(Math.random() * 5) + 2;
+        const b = Math.floor(Math.random() * 14) + 5;
+        const c = Math.floor(Math.random() * 30) + 6;
         const x = Math.floor(Math.random() * 6) + 2;
-        return { problem: `${a}x² - ${b}x (where x=${x})`, answer: a * x * x - b * x };
+        return {
+          problem: `${a}x^3 + ${b}x - ${c} (x=${x})`,
+          answer: a * x * x * x + b * x - c,
+        };
       },
 
-      // Expert: Complex polynomial
+      // Sum formula: Sum(1..n)
       () => {
-        const a = Math.floor(Math.random() * 6) + 1;
-        const b = Math.floor(Math.random() * 10) + 1;
-        const c = Math.floor(Math.random() * 8) + 1;
-        const x = Math.floor(Math.random() * 5) + 2;
-        return { problem: `${a}x³ + ${b}x - ${c} (where x=${x})`, answer: a * x * x * x + b * x - c };
-      },
-
-      // Expert: Sum formulas
-      () => {
-        const n = Math.floor(Math.random() * 12) + 3; // Sum of 1 to n
+        const n = Math.floor(Math.random() * 21) + 10; // 10..30
         const sum = (n * (n + 1)) / 2;
         return { problem: `Sum(1..${n})`, answer: sum };
       },
+
+      // Sum of squares
       () => {
-        const n = Math.floor(Math.random() * 8) + 3; // Sum of squares
-        let sum = 0;
-        for (let i = 1; i <= n; i++) sum += i * i;
-        return { problem: `1² + 2² + ... + ${n}²`, answer: sum };
+        const n = Math.floor(Math.random() * 10) + 8; // 8..17
+        const sumSquares = (n * (n + 1) * (2 * n + 1)) / 6;
+        return { problem: `1^2 + 2^2 + ... + ${n}^2`, answer: sumSquares };
       },
 
-      // Expert: Permutations and combinations
+      // Permutations: P(n,r)
       () => {
-        const perm = (n: number, r: number): number => {
-          if (r > n) return 0;
-          let result = 1;
-          for (let i = 0; i < r; i++) result *= (n - i);
-          return result;
-        };
-        const n = Math.floor(Math.random() * 6) + 5;
-        const r = Math.floor(Math.random() * (n - 2)) + 1;
-        return { problem: `P(${n},${r})`, answer: perm(n, r) };
-      },
-      () => {
-        const comb = (n: number, r: number): number => {
-          if (r > n) return 0;
-          let num = 1, den = 1;
-          for (let i = 0; i < r; i++) {
-            num *= (n - i);
-            den *= (i + 1);
-          }
-          return Math.floor(num / den);
-        };
-        const n = Math.floor(Math.random() * 8) + 5;
-        const r = Math.floor(Math.random() * (n - 1)) + 1;
-        return { problem: `C(${n},${r})`, answer: comb(n, r) };
+        const n = Math.floor(Math.random() * 5) + 8; // 8..12
+        const r = Math.floor(Math.random() * 3) + 3; // 3..5
+        return { problem: `P(${n},${r})`, answer: permutation(n, r) };
       },
 
-      // Expert: Multiple nested operations
+      // Combinations: C(n,r)
       () => {
-        const a = Math.floor(Math.random() * 12) + 2;
-        const b = Math.floor(Math.random() * 10) + 1;
-        const c = Math.floor(Math.random() * 8) + 1;
-        const d = Math.floor(Math.random() * 6) + 1;
-        return { problem: `(${a} + ${b}) × (${c} - ${d})`, answer: (a + b) * (c - d) };
-      },
-      () => {
-        const a = Math.floor(Math.random() * 20) + 10;
-        const b = Math.floor(Math.random() * 8) + 2;
-        const c = Math.floor(Math.random() * 6) + 1;
-        return { problem: `${a} ÷ ${b} × ${c}`, answer: Math.floor((a / b) * c) };
-      },
-
-      // Expert: Modulo operations
-      () => {
-        const a = Math.floor(Math.random() * 100) + 20;
-        const b = Math.floor(Math.random() * 15) + 5;
-        return { problem: `${a} mod ${b}`, answer: a % b };
-      },
-
-      // Expert: Mixed operations with order of operations
-      () => {
-        const a = Math.floor(Math.random() * 8) + 2;
-        const b = Math.floor(Math.random() * 8) + 2;
-        const c = Math.floor(Math.random() * 6) + 1;
-        return { problem: `${b} + ${a} × ${c}`, answer: b + a * c };
-      },
-      () => {
-        const a = Math.floor(Math.random() * 10) + 1;
-        const b = Math.floor(Math.random() * 10) + 5;
-        const c = Math.floor(Math.random() * 4) + 2;
-        return { problem: `(${b} ÷ ${a}) × ${c}`, answer: Math.floor((b / a) * c) };
+        const n = Math.floor(Math.random() * 8) + 10; // 10..17
+        const r = Math.floor(Math.random() * 4) + 3; // 3..6
+        return { problem: `C(${n},${r})`, answer: combination(n, r) };
       },
     ];
 
