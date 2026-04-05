@@ -33,79 +33,261 @@ const TEMPLATES = [
   {
     label: "🎉 Welcome New Members",
     subject: "Welcome to DIU Robotics Club!",
-    body: `<h2>Welcome to the DIU Robotics Club Family! 🤖</h2>
+    body: `<div style="font-family:Arial,sans-serif;color:#333;line-height:1.6;">
+<h2 style="color:#0066cc;border-bottom:3px solid #00ccff;padding-bottom:10px;">Welcome to the DIU Robotics Club Family! 🤖</h2>
 <p>Dear Member,</p>
 <p>We are thrilled to have you on board! As a member of the <strong>Daffodil International University Robotics Club</strong>, you now have access to exciting workshops, seminars, competitions, and a community of like-minded innovators.</p>
-<h3>What's next?</h3>
-<ul>
-  <li>Check out our upcoming <a href="https://diu-rc-new.vercel.app/events">Events</a></li>
-  <li>Explore our <a href="https://diu-rc-new.vercel.app/workshops">Workshops</a></li>
-  <li>Connect with the team on our <a href="https://diu-rc-new.vercel.app/teams">Teams page</a></li>
+<h3 style="color:#0066cc;margin-top:20px;">What's Next?</h3>
+<ul style="background:#f0f8ff;padding:15px 20px;border-left:4px solid #00ccff;border-radius:6px;">
+  <li>Check out our upcoming <a href="https://diu-rc-new.vercel.app/events" style="color:#0066cc;text-decoration:none;font-weight:bold;">Events</a></li>
+  <li>Explore our <a href="https://diu-rc-new.vercel.app/workshops" style="color:#0066cc;text-decoration:none;font-weight:bold;">Workshops</a></li>
+  <li>Connect with the team on our <a href="https://diu-rc-new.vercel.app/teams" style="color:#0066cc;text-decoration:none;font-weight:bold;">Teams page</a></li>
 </ul>
-<p>Stay tuned for announcements and get ready to innovate!</p>
-<p>Best regards,<br/><strong>DIU Robotics Club Team</strong></p>`,
+<p style="margin-top:20px;">Stay tuned for announcements and get ready to innovate!</p>
+<p style="margin-top:20px;">Best regards,<br/><strong style="color:#0066cc;">DIU Robotics Club Team</strong></p>
+</div>`,
   },
   {
     label: "📣 Event Announcement",
     subject: "Exciting Event Coming Up at DIU Robotics Club!",
-    body: `<h2>Don't Miss Our Upcoming Event! 🚀</h2>
+    body: `<div style="font-family:Arial,sans-serif;color:#333;line-height:1.6;">
+<h2 style="color:#0066cc;border-bottom:3px solid #ff6600;padding-bottom:10px;">Don't Miss Our Upcoming Event! 🚀</h2>
 <p>Dear Member,</p>
 <p>We are excited to announce an upcoming event organized by the <strong>DIU Robotics Club</strong>!</p>
-<h3>Event Details</h3>
-<ul>
-  <li><strong>Event Name:</strong> [Event Name Here]</li>
-  <li><strong>Date:</strong> [Date]</li>
-  <li><strong>Time:</strong> [Time]</li>
-  <li><strong>Venue:</strong> [Venue]</li>
-</ul>
+<h3 style="color:#0066cc;margin-top:20px;">Event Details</h3>
+<div style="background:#fff3e0;padding:15px 20px;border-left:4px solid #ff6600;border-radius:6px;margin-bottom:15px;">
+  <p><strong>Event Name:</strong> [Event Name Here]</p>
+  <p><strong>Date:</strong> [Date]</p>
+  <p><strong>Time:</strong> [Time]</p>
+  <p><strong>Venue:</strong> [Venue]</p>
+</div>
 <p>This is a great opportunity to learn, network, and showcase your skills. Seats are limited — register early!</p>
-<p><a href="https://diu-rc-new.vercel.app/events" style="display:inline-block;padding:10px 24px;background:#1c75bc;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold;">View Events →</a></p>
-<p>See you there!<br/><strong>DIU Robotics Club Team</strong></p>`,
+<p style="text-align:center;margin:25px 0;"><a href="https://diu-rc-new.vercel.app/events" style="display:inline-block;padding:12px 30px;background:#ff6600;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px;">View & Register Now →</a></p>
+<p>See you there!<br/><strong style="color:#0066cc;">DIU Robotics Club Team</strong></p>
+</div>`,
   },
   {
     label: "🛠️ Workshop Invitation",
     subject: "You're Invited: Exclusive Workshop by DIU Robotics Club",
-    body: `<h2>Exclusive Workshop Invitation 🛠️</h2>
+    body: `<div style="font-family:Arial,sans-serif;color:#333;line-height:1.6;">
+<h2 style="color:#0066cc;border-bottom:3px solid #00cc66;padding-bottom:10px;">Exclusive Workshop Invitation 🛠️</h2>
 <p>Dear Member,</p>
 <p>We are hosting an exclusive workshop designed to sharpen your technical skills and broaden your knowledge in robotics and automation.</p>
-<h3>Workshop Details</h3>
-<ul>
-  <li><strong>Topic:</strong> [Workshop Topic]</li>
-  <li><strong>Instructor:</strong> [Instructor Name]</li>
-  <li><strong>Date &amp; Time:</strong> [Date &amp; Time]</li>
-  <li><strong>Registration Deadline:</strong> [Deadline]</li>
-</ul>
-<p>A certificate will be provided upon successful completion.</p>
-<p><a href="https://diu-rc-new.vercel.app/workshops" style="display:inline-block;padding:10px 24px;background:#1c75bc;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold;">Register Now →</a></p>
-<p>Best regards,<br/><strong>DIU Robotics Club Team</strong></p>`,
+<h3 style="color:#0066cc;margin-top:20px;">Workshop Details</h3>
+<div style="background:#f0fff0;padding:15px 20px;border-left:4px solid #00cc66;border-radius:6px;margin-bottom:15px;">
+  <p><strong>Topic:</strong> [Workshop Topic]</p>
+  <p><strong>Instructor:</strong> [Instructor Name]</p>
+  <p><strong>Date &amp; Time:</strong> [Date &amp; Time]</p>
+  <p><strong>Capacity:</strong> [Number] participants</p>
+  <p><strong>Registration Deadline:</strong> [Deadline]</p>
+</div>
+<p><strong style="color:#00cc66;">✓ Certificate</strong> will be provided upon successful completion.</p>
+<p style="text-align:center;margin:25px 0;"><a href="https://diu-rc-new.vercel.app/workshops" style="display:inline-block;padding:12px 30px;background:#00cc66;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px;">Register Now →</a></p>
+<p>Best regards,<br/><strong style="color:#0066cc;">DIU Robotics Club Team</strong></p>
+</div>`,
   },
   {
     label: "🔔 General Announcement",
     subject: "Important Announcement from DIU Robotics Club",
-    body: `<h2>Important Announcement 🔔</h2>
+    body: `<div style="font-family:Arial,sans-serif;color:#333;line-height:1.6;">
+<h2 style="color:#0066cc;border-bottom:3px solid #cc0000;padding-bottom:10px;">Important Announcement 🔔</h2>
 <p>Dear Member,</p>
 <p>We have an important update to share with all members of the <strong>Daffodil International University Robotics Club</strong>.</p>
-<p>[Write your announcement here]</p>
-<p>For more information, visit our website or contact us at <a href="mailto:info@diuroboticclub.com">info@diuroboticclub.com</a>.</p>
+<div style="background:#ffe6e6;padding:15px 20px;border-left:4px solid #cc0000;border-radius:6px;margin:20px 0;">
+  <p>[Write your announcement here]</p>
+</div>
+<h3 style="color:#0066cc;margin-top:20px;">What You Need to Know</h3>
+<ul>
+  <li>[Key Point 1]</li>
+  <li>[Key Point 2]</li>
+  <li>[Key Point 3]</li>
+</ul>
+<p style="margin-top:20px;">For more information, visit our website or contact us at <a href="mailto:info@diuroboticclub.com" style="color:#0066cc;text-decoration:none;font-weight:bold;">info@diuroboticclub.com</a>.</p>
 <p>Thank you for being a valued member!</p>
-<p>Best regards,<br/><strong>DIU Robotics Club Team</strong></p>`,
+<p>Best regards,<br/><strong style="color:#0066cc;">DIU Robotics Club Team</strong></p>
+</div>`,
   },
   {
     label: "🏆 Membership Renewal Reminder",
     subject: "Renew Your DIU Robotics Club Membership",
-    body: `<h2>Time to Renew Your Membership! 🏆</h2>
+    body: `<div style="font-family:Arial,sans-serif;color:#333;line-height:1.6;">
+<h2 style="color:#0066cc;border-bottom:3px solid #ffd700;padding-bottom:10px;">Time to Renew Your Membership! 🏆</h2>
 <p>Dear Member,</p>
 <p>Your membership with the <strong>DIU Robotics Club</strong> is due for renewal. Don't miss out on another year of exciting events, workshops, and opportunities!</p>
-<h3>Membership Benefits</h3>
-<ul>
-  <li>Access to exclusive workshops and bootcamps</li>
-  <li>Priority registration for competitions</li>
-  <li>Networking with top engineering students</li>
-  <li>Certificate of membership</li>
+<h3 style="color:#0066cc;margin-top:20px;">Membership Benefits</h3>
+<div style="background:#fffef0;padding:15px 20px;border-left:4px solid #ffd700;border-radius:6px;margin-bottom:15px;">
+  <ul style="margin:0;padding-left:20px;">
+    <li>Access to exclusive workshops and bootcamps</li>
+    <li>Priority registration for competitions</li>
+    <li>Networking with top engineering students</li>
+    <li>Certificate of membership</li>
+    <li>Exclusive club merchandise</li>
+  </ul>
+</div>
+<p style="font-size:18px;text-align:center;color:#cc6600;font-weight:bold;margin:20px 0;">Renewal Fee: <span style="color:#0066cc;">৳200 BDT</span></p>
+<p style="text-align:center;margin:25px 0;"><a href="https://diu-rc-new.vercel.app/join" style="display:inline-block;padding:12px 30px;background:#ffd700;color:#000;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px;">Renew Now →</a></p>
+<p>Thank you for being part of our community!<br/><strong style="color:#0066cc;">DIU Robotics Club Team</strong></p>
+</div>`,
+  },
+  {
+    label: "🎯 Project Showcase & Sponsorship",
+    subject: "Exciting Projects & Sponsorship Opportunities",
+    body: `<div style="font-family:Arial,sans-serif;color:#333;line-height:1.6;">
+<h2 style="color:#0066cc;border-bottom:3px solid #9933cc;padding-bottom:10px;">Check Out Our Amazing Projects! 🎯</h2>
+<p>Dear Member,</p>
+<p>We're proud to showcase the incredible projects our members have been working on this semester. From AI-powered robots to autonomous vehicles, our club continues to push the boundaries of innovation!</p>
+<h3 style="color:#0066cc;margin-top:20px;">Featured Projects</h3>
+<div style="background:#f3e6ff;padding:15px 20px;border-left:4px solid #9933cc;border-radius:6px;margin-bottom:15px;">
+  <p><strong>[Project Name 1]</strong> - [Brief Description]</p>
+  <p style="margin-top:10px;"><strong>[Project Name 2]</strong> - [Brief Description]</p>
+  <p style="margin-top:10px;"><strong>[Project Name 3]</strong> - [Brief Description]</p>
+</div>
+<h3 style="color:#0066cc;margin-top:20px;">Sponsorship Opportunities</h3>
+<p>If you or your organization would like to support DIU Robotics Club, we have exciting sponsorship opportunities available. Your support helps us:</p>
+<ul style="background:#f9f9f9;padding:15px 20px;border-radius:6px;">
+  <li>Organize competitions and events</li>
+  <li>Conduct advanced workshops</li>
+  <li>Purchase state-of-the-art equipment</li>
 </ul>
-<p><strong>Renewal Fee: ৳200 BDT</strong></p>
-<p><a href="https://diu-rc-new.vercel.app/join" style="display:inline-block;padding:10px 24px;background:#1c75bc;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold;">Renew Now →</a></p>
-<p>Thank you for being part of our community!<br/><strong>DIU Robotics Club Team</strong></p>`,
+<p style="text-align:center;margin:25px 0;"><a href="https://diu-rc-new.vercel.app/sponsors" style="display:inline-block;padding:12px 30px;background:#9933cc;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px;">Learn More About Sponsorship →</a></p>
+<p>Best regards,<br/><strong style="color:#0066cc;">DIU Robotics Club Leadership</strong></p>
+</div>`,
+  },
+  {
+    label: "✅ Registration Confirmation",
+    subject: "Your Registration is Confirmed - DIU Robotics Club",
+    body: `<div style="font-family:Arial,sans-serif;color:#333;line-height:1.6;">
+<h2 style="color:#0066cc;border-bottom:3px solid #00cc00;padding-bottom:10px;">Registration Confirmed! ✅</h2>
+<p>Dear Member,</p>
+<p>Thank you for registering for our upcoming <strong>[Event/Workshop Name]</strong>. We're excited to have you participate!</p>
+<h3 style="color:#0066cc;margin-top:20px;">Confirmation Details</h3>
+<div style="background:#e6ffe6;padding:15px 20px;border-left:4px solid #00cc00;border-radius:6px;margin-bottom:15px;">
+  <p><strong>Confirmation Number:</strong> [CONF-000123]</p>
+  <p><strong>Event:</strong> [Event Name]</p>
+  <p><strong>Date:</strong> [Date]</p>
+  <p><strong>Time:</strong> [Time]</p>
+  <p><strong>Venue:</strong> [Venue/Link]</p>
+  <p><strong>Registration Status:</strong> <span style="color:#00cc00;font-weight:bold;">✓ Confirmed</span></p>
+</div>
+<h3 style="color:#0066cc;margin-top:20px;">What to Bring/Do</h3>
+<ul>
+  <li>Bring a valid ID</li>
+  <li>Arrive 10 minutes early</li>
+  <li>Bring your laptop (if applicable)</li>
+</ul>
+<p style="margin-top:20px;padding:15px;background:#f0f8ff;border-radius:6px;"><strong>Questions?</strong> Contact us at <a href="mailto:support@diuroboticclub.com" style="color:#0066cc;text-decoration:none;">support@diuroboticclub.com</a></p>
+<p style="margin-top:20px;">We look forward to seeing you!<br/><strong style="color:#0066cc;">DIU Robotics Club Team</strong></p>
+</div>`,
+  },
+  {
+    label: "🎖️ Congratulations & Achievement",
+    subject: "🎉 Congratulations on Your Achievement!",
+    body: `<div style="font-family:Arial,sans-serif;color:#333;line-height:1.6;">
+<h2 style="color:#0066cc;border-bottom:3px solid #ff6600;padding-bottom:10px;text-align:center;font-size:28px;">🎉 Congratulations! 🎖️</h2>
+<p style="text-align:center;font-size:18px;color:#ff6600;font-weight:bold;margin:20px 0;">We're Proud of Your Achievement!</p>
+<p>Dear [Member Name],</p>
+<p style="text-align:center;margin:20px 0;font-size:16px;">We are delighted to recognize your outstanding contribution and achievement in [Competition/Project/Role]!</p>
+<div style="background:#fff3e0;padding:20px;border-left:4px solid #ff6600;border-radius:6px;margin:20px 0;text-align:center;">
+  <p style="font-size:20px;color:#ff6600;font-weight:bold;margin:0;">Winner: [Award Category]</p>
+  <p style="margin:10px 0 0 0;color:#0066cc;">Date: [Date of Achievement]</p>
+</div>
+<h3 style="color:#0066cc;margin-top:20px;">Why This Matters</h3>
+<p>Your dedication, hard work, and innovation exemplify the spirit of DIU Robotics Club. This achievement not only showcases your skills but also represents the excellence of our entire organization.</p>
+<h3 style="color:#0066cc;margin-top:20px;">What's Next?</h3>
+<ul>
+  <li>Join our Hall of Fame at <a href="https://diu-rc-new.vercel.app/hall-of-fame" style="color:#0066cc;text-decoration:none;font-weight:bold;">Hall of Fame</a></li>
+  <li>Share your experience with the community</li>
+  <li>Mentor junior members</li>
+</ul>
+<p style="text-align:center;margin:25px 0;"><a href="https://diu-rc-new.vercel.app/hall-of-fame" style="display:inline-block;padding:12px 30px;background:#ff6600;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px;">View Hall of Fame →</a></p>
+<p>Once again, congratulations!<br/><strong style="color:#0066cc;">DIU Robotics Club Leadership</strong></p>
+</div>`,
+  },
+  {
+    label: "📅 Meeting Reminder & Agenda",
+    subject: "Meeting Reminder: DIU Robotics Club - [Date]",
+    body: `<div style="font-family:Arial,sans-serif;color:#333;line-height:1.6;">
+<h2 style="color:#0066cc;border-bottom:3px solid #0099ff;padding-bottom:10px;">📅 Upcoming Meeting Reminder</h2>
+<p>Dear Member,</p>
+<p>We have an important meeting coming up! Please mark your calendar and plan to attend.</p>
+<h3 style="color:#0066cc;margin-top:20px;">Meeting Details</h3>
+<div style="background:#e6f2ff;padding:15px 20px;border-left:4px solid #0099ff;border-radius:6px;margin-bottom:15px;">
+  <p><strong>Date:</strong> [Date]</p>
+  <p><strong>Time:</strong> [Time]</p>
+  <p><strong>Venue:</strong> [Room/Location]</p>
+  <p><strong>Duration:</strong> [Duration] minutes</p>
+</div>
+<h3 style="color:#0066cc;margin-top:20px;">Agenda</h3>
+<ol style="background:#f9f9f9;padding:15px 20px;border-radius:6px;">
+  <li><strong>Opening Remarks</strong> - Updates from leadership</li>
+  <li><strong>Project Updates</strong> - Status on ongoing projects</li>
+  <li><strong>Upcoming Events</strong> - Discussion on next events</li>
+  <li><strong>Announcements</strong> - Important news and opportunities</li>
+  <li><strong>Q&A Session</strong> - Ask your questions!</li>
+  <li><strong>Closing</strong> - Next meeting date</li>
+</ol>
+<p style="margin-top:20px;padding:15px;background:#ffe6e6;border-left:4px solid #cc0000;border-radius:6px;"><strong>⚠️ Important:</strong> Please confirm your attendance by replying to this email or registering <a href="https://diu-rc-new.vercel.app" style="color:#0066cc;text-decoration:none;font-weight:bold;">here</a>.</p>
+<p style="margin-top:20px;">See you there!<br/><strong style="color:#0066cc;">DIU Robotics Club Team</strong></p>
+</div>`,
+  },
+  {
+    label: "💬 Feedback & Survey Request",
+    subject: "Your Feedback Matters! Help Us Improve",
+    body: `<div style="font-family:Arial,sans-serif;color:#333;line-height:1.6;">
+<h2 style="color:#0066cc;border-bottom:3px solid #00cc99;padding-bottom:10px;">💬 We Value Your Feedback!</h2>
+<p>Dear Member,</p>
+<p>Thank you for being an active member of DIU Robotics Club! Your feedback is invaluable to help us improve our services, events, and overall member experience.</p>
+<h3 style="color:#0066cc;margin-top:20px;">Why Your Opinion Matters</h3>
+<div style="background:#e6ffe6;padding:15px 20px;border-left:4px solid #00cc99;border-radius:6px;margin-bottom:15px;">
+  <ul style="margin:0;padding-left:20px;">
+    <li>Help us design better workshops and events</li>
+    <li>Improve our communication and resources</li>
+    <li>Shape the future of the club</li>
+    <li>Your voice directly influences our decisions</li>
+  </ul>
+</div>
+<h3 style="color:#0066cc;margin-top:20px;">Survey Topics Include</h3>
+<p>✓ Event quality and relevance<br/>
+✓ Workshop content and instructors<br/>
+✓ Communication effectiveness<br/>
+✓ Community and networking<br/>
+✓ Resources and support<br/>
+✓ Overall member satisfaction</p>
+<p style="text-align:center;margin:25px 0;"><a href="https://diu-rc-new.vercel.app" style="display:inline-block;padding:12px 30px;background:#00cc99;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px;">Take the Survey (5 minutes) →</a></p>
+<p style="margin-top:20px;padding:15px;background:#f0f8ff;border-radius:6px;"><strong>Incentive:</strong> All survey participants will be entered into a raffle to win exciting prizes!</p>
+<p style="margin-top:20px;">Thank you for helping us build a better club!<br/><strong style="color:#0066cc;">DIU Robotics Club Team</strong></p>
+</div>`,
+  },
+  {
+    label: "🚀 Bootcamp Invitation",
+    subject: "Elevate Your Skills: DIU Robotics Bootcamp Starts Soon!",
+    body: `<div style="font-family:Arial,sans-serif;color:#333;line-height:1.6;">
+<h2 style="color:#0066cc;border-bottom:3px solid #ff0066;padding-bottom:10px;">🚀 Bootcamp Starts Soon!</h2>
+<p>Dear Member,</p>
+<p>Get ready for an intensive learning experience! We're launching an exclusive <strong>Robotics Bootcamp</strong> designed to take your skills to the next level.</p>
+<h3 style="color:#0066cc;margin-top:20px;">Bootcamp Overview</h3>
+<div style="background:#ffe6f0;padding:15px 20px;border-left:4px solid #ff0066;border-radius:6px;margin-bottom:15px;">
+  <p><strong>Duration:</strong> [Duration - e.g., 4 weeks]</p>
+  <p><strong>Schedule:</strong> [Days and Times]</p>
+  <p><strong>Format:</strong> Hands-on practical learning with real projects</p>
+  <p><strong>Capacity:</strong> Limited to [Number] participants</p>
+  <p><strong>Start Date:</strong> [Date]</p>
+</div>
+<h3 style="color:#0066cc;margin-top:20px;">What You'll Learn</h3>
+<ul style="background:#f9f9f9;padding:15px 20px;border-radius:6px;">
+  <li>Advanced robotics programming concepts</li>
+  <li>Hardware integration and troubleshooting</li>
+  <li>Real-world project development</li>
+  <li>Industry best practices</li>
+  <li>Collaboration and teamwork</li>
+</ul>
+<h3 style="color:#0066cc;margin-top:20px;">Investment</h3>
+<p style="text-align:center;font-size:18px;font-weight:bold;margin:15px 0;">Early Bird Price: <span style="color:#ff0066;">৳[Amount] BDT</span></p>
+<p style="text-align:center;color:#666;font-size:12px;">Regular Price: ৳[Original Amount] BDT</p>
+<p style="text-align:center;margin:25px 0;"><a href="https://diu-rc-new.vercel.app/bootcamp" style="display:inline-block;padding:12px 30px;background:#ff0066;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px;">Enroll Now →</a></p>
+<p style="color:#cc0000;margin:15px 0;font-weight:bold;">⏰ Limited seats available! Register before [Deadline]</p>
+<p>Best regards,<br/><strong style="color:#0066cc;">DIU Robotics Club Team</strong></p>
+</div>`,
   },
 ];
 
