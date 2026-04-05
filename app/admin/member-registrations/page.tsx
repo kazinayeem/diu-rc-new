@@ -30,6 +30,53 @@ export default function MemberRegistrationsPage() {
   const [editForm, setEditForm] = useState<any>({});
   const [isSavingEdit, setIsSavingEdit] = useState(false);
 
+  // Math verification for delete all
+  const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
+  const [mathProblem, setMathProblem] = useState<any>(null);
+  const [userAnswer, setUserAnswer] = useState("");
+  const [deleteAllData, setDeleteAllData] = useState<any>(null);
+  const [verificationError, setVerificationError] = useState("");
+
+  // Generate random math problem
+  const generateMathProblem = () => {
+    const operations = [
+      () => {
+        const a = Math.floor(Math.random() * 50) + 1;
+        const b = Math.floor(Math.random() * 50) + 1;
+        return { problem: `${a} + ${b}`, answer: a + b };
+      },
+      () => {
+        const a = Math.floor(Math.random() * 100) + 50;
+        const b = Math.floor(Math.random() * a);
+        return { problem: `${a} - ${b}`, answer: a - b };
+      },
+      () => {
+        const a = Math.floor(Math.random() * 12) + 2;
+        const b = Math.floor(Math.random() * 12) + 2;
+        return { problem: `${a} × ${b}`, answer: a * b };
+      },
+      () => {
+        const a = Math.floor(Math.random() * 10) + 10;
+        const b = Math.floor(Math.random() * a) + 1;
+        return { problem: `${a} ÷ ${b}`, answer: Math.round(a / b) };
+      },
+      () => {
+        const a = Math.floor(Math.random() * 20) + 2;
+        const b = Math.floor(Math.random() * 3) + 2;
+        return { problem: `${a}² - ${b}²`, answer: a * a - b * b };
+      },
+      () => {
+        const a = Math.floor(Math.random() * 15) + 1;
+        const b = Math.floor(Math.random() * 10) + 1;
+        const c = Math.floor(Math.random() * a);
+        return { problem: `(${a} + ${b}) × ${c}`, answer: (a + b) * c };
+      },
+    ];
+
+    const randomOp = operations[Math.floor(Math.random() * operations.length)];
+    return randomOp();
+  };
+
   const openEdit = (row: any) => {
     setEditingRegistration(row);
     setEditForm({
@@ -203,23 +250,41 @@ export default function MemberRegistrationsPage() {
       return;
     }
 
-    const confirmMsg = selectedStatus || search
-      ? `Are you sure you want to delete all ${totalRecords} filtered registration(s)?`
-      : `⚠️ WARNING: This will delete ALL ${totalRecords} registration(s) from the database! This action cannot be undone!`;
+    // Generate math problem and show modal instead of confirm dialog
+    const problem = generateMathProblem();
+    setMathProblem(problem);
+    setUserAnswer("");
+    setVerificationError("");
+    setDeleteAllData({
+      filters: {
+        ...(selectedStatus ? { status: selectedStatus } : {}),
+        ...(search ? { search } : {}),
+      },
+      isFiltered: selectedStatus || search,
+    });
+    setShowDeleteAllModal(true);
+  };
 
-    if (!confirm(confirmMsg)) return;
+  const verifyAndDelete = async () => {
+    if (!mathProblem || !deleteAllData) return;
 
+    const userValue = parseInt(userAnswer.trim());
+    if (isNaN(userValue) || userValue !== mathProblem.answer) {
+      setVerificationError("❌ Incorrect answer. Please try again.");
+      setUserAnswer("");
+      return;
+    }
+
+    // Correct answer - proceed with deletion
+    setVerificationError("");
+    setShowDeleteAllModal(false);
     setDeletingBulk(true);
 
     try {
-      // Call delete-all endpoint directly with optional filters — no need to fetch IDs first
       const deleteResponse = await fetch("/api/admin/member-registrations/delete-all", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...(selectedStatus ? { status: selectedStatus } : {}),
-          ...(search ? { search } : {}),
-        }),
+        body: JSON.stringify(deleteAllData.filters),
       });
 
       const deleteResult = await deleteResponse.json();
@@ -227,7 +292,6 @@ export default function MemberRegistrationsPage() {
       if (deleteResult.success) {
         setSelectedIds([]);
         alert(deleteResult.message);
-        // If already on page 1, setPage won't trigger a refetch — call refetch() explicitly
         if (page !== 1) {
           setPage(1);
         } else {
@@ -925,6 +989,127 @@ export default function MemberRegistrationsPage() {
             setPage(page);
           }}
         />
+      )}
+
+      {/* Math Verification Modal for Delete All */}
+      {showDeleteAllModal && mathProblem && deleteAllData && (
+        <div 
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-6 z-50"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !deletingBulk) {
+              setShowDeleteAllModal(false);
+              setVerificationError("");
+              setUserAnswer("");
+            }
+          }}
+        >
+          <div className="bg-[#0f192d] border border-white/10 rounded-xl max-w-md w-full p-8 space-y-6 relative">
+            {/* Close button */}
+            <button
+              onClick={() => {
+                if (!deletingBulk) {
+                  setShowDeleteAllModal(false);
+                  setVerificationError("");
+                  setUserAnswer("");
+                }
+              }}
+              disabled={deletingBulk}
+              className="absolute top-4 right-4 text-white/50 hover:text-white disabled:opacity-50 transition-colors"
+            >
+              <X size={24} />
+            </button>
+
+            {/* Header */}
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-red-500/20 border border-red-500/30 rounded-full mb-4">
+                <Trash2 size={28} className="text-red-400" />
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-2">Security Verification</h2>
+              <p className="text-white/60 text-sm">
+                {deleteAllData.isFiltered 
+                  ? "Solve this math problem to confirm filtered deletion"
+                  : "This will delete ALL records. Solve this problem to confirm"}
+              </p>
+            </div>
+
+            {/* Warning Banner */}
+            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+              <p className="text-sm text-red-300">
+                <strong>⚠️ Warning:</strong> This action {deleteAllData.isFiltered ? "deletes filtered registrations" : "cannot be undone!"} and is permanent.
+              </p>
+            </div>
+
+            {/* Math Problem */}
+            <div className="bg-white/5 border border-white/10 rounded-lg p-6 text-center space-y-4">
+              <p className="text-white/60 text-sm font-medium">Solve this problem:</p>
+              <div className="text-4xl font-bold text-cyan-300 font-mono">
+                {mathProblem.problem} = ?
+              </div>
+            </div>
+
+            {/* Input and Error */}
+            <div className="space-y-2">
+              <input
+                type="number"
+                value={userAnswer}
+                onChange={(e) => {
+                  setUserAnswer(e.target.value);
+                  setVerificationError("");
+                }}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" && !deletingBulk) {
+                    verifyAndDelete();
+                  }
+                }}
+                placeholder="Enter your answer..."
+                disabled={deletingBulk}
+                className="w-full px-4 py-3 bg-white/5 border border-white/15 rounded-lg text-white placeholder-white/30 text-center text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:opacity-50"
+                autoFocus
+              />
+              {verificationError && (
+                <p className="text-red-400 text-sm font-medium">{verificationError}</p>
+              )}
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3">
+              <Button
+                onClick={() => {
+                  setShowDeleteAllModal(false);
+                  setVerificationError("");
+                  setUserAnswer("");
+                }}
+                variant="outline"
+                disabled={deletingBulk}
+                className="flex-1 border-white/20 text-white/70 hover:bg-white/5 disabled:opacity-50"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={verifyAndDelete}
+                disabled={deletingBulk || !userAnswer.trim()}
+                className="flex-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {deletingBulk ? (
+                  <>
+                    <Loader2 size={16} className="mr-2 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={16} className="mr-2" />
+                    Verify & Delete
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {/* Info */}
+            <p className="text-xs text-white/40 text-center">
+              This verification is required for data security
+            </p>
+          </div>
+        </div>
       )}
     </div>
   );
