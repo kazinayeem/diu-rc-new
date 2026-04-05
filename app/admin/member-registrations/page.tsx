@@ -37,7 +37,7 @@ export default function MemberRegistrationsPage() {
   const [deleteAllData, setDeleteAllData] = useState<any>(null);
   const [verificationError, setVerificationError] = useState("");
 
-  // Generate random math problem (expert-only for Delete All safety)
+  // Generate random math problem for Delete All safety
   const generateMathProblem = () => {
     const factorial = (n: number): number => {
       let result = 1;
@@ -75,6 +75,73 @@ export default function MemberRegistrationsPage() {
     };
 
     const operations = [
+      // Basic arithmetic: x + y
+      () => {
+        const x = Math.floor(Math.random() * 50) + 10;
+        const y = Math.floor(Math.random() * 50) + 10;
+        return { problem: `${x} + ${y}`, answer: x + y };
+      },
+
+      // Basic arithmetic: x - y
+      () => {
+        const x = Math.floor(Math.random() * 80) + 20;
+        const y = Math.floor(Math.random() * 40) + 5;
+        return { problem: `${x} - ${y}`, answer: x - y };
+      },
+
+      // Basic algebra: solve x in x + a = b
+      () => {
+        const x = Math.floor(Math.random() * 30) + 5;
+        const a = Math.floor(Math.random() * 25) + 5;
+        const b = x + a;
+        return { problem: `Solve x: x + ${a} = ${b}`, answer: x };
+      },
+
+      // Basic algebra: solve x in ax + b = c
+      () => {
+        const a = Math.floor(Math.random() * 5) + 2;
+        const x = Math.floor(Math.random() * 12) + 2;
+        const b = Math.floor(Math.random() * 20) + 1;
+        const c = a * x + b;
+        return { problem: `Solve x: ${a}x + ${b} = ${c}`, answer: x };
+      },
+
+      // Basic calculus: derivative value at a point (requested format)
+      () => {
+        const a = Math.floor(Math.random() * 6) + 2;
+        const b = Math.floor(Math.random() * 10) + 1;
+        const n = Math.floor(Math.random() * 6) + 1;
+        // f(x) = ax^2 + bx => f'(n) = 2an + b
+        return { problem: `If f(x)=${a}x^2+${b}x, find f'(${n})`, answer: 2 * a * n + b };
+      },
+
+      // Basic calculus: definite integral with integer result (requested format)
+      () => {
+        const kOptions = [2, 4, 6, 8];
+        const k = kOptions[Math.floor(Math.random() * kOptions.length)];
+        const nOptions = [2, 3, 4, 5, 6];
+        const n = nOptions[Math.floor(Math.random() * nOptions.length)];
+        // integral_0^n (k*x) dx = k*n^2/2
+        return { problem: `Integral 0..${n} of ${k}x dx`, answer: (k * n * n) / 2 };
+      },
+
+      // Extra calculus variant to increase appearance frequency
+      () => {
+        const a = Math.floor(Math.random() * 5) + 3;
+        const b = Math.floor(Math.random() * 10) + 2;
+        const n = Math.floor(Math.random() * 5) + 2;
+        return { problem: `If f(x)=${a}x^2+${b}x, find f'(${n})`, answer: 2 * a * n + b };
+      },
+
+      // Extra integral variant to increase appearance frequency
+      () => {
+        const kOptions = [2, 4, 6, 10];
+        const k = kOptions[Math.floor(Math.random() * kOptions.length)];
+        const nOptions = [2, 3, 4, 5, 6];
+        const n = nOptions[Math.floor(Math.random() * nOptions.length)];
+        return { problem: `Integral 0..${n} of ${k}x dx`, answer: (k * n * n) / 2 };
+      },
+
       // Factorials: 3!, 4!, 5! (+ a bit harder variants)
       () => {
         const options = [3, 4, 5, 6, 7];
@@ -1088,7 +1155,7 @@ export default function MemberRegistrationsPage() {
       {/* Math Verification Modal for Delete All */}
       {showDeleteAllModal && mathProblem && deleteAllData && (
         <div 
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-6 z-50"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 z-50"
           onClick={(e) => {
             if (e.target === e.currentTarget && !deletingBulk) {
               setShowDeleteAllModal(false);
@@ -1097,7 +1164,7 @@ export default function MemberRegistrationsPage() {
             }
           }}
         >
-          <div className="bg-[#0f192d] border border-white/10 rounded-xl max-w-md w-full p-8 space-y-6 relative">
+          <div className="bg-[#0f192d] border border-white/10 rounded-xl max-w-md w-full p-4 sm:p-6 space-y-4 sm:space-y-5 relative max-h-[92vh] overflow-y-auto">
             {/* Close button */}
             <button
               onClick={() => {
@@ -1108,18 +1175,18 @@ export default function MemberRegistrationsPage() {
                 }
               }}
               disabled={deletingBulk}
-              className="absolute top-4 right-4 text-white/50 hover:text-white disabled:opacity-50 transition-colors"
+              className="absolute top-3 right-3 sm:top-4 sm:right-4 text-white/50 hover:text-white disabled:opacity-50 transition-colors"
             >
-              <X size={24} />
+              <X size={20} />
             </button>
 
             {/* Header */}
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-red-500/20 border border-red-500/30 rounded-full mb-4">
-                <Trash2 size={28} className="text-red-400" />
+              <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 bg-red-500/20 border border-red-500/30 rounded-full mb-3">
+                <Trash2 size={22} className="text-red-400" />
               </div>
-              <h2 className="text-2xl font-bold text-white mb-2">Security Verification</h2>
-              <p className="text-white/60 text-sm">
+              <h2 className="text-lg sm:text-xl font-bold text-white mb-1.5">Security Verification</h2>
+              <p className="text-white/60 text-xs sm:text-sm leading-relaxed">
                 {deleteAllData.isFiltered 
                   ? "Solve this math problem to confirm filtered deletion"
                   : "This will delete ALL records. Solve this problem to confirm"}
@@ -1127,22 +1194,22 @@ export default function MemberRegistrationsPage() {
             </div>
 
             {/* Warning Banner */}
-            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
-              <p className="text-sm text-red-300">
+            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 sm:p-4">
+              <p className="text-xs sm:text-sm text-red-300 leading-relaxed">
                 <strong>⚠️ Warning:</strong> This action {deleteAllData.isFiltered ? "deletes filtered registrations" : "cannot be undone!"} and is permanent.
               </p>
             </div>
 
             {/* Math Problem */}
-            <div className="bg-white/5 border border-white/10 rounded-lg p-6 text-center space-y-4">
-              <p className="text-white/60 text-sm font-medium">Solve this problem:</p>
-              <div className="text-4xl font-bold text-cyan-300 font-mono">
+            <div className="bg-white/5 border border-white/10 rounded-lg p-3 sm:p-4 text-center space-y-2 sm:space-y-3">
+              <p className="text-white/60 text-xs sm:text-sm font-medium">Solve this problem:</p>
+              <div className="text-lg sm:text-2xl md:text-3xl font-bold text-cyan-300 font-mono break-words leading-snug">
                 {mathProblem.problem} = ?
               </div>
             </div>
 
             {/* Input and Error */}
-            <div className="space-y-2">
+            <div className="space-y-1.5 sm:space-y-2">
               <input
                 type="number"
                 value={userAnswer}
@@ -1157,16 +1224,16 @@ export default function MemberRegistrationsPage() {
                 }}
                 placeholder="Enter your answer..."
                 disabled={deletingBulk}
-                className="w-full px-4 py-3 bg-white/5 border border-white/15 rounded-lg text-white placeholder-white/30 text-center text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:opacity-50"
+                className="w-full px-3 py-2.5 sm:px-4 sm:py-3 bg-white/5 border border-white/15 rounded-lg text-white placeholder-white/30 text-center text-base sm:text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:opacity-50"
                 autoFocus
               />
               {verificationError && (
-                <p className="text-red-400 text-sm font-medium">{verificationError}</p>
+                <p className="text-red-400 text-xs sm:text-sm font-medium">{verificationError}</p>
               )}
             </div>
 
             {/* Buttons */}
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
               <Button
                 onClick={() => {
                   setShowDeleteAllModal(false);
@@ -1175,14 +1242,14 @@ export default function MemberRegistrationsPage() {
                 }}
                 variant="outline"
                 disabled={deletingBulk}
-                className="flex-1 border-white/20 text-white/70 hover:bg-white/5 disabled:opacity-50"
+                className="flex-1 border-white/20 text-white/70 hover:bg-white/5 disabled:opacity-50 text-sm"
               >
                 Cancel
               </Button>
               <Button
                 onClick={verifyAndDelete}
                 disabled={deletingBulk || !userAnswer.trim()}
-                className="flex-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
               >
                 {deletingBulk ? (
                   <>
@@ -1199,7 +1266,7 @@ export default function MemberRegistrationsPage() {
             </div>
 
             {/* Info */}
-            <p className="text-xs text-white/40 text-center">
+            <p className="text-[11px] sm:text-xs text-white/40 text-center">
               This verification is required for data security
             </p>
           </div>
