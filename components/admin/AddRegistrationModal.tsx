@@ -70,8 +70,8 @@ export default function AddRegistrationModal({ onClose, onSuccess }: AddRegistra
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-6 z-50 overflow-y-auto">
-      <div className="bg-[#0f192d] border border-white/10 rounded-xl max-w-4xl w-full p-6 my-8">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-6 z-50">
+      <div className="bg-[#0f192d] border border-white/10 rounded-xl max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Add New Registration</h2>
           <button
