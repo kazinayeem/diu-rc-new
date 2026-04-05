@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import ContentPageRenderer from "@/components/public/ContentPageRenderer";
 
 export const metadata = {
   title: "Terms & Conditions | DIU Robotics Club",
@@ -7,15 +8,8 @@ export const metadata = {
 };
 
 export default function TermsPage() {
-  return (
-    <div className="min-h-screen bg-white dark:bg-[#0B1F3A] text-black dark:text-white">
-      {/* Hero */}
-      <section className="py-20 text-center bg-gray-50 dark:bg-transparent border-b border-gray-200 dark:border-white/10">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Terms &amp; Conditions</h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm">Last updated: March 2026</p>
-      </section>
-
-      <main className="max-w-4xl mx-auto px-6 py-16 space-y-10">
+  const defaultContent = (
+    <main className="max-w-4xl mx-auto px-6 py-16 space-y-10">
         <Section title="1. Acceptance of Terms">
           By accessing or using the Daffodil International University Robotics Club (&quot;DIU RC&quot;) website and services, you agree to be bound by these Terms &amp; Conditions. If you do not agree, please do not use our services.
         </Section>
@@ -61,6 +55,21 @@ export default function TermsPage() {
           <a href="mailto:info@diuroboticclub.com" className="text-cyan-400 hover:underline">info@diuroboticclub.com</a>.
         </Section>
       </main>
+  );
+
+  return (
+    <div className="min-h-screen bg-white dark:bg-[#0B1F3A] text-black dark:text-white">
+      {/* Hero */}
+      <section className="py-20 text-center bg-gray-50 dark:bg-transparent border-b border-gray-200 dark:border-white/10">
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Terms &amp; Conditions</h1>
+        <p className="text-gray-500 dark:text-gray-400 text-sm">Last updated: March 2026</p>
+      </section>
+
+      <ContentPageRenderer
+        slug="terms"
+        title="Terms & Conditions"
+        defaultContent={defaultContent}
+      />
     </div>
   );
 }

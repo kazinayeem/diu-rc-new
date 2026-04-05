@@ -12,6 +12,7 @@ const NAV_LINKS = [
   { href: "/teams", label: "Team" },
   { href: "/projects", label: "Projects" },
   { href: "/publications", label: "Publications" },
+  { href: "/notices", label: "Notices" },
   { href: "/verify", label: "Verify" },
 ];
 

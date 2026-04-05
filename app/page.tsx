@@ -26,6 +26,8 @@ import dynamic from "next/dynamic";
 
 import LatestEvents from "@/components/public/LatestEvents";
 import LatestWorkshops from "@/components/public/LatestWorkshops";
+import LatestSeminars from "@/components/public/LatestSeminars";
+import LatestBootcamps from "@/components/public/LatestBootcamps";
 
 const HeroWithRobot = dynamic(() => import("@/components/public/With3drobot"), {
   ssr: false,
@@ -502,10 +504,12 @@ export default async function HomePage() {
           </AnimatedSection>
         )}
 
-        {/* 🚀 NEW BOTTOM SECTIONS */}
+        {/* Latest Events Section */}
         <ConvenerMessage />
         <LatestEvents />
         <LatestWorkshops />
+        <LatestSeminars />
+        <LatestBootcamps />
 
         {/* FAQ */}
         <AnimatedSection className="py-20">

@@ -7,6 +7,7 @@ import { ChevronLeft, Loader } from "lucide-react";
 import Link from "next/link";
 import EventFormEnhanced from "@/components/admin/forms/EventFormEnhanced";
 import RegistrationManagement from "@/components/admin/RegistrationManagement";
+import CouponManagement from "@/components/admin/CouponManagement";
 
 export default function ProgramEditPage() {
   const params = useParams();
@@ -16,7 +17,7 @@ export default function ProgramEditPage() {
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"details" | "registrations">("details");
+  const [activeTab, setActiveTab] = useState<"details" | "registrations" | "coupons">("details");
 
   useEffect(() => {
     if (!id) {
@@ -96,10 +97,10 @@ export default function ProgramEditPage() {
 
         {/* Tabs */}
         <div className="bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-8 overflow-x-auto">
             <button
               onClick={() => setActiveTab("details")}
-              className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
+              className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
                 activeTab === "details"
                   ? "border-cyan-600 text-cyan-600 dark:text-cyan-400"
                   : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300"
@@ -109,13 +110,23 @@ export default function ProgramEditPage() {
             </button>
             <button
               onClick={() => setActiveTab("registrations")}
-              className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
+              className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
                 activeTab === "registrations"
                   ? "border-cyan-600 text-cyan-600 dark:text-cyan-400"
                   : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300"
               }`}
             >
               Registrations
+            </button>
+            <button
+              onClick={() => setActiveTab("coupons")}
+              className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
+                activeTab === "coupons"
+                  ? "border-cyan-600 text-cyan-600 dark:text-cyan-400"
+                  : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300"
+              }`}
+            >
+              Coupons
             </button>
           </div>
         </div>
@@ -142,6 +153,15 @@ export default function ProgramEditPage() {
         )}
 
         {activeTab === "registrations" && <RegistrationManagement eventId={id} />}
+
+        {activeTab === "coupons" && (
+          <CouponManagement 
+            eventId={id}
+            eventTitle={event.title}
+            registrationFee={event.registrationFee || 0}
+            isPaid={event.isPaid}
+          />
+        )}
       </div>
     </div>
   );

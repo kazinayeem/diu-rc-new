@@ -1,10 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Download, Printer, Loader2, XCircle, ArrowLeft, CheckCircle2 } from "lucide-react";
-import { Great_Vibes } from "next/font/google";
-import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
 interface CertificateData {
@@ -17,19 +15,15 @@ interface CertificateData {
 
 const CERT_WIDTH = 1123;
 const CERT_HEIGHT = 794;
-const signatureFont = Great_Vibes({ subsets: ["latin"], weight: "400" });
 
 export default function CertificateDisplayPage() {
   const params = useParams();
   const router = useRouter();
-  const certificateRef = useRef<HTMLDivElement>(null);
 
   const [loading, setLoading] = useState(true);
   const [certificate, setCertificate] = useState<CertificateData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
-  const [printing, setPrinting] = useState(false);
-  const [previewScale, setPreviewScale] = useState(1);
 
   useEffect(() => {
     const fetchCertificate = async () => {
@@ -62,18 +56,6 @@ export default function CertificateDisplayPage() {
     fetchCertificate();
   }, [params.certificateId]);
 
-  useEffect(() => {
-    const updatePreviewScale = () => {
-      const availableWidth = Math.max(320, window.innerWidth - 32);
-      const nextScale = Math.min(1, availableWidth / CERT_WIDTH);
-      setPreviewScale(nextScale);
-    };
-
-    updatePreviewScale();
-    window.addEventListener("resize", updatePreviewScale);
-    return () => window.removeEventListener("resize", updatePreviewScale);
-  }, []);
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -85,61 +67,99 @@ export default function CertificateDisplayPage() {
 
   const getDescription = () => {
     if (certificate?.description) return certificate.description;
-    return `for successfully participating in ${certificate?.event ?? "the event"} organized by DIU Robotics Club`;
+    return `for successfully completing ${certificate?.event ?? "the program"}`;
   };
 
-  const recipientName = certificate?.recipientName ?? "";
-  const descriptionText = getDescription();
-  const recipientFontSize = recipientName.length > 24 ? 52 : recipientName.length > 18 ? 58 : 64;
-  const descriptionFontSize = descriptionText.length > 150 ? 14 : descriptionText.length > 115 ? 16 : 18;
-
-  const waitForRenderReady = async () => {
-    await document.fonts.ready;
-
-    await new Promise<void>((resolve) => {
+  const getTemplateDataUrl = async () => {
+    return new Promise<string>((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = "anonymous";
-      img.onload = () => resolve();
-      img.onerror = () => resolve();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL("image/png"));
+        } else {
+          reject(new Error("Canvas context failed"));
+        }
+      };
+      img.onerror = () => reject(new Error("Failed to load template image"));
       img.src = "/ce.png";
     });
   };
 
-  const renderCertificateCanvas = async () => {
-    if (!certificateRef.current) {
-      throw new Error("Certificate container not found");
-    }
+  const drawCertificatePDF = (
+    pdf: jsPDF,
+    templateDataUrl: string,
+    certData: CertificateData
+  ) => {
+    // Add template image
+    pdf.addImage(templateDataUrl, "PNG", 0, 0, CERT_WIDTH, CERT_HEIGHT);
 
-    await waitForRenderReady();
+    // Add ID and Date in top left
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFont("courier", "bold");
+    pdf.setFontSize(12);
+    pdf.text(`ID: ${certData.id}`, 42, 42);
+    pdf.text(`DATE: ${formatDate(certData.issueDate)}`, 42, 62);
 
-    return html2canvas(certificateRef.current, {
-      scale: 3,
-      useCORS: true,
-      backgroundColor: null,
-      width: CERT_WIDTH,
-      height: CERT_HEIGHT,
-      logging: false,
-      scrollX: 0,
-      scrollY: 0,
-    });
+    // Add "of appreciation"
+    pdf.setTextColor(30, 58, 138);
+    pdf.setFont("times", "italic");
+    pdf.setFontSize(38);
+    pdf.text("of appreciation", CERT_WIDTH / 2, 278, { align: "center" });
+
+    // Add "This is to certify that"
+    pdf.setFont("times", "normal");
+    pdf.setFontSize(26);
+    pdf.text("This is to certify that", CERT_WIDTH / 2, 316, { align: "center" });
+
+    // Add recipient name
+    const recipientName = certData.recipientName ?? "";
+    const recipientFontSize = recipientName.length > 24 ? 52 : recipientName.length > 18 ? 58 : 64;
+    pdf.setFont("times", "bolditalic");
+    pdf.setFontSize(recipientFontSize);
+    pdf.text(recipientName, CERT_WIDTH / 2, 386, { align: "center" });
+
+    // Add event name
+    pdf.setFont("times", "normal");
+    pdf.setFontSize(20);
+    pdf.setTextColor(30, 58, 138);
+    pdf.text(certData.event || "", CERT_WIDTH / 2, 420, { align: "center" });
+
+    // Add completion message - positioned better for visibility
+    const completeMsg = `for successfully completing ${certData.event || "the program"}`;
+    const msgFont = completeMsg.length > 120 ? 14 : completeMsg.length > 80 ? 15 : 16;
+    pdf.setFont("times", "normal");
+    pdf.setFontSize(msgFont);
+    pdf.setTextColor(30, 58, 138);
+    const wrapped = pdf.splitTextToSize(completeMsg, 840);
+    pdf.text(wrapped, CERT_WIDTH / 2, 450, { align: "center" });
+
+    // Add "Best Wishes!"
+    pdf.setFont("times", "italic");
+    pdf.setFontSize(16);
+    pdf.setTextColor(30, 58, 138);
+    pdf.text("Best Wishes!", CERT_WIDTH / 2, 560, { align: "center" });
   };
 
   const handleDownload = async () => {
-    if (downloading || printing) return;
+    if (downloading || !certificate) return;
 
     setDownloading(true);
     try {
-      const canvas = await renderCertificateCanvas();
-      const imgData = canvas.toDataURL("image/png", 1.0);
-
+      const templateDataUrl = await getTemplateDataUrl();
       const pdf = new jsPDF({
         orientation: "landscape",
         unit: "px",
         format: [CERT_WIDTH, CERT_HEIGHT],
       });
 
-      pdf.addImage(imgData, "PNG", 0, 0, CERT_WIDTH, CERT_HEIGHT, undefined, "FAST");
-      pdf.save(`Certificate_${certificate?.id}.pdf`);
+      drawCertificatePDF(pdf, templateDataUrl, certificate);
+      pdf.save(`Certificate_${certificate.id}.pdf`);
     } catch (downloadError) {
       console.error("Download failed:", downloadError);
       alert("Failed to download certificate. Please try again.");
@@ -148,79 +168,7 @@ export default function CertificateDisplayPage() {
     }
   };
 
-  const handlePrint = async () => {
-    if (printing || downloading) return;
-
-    setPrinting(true);
-    try {
-      const canvas = await renderCertificateCanvas();
-      const imgData = canvas.toDataURL("image/png", 1.0);
-      const printWindow = window.open("", "_blank", "width=1300,height=900");
-
-      if (!printWindow) {
-        alert("Popup blocked. Please allow popups to print the certificate.");
-        setPrinting(false);
-        return;
-      }
-
-      printWindow.document.open();
-      printWindow.document.write(`
-        <!doctype html>
-        <html>
-          <head>
-            <title>Certificate ${certificate?.id}</title>
-            <style>
-              @page { size: landscape; margin: 0; }
-              html, body {
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                height: 100%;
-                background: #ffffff;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-              }
-              body {
-                display: grid;
-                place-items: center;
-                overflow: hidden;
-              }
-              img {
-                width: 100vw;
-                height: 100vh;
-                object-fit: contain;
-                display: block;
-              }
-            </style>
-          </head>
-          <body>
-            <img src="${imgData}" alt="Certificate" />
-            <script>
-              const runPrint = () => {
-                window.focus();
-                window.print();
-                window.onafterprint = () => window.close();
-              };
-              if (document.readyState === "complete") {
-                setTimeout(runPrint, 150);
-              } else {
-                window.addEventListener("load", () => setTimeout(runPrint, 150));
-              }
-            </script>
-          </body>
-        </html>
-      `);
-      printWindow.document.close();
-    } catch (printError) {
-      console.error("Print failed:", printError);
-      alert("Failed to print certificate. Please try again.");
-    } finally {
-      // Reset parent UI state after print window has been initiated.
-      setTimeout(() => setPrinting(false), 400);
-    }
-  };
-
-  if (loading) {
+if (loading) {
     return (
       <main className="min-h-screen bg-[#0B1F3A] flex items-center justify-center">
         <div className="text-center no-print">
@@ -253,252 +201,95 @@ export default function CertificateDisplayPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0B1F3A] py-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="no-print flex items-center justify-center gap-3 mb-8">
-          <CheckCircle2 size={30} className="text-emerald-400" />
-          <div>
-            <h1 className="text-2xl font-bold text-white">Certificate Verified</h1>
-            <p className="text-white/60 text-sm">This certificate is authentic and valid</p>
+    <main className="min-h-screen bg-gradient-to-b from-[#0B1F3A] to-[#1a3a52] py-8 sm:py-16 px-4 sm:px-6">
+      <div className="max-w-3xl mx-auto">
+        {/* Header Section */}
+        <div className="text-center mb-10 sm:mb-16">
+          <div className="inline-flex items-center gap-3 mb-4 bg-emerald-500/10 px-4 py-2 rounded-full border border-emerald-400/30">
+            <CheckCircle2 size={24} className="text-emerald-400" />
+            <span className="text-emerald-300 font-semibold text-sm sm:text-base">Certificate Verified & Valid</span>
           </div>
+          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">Certificate of Achievement</h1>
+          <p className="text-white/60 text-sm sm:text-base">This certificate is authentic and has been verified</p>
         </div>
 
-        <div className="print-root">
-          <div className="certificate-stage">
-            <div
-              className="certificate-preview-frame"
-              style={{
-                width: `${CERT_WIDTH * previewScale}px`,
-                height: `${CERT_HEIGHT * previewScale}px`,
-              }}
-            >
-              <div
-                className="certificate-preview-scale"
-                style={{
-                  width: `${CERT_WIDTH}px`,
-                  height: `${CERT_HEIGHT}px`,
-                  transform: `scale(${previewScale})`,
-                  transformOrigin: "top left",
-                }}
-              >
-                <div
-                  ref={certificateRef}
-                  className="certificate-container"
-                  style={{
-                    width: `${CERT_WIDTH}px`,
-                    height: `${CERT_HEIGHT}px`,
-                    backgroundImage: "url('/ce.png')",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    backgroundRepeat: "no-repeat",
-                  }}
-                >
-                  <div className="field-appreciation">of appreciation</div>
+        {/* Certificate Details Card */}
+        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-6 sm:p-10 mb-8 shadow-2xl">
+          {/* Main Info Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
+            {/* Certificate ID */}
+            <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl p-5 sm:p-6 border border-blue-400/20 text-center">
+              <p className="text-white/60 text-xs sm:text-sm font-medium uppercase tracking-wider mb-2">ID</p>
+              <p className="text-lg sm:text-2xl font-bold text-[#3DB5D8] truncate">{certificate.id}</p>
+            </div>
 
-                  <div className="field-certify-line">This is to certify that</div>
+            {/* Recipient Name */}
+            <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl p-5 sm:p-6 border border-emerald-400/20 text-center">
+              <p className="text-white/60 text-xs sm:text-sm font-medium uppercase tracking-wider mb-2">Recipient</p>
+              <p className="text-lg sm:text-2xl font-bold text-emerald-300 line-clamp-2">{certificate.recipientName}</p>
+            </div>
 
-                  <div className={`field-recipient ${signatureFont.className}`} style={{ fontSize: `${recipientFontSize}px` }}>
-                    {certificate.recipientName}
-                  </div>
-
-                  <div className="field-description" style={{ fontSize: `${descriptionFontSize}px` }}>
-                    {descriptionText}
-                  </div>
-
-                  <div className="field-certificate-id">ID: {certificate.id}</div>
-
-                  <div className="field-issue-date">DATE: {formatDate(certificate.issueDate)}</div>
-                </div>
-              </div>
+            {/* Event Name */}
+            <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 rounded-2xl p-5 sm:p-6 border border-amber-400/20 text-center">
+              <p className="text-white/60 text-xs sm:text-sm font-medium uppercase tracking-wider mb-2">Program</p>
+              <p className="text-lg sm:text-2xl font-bold text-amber-300 line-clamp-2">{certificate.event}</p>
             </div>
           </div>
+
+          {/* Divider */}
+          <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-8"></div>
+
+          {/* Certification Text */}
+          <div className="text-center space-y-4">
+            <p className="text-white/80 text-base sm:text-lg leading-relaxed">
+              This is to certify that
+            </p>
+            <p className="text-xl sm:text-3xl font-bold text-emerald-300">
+              {certificate.recipientName}
+            </p>
+            <p className="text-white/80 text-base sm:text-lg leading-relaxed">
+              has successfully completed
+            </p>
+            <p className="text-lg sm:text-2xl font-semibold text-amber-300">
+              {certificate.event}
+            </p>
+          </div>
         </div>
 
-        <div className="no-print flex flex-col sm:flex-row gap-4 justify-center mt-8">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
           <button
             onClick={handleDownload}
-            disabled={downloading || printing}
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#3DB5D8] hover:bg-[#3DB5D8]/90 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+            disabled={downloading}
+            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-[#3DB5D8] to-[#2a9bc4] hover:from-[#2a9bc4] hover:to-[#1f7da0] text-white font-semibold rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
           >
             {downloading ? <Loader2 size={20} className="animate-spin" /> : <Download size={20} />}
-            {downloading ? "Generating PDF..." : "Download Certificate"}
-          </button>
-
-          <button
-            onClick={handlePrint}
-            disabled={printing || downloading}
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white hover:bg-gray-50 text-gray-800 font-semibold rounded-xl transition-all border-2 border-gray-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {printing ? <Loader2 size={20} className="animate-spin" /> : <Printer size={20} />}
-            {printing ? "Preparing Print..." : "Print Certificate"}
+            <span className="hidden sm:inline">{downloading ? "Generating..." : "Download PDF"}</span>
+            <span className="sm:hidden">{downloading ? "Generating..." : "Download"}</span>
           </button>
 
           <button
             onClick={() => router.push("/verify")}
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl"
+            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all duration-200 border border-white/20 hover:border-white/40 shadow-lg"
           >
             <ArrowLeft size={20} />
-            Verify Another
+            <span className="hidden sm:inline">Verify Another</span>
+            <span className="sm:hidden">Back</span>
           </button>
+        </div>
+
+        {/* Footer Info */}
+        <div className="mt-10 sm:mt-14 text-center">
+          <p className="text-white/50 text-xs sm:text-sm">
+            Shared or verified this certificate? Find more at <span className="text-[#3DB5D8] font-semibold">DIU Robotics Club</span>
+          </p>
         </div>
       </div>
 
       <style jsx global>{`
-        .certificate-stage {
-          display: flex;
-          justify-content: center;
-          overflow: hidden;
-          padding: 8px;
-        }
-
-        .certificate-preview-frame {
-          position: relative;
-          overflow: hidden;
-          margin: 0 auto;
-        }
-
-        .certificate-preview-scale {
-          position: relative;
-          will-change: transform;
-        }
-
-        .certificate-container {
-          position: relative;
-          min-width: 1123px;
-          min-height: 794px;
-          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-          border-radius: 8px;
-          overflow: hidden;
-        }
-
-        .field-recipient {
-          position: absolute;
-          top: 386px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 900px;
-          text-align: center;
-          font-family: "Great Vibes", "Brush Script MT", cursive;
-          line-height: 1.18;
-          font-weight: 400;
-          color: #1e3a8a;
-          white-space: nowrap;
-          padding-bottom: 4px;
-        }
-
-        .field-appreciation {
-          position: absolute;
-          top: 278px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 420px;
-          text-align: center;
-          font-family: "Times New Roman", serif;
-          font-size: 38px;
-          font-style: italic;
-          line-height: 1;
-          font-weight: 400;
-          color: #1e3a8a;
-          opacity: 0.95;
-          white-space: nowrap;
-        }
-
-        .field-certify-line {
-          position: absolute;
-          top: 316px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 520px;
-          text-align: center;
-          font-family: "Times New Roman", serif;
-          font-size: 26px;
-          line-height: 1.1;
-          font-weight: 400;
-          color: #1e3a8a;
-          opacity: 0.95;
-          white-space: nowrap;
-        }
-
-        .field-description {
-          position: absolute;
-          top: 474px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 840px;
-          text-align: center;
-          font-family: "Times New Roman", serif;
-          line-height: 1.42;
-          font-weight: 400;
-          color: #1e3a8a;
-          max-height: 140px;
-          padding-bottom: 10px;
-          overflow: hidden;
-        }
-
-        .field-certificate-id {
-          position: absolute;
-          left: 42px;
-          top: 42px;
-          font-family: "Courier New", Courier, monospace;
-          font-size: 12px;
-          line-height: 1.25;
-          font-weight: 700;
-          color: #ffffff;
-          max-width: 520px;
-          white-space: nowrap;
-          overflow: visible;
-          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-          z-index: 4;
-        }
-
-        .field-issue-date {
-          position: absolute;
-          left: 42px;
-          top: 62px;
-          font-family: "Courier New", Courier, monospace;
-          font-size: 12px;
-          line-height: 1.25;
-          font-weight: 700;
-          color: #ffffff;
-          text-align: left;
-          max-width: 520px;
-          white-space: nowrap;
-          overflow: visible;
-          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-          z-index: 4;
-        }
-
         @media print {
-          @page {
-            size: landscape;
-            margin: 0;
-          }
-
-          html,
-          body {
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            background: #fff !important;
-          }
-
-          * {
-            animation: none !important;
-            transition: none !important;
-          }
-
-          header,
-          nav,
-          .navbar,
-          .topbar,
           .no-print {
             display: none !important;
-          }
-
-          .certificate-container {
-            box-shadow: none !important;
-            border-radius: 0 !important;
           }
         }
       `}</style>

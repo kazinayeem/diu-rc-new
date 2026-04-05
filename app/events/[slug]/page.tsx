@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import EventRegistrationForm from "@/components/public/EventRegistrationForm";
+import parse, { HTMLReactParserOptions, Element, domToReact } from "html-react-parser";
 import {
   Calendar,
   Clock,
@@ -61,6 +62,130 @@ interface EventDetails {
   createdAt: string;
   updatedAt: string;
 }
+
+// Helper function to decode HTML entities
+const decodeHTMLEntities = (text: string): string => {
+  const entities: { [key: string]: string } = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&nbsp;': ' ',
+    '&apos;': "'",
+  };
+  
+  let decoded = text;
+  Object.entries(entities).forEach(([entity, char]) => {
+    decoded = decoded.replace(new RegExp(entity, 'g'), char);
+  });
+  
+  // Handle numeric entities
+  decoded = decoded.replace(/&#(\d+);/g, (match, decimal) => {
+    return String.fromCharCode(parseInt(decimal, 10));
+  });
+  decoded = decoded.replace(/&#x([0-9A-F]+);/gi, (match, hex) => {
+    return String.fromCharCode(parseInt(hex, 16));
+  });
+  
+  return decoded;
+};
+
+// HTML Parser options for React Quill content
+const htmlParserOptions: HTMLReactParserOptions = {
+  replace: (domNode) => {
+    if (domNode instanceof Element) {
+      const element = domNode as any;
+      
+      // Remove inline style attributes and replace with Tailwind classes
+      delete element.attribs.style;
+      
+      // Apply Tailwind classes to HTML elements
+      switch (element.name) {
+        case 'h1':
+          element.attribs.class = `text-2xl md:text-3xl font-bold mt-6 mb-4 text-gray-900 dark:text-white ${element.attribs.class || ''}`;
+          break;
+        case 'h2':
+          element.attribs.class = `text-xl md:text-2xl font-bold mt-6 mb-3 text-gray-900 dark:text-white ${element.attribs.class || ''}`;
+          break;
+        case 'h3':
+          element.attribs.class = `text-lg md:text-xl font-semibold mt-5 mb-3 text-gray-900 dark:text-white ${element.attribs.class || ''}`;
+          break;
+        case 'h4':
+          element.attribs.class = `text-base md:text-lg font-semibold mt-4 mb-2 text-gray-900 dark:text-white ${element.attribs.class || ''}`;
+          break;
+        case 'p':
+          element.attribs.class = `mb-4 leading-relaxed text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'span':
+          element.attribs.class = `text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'ul':
+          element.attribs.class = `list-disc list-inside mb-4 ml-4 space-y-2 text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'ol':
+          element.attribs.class = `list-decimal list-inside mb-4 ml-4 space-y-2 text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'li':
+          element.attribs.class = `mb-2 leading-relaxed text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'table':
+          element.attribs.class = `w-full border-collapse border border-gray-300 dark:border-gray-600 my-4 ${element.attribs.class || ''}`;
+          break;
+        case 'thead':
+          element.attribs.class = `bg-cyan-600 dark:bg-cyan-700 text-white ${element.attribs.class || ''}`;
+          break;
+        case 'th':
+          element.attribs.class = `px-4 py-3 text-left font-semibold border border-gray-300 dark:border-gray-600 ${element.attribs.class || ''}`;
+          break;
+        case 'td':
+          element.attribs.class = `px-4 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'tr':
+          if (element.parent?.name === 'tbody') {
+            element.attribs.class = `hover:bg-gray-100 dark:hover:bg-white/10 transition-colors ${element.attribs.class || ''}`;
+            const rowIndex = element.parent.children.indexOf(element);
+            if (rowIndex % 2 === 0) {
+              element.attribs.class += ` bg-gray-50 dark:bg-white/5`;
+            }
+          }
+          break;
+        case 'blockquote':
+          element.attribs.class = `border-l-4 border-cyan-600 dark:border-cyan-400 pl-4 py-2 mb-4 bg-cyan-50 dark:bg-cyan-900/20 italic text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'code':
+          element.attribs.class = `bg-gray-200 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-red-600 dark:text-red-400 ${element.attribs.class || ''}`;
+          break;
+        case 'pre':
+          element.attribs.class = `bg-gray-800 dark:bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4 font-mono text-sm ${element.attribs.class || ''}`;
+          break;
+        case 'a':
+          element.attribs.class = `text-cyan-600 dark:text-cyan-400 hover:underline transition-colors ${element.attribs.class || ''}`;
+          element.attribs.target = '_blank';
+          element.attribs.rel = 'noopener noreferrer';
+          break;
+        case 'strong':
+        case 'b':
+          element.attribs.class = `font-semibold text-gray-900 dark:text-white ${element.attribs.class || ''}`;
+          break;
+        case 'em':
+        case 'i':
+          element.attribs.class = `italic text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'hr':
+          element.attribs.class = `border-gray-300 dark:border-gray-600 my-6 ${element.attribs.class || ''}`;
+          break;
+        case 'img':
+          element.attribs.class = `max-w-full h-auto rounded-lg my-4 ${element.attribs.class || ''}`;
+          break;
+        case 'br':
+          return <br />;
+        default:
+          break;
+      }
+    }
+  },
+};
 
 export default function EventDetailsPage() {
   const params = useParams();
@@ -234,69 +359,87 @@ export default function EventDetailsPage() {
     <div className="min-h-screen bg-white dark:bg-transparent text-black dark:text-white">
       {/* Back Button */}
       <div className="sticky top-[104px] z-30 bg-white/80 dark:bg-black/40 backdrop-blur-sm border-b border-gray-200 dark:border-white/10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Link
             href="/events"
-            className="inline-flex items-center gap-2 text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 transition-colors"
+            className="inline-flex items-center gap-2 text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 transition-colors text-sm md:text-base"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
             <span>Back to Events</span>
           </Link>
         </div>
       </div>
 
-      {/* Hero Image */}
-      {event.image && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="relative h-96 w-full overflow-hidden bg-gray-200 dark:bg-gray-800"
-        >
-          <img
-            src={event.image}
-            alt={event.title}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        </motion.div>
-      )}
-
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Column - Event Details */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        {/* Hero Section - Image & Title Side by Side */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 items-center"
+        >
+          {/* Image Column */}
+          {event.image && (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+              className="relative overflow-hidden rounded-2xl bg-gray-200 dark:bg-gray-800 h-80 md:h-96 order-2 md:order-1"
+            >
+              <img
+                src={event.image}
+                alt={event.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+            </motion.div>
+          )}
+
+          {/* Title & Info Column */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="lg:col-span-2"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="order-1 md:order-2"
           >
             {/* Title & Badges */}
             <div className="mb-6">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
                 {event.title}
               </h1>
 
-              <div className="flex flex-wrap gap-3 mb-4">
-                {/* Status Badge */}
-                <span className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(event.status)}`}>
+              <div className="flex flex-wrap gap-2 mb-6">
+                <span className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium ${getStatusColor(event.status)}`}>
                   {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
                 </span>
 
-                {/* Mode Badge */}
                 {event.mode && (
-                  <span className={`px-4 py-2 rounded-full text-sm font-medium ${getModeColor(event.mode)}`}>
+                  <span className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium ${getModeColor(event.mode)}`}>
                     {event.mode === "online" ? "🌐 Online" : "📍 Offline"}
                   </span>
                 )}
 
-                {/* Type Badge */}
-                <span className="px-4 py-2 rounded-full text-sm font-medium bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-400/40">
+                {/* Type Badge with Dynamic Icon & Color */}
+                <span className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium ${
+                  event.type === "workshop"
+                    ? "bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 border border-orange-300 dark:border-orange-400/40"
+                    : event.type === "seminar"
+                    ? "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-400/40"
+                    : event.type === "bootcamp"
+                    ? "bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-400/40"
+                    : "bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-400/40"
+                }`}>
+                  {event.type === "workshop" && "🛠️"}
+                  {event.type === "seminar" && "🎓"}
+                  {event.type === "bootcamp" && "🚀"}
+                  {event.type === "event" && "📅"}
+                  {" "}
                   {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
                 </span>
 
-                {/* Featured Badge */}
                 {event.featured && (
-                  <span className="px-4 py-2 rounded-full text-sm font-medium bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-400/40">
+                  <span className="px-4 py-2 rounded-full text-xs sm:text-sm font-medium bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-400/40">
                     ⭐ Featured
                   </span>
                 )}
@@ -304,27 +447,27 @@ export default function EventDetailsPage() {
             </div>
 
             {/* Quick Info */}
-            <div className="grid sm:grid-cols-2 gap-4 mb-8 bg-gray-50 dark:bg-white/5 rounded-xl p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 dark:bg-white/5 rounded-xl p-6">
               <div className="flex items-start gap-3">
                 <Calendar className="text-cyan-600 dark:text-cyan-400 w-5 h-5 mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Date</p>
-                  <p className="font-semibold">{formatDate(event.eventDate)}</p>
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Date</p>
+                  <p className="font-semibold text-sm sm:text-base">{formatDate(event.eventDate)}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
                 <Clock className="text-cyan-600 dark:text-cyan-400 w-5 h-5 mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Time</p>
-                  <p className="font-semibold">{event.eventTime}</p>
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Time</p>
+                  <p className="font-semibold text-sm sm:text-base">{event.eventTime}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
                 <MapPin className="text-cyan-600 dark:text-cyan-400 w-5 h-5 mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                     {event.mode === "online" ? "Event Link" : "Location"}
                   </p>
                   {event.mode === "online" && event.eventLink ? (
@@ -332,12 +475,12 @@ export default function EventDetailsPage() {
                       href={event.eventLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold text-cyan-600 dark:text-cyan-400 hover:underline break-all"
+                      className="font-semibold text-cyan-600 dark:text-cyan-400 hover:underline break-all text-sm sm:text-base"
                     >
                       Join Event →
                     </a>
                   ) : (
-                    <p className="font-semibold">{event.location}</p>
+                    <p className="font-semibold text-sm sm:text-base">{event.location}</p>
                   )}
                 </div>
               </div>
@@ -346,27 +489,37 @@ export default function EventDetailsPage() {
                 <div className="flex items-start gap-3">
                   <Users className="text-cyan-600 dark:text-cyan-400 w-5 h-5 mt-1 flex-shrink-0" />
                   <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Attendees</p>
-                    <p className="font-semibold">{event.attendees}</p>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Attendees</p>
+                    <p className="font-semibold text-sm sm:text-base">{event.attendees}</p>
                   </div>
                 </div>
               )}
             </div>
+          </motion.div>
+        </motion.div>
 
-            {/* Description */}
+        {/* Main Content Grid */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Left Column - Event Details */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="lg:col-span-2"
+          >
+            {/* Description / About Section */}
             <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-4">About This Event</h2>
-              <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-                {event.description}
-              </p>
+              <h2 className="text-2xl md:text-3xl font-bold mb-6">About This Event</h2>
+              <div className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6 text-base md:text-lg">
+                {parse(decodeHTMLEntities(event.description), htmlParserOptions)}
+              </div>
 
               {event.content && (
-                <div className="mt-6 p-6 bg-gray-50 dark:bg-white/5 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-3">Event Details</h3>
-                  <div 
-                    className="prose prose-invert max-w-none text-gray-700 dark:text-gray-300 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mt-4 [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mt-3 [&_h3]:mb-2 [&_p]:mb-3 [&_ul]:mb-3 [&_ul]:ml-4 [&_li]:mb-1 [&_li]:list-disc"
-                    dangerouslySetInnerHTML={{ __html: event.content }}
-                  />
+                <div className="mt-6 p-6 md:p-8 bg-gray-50 dark:bg-white/5 rounded-2xl">
+                  <h3 className="text-lg md:text-xl font-semibold mb-6">Event Details</h3>
+                  <div className="prose prose-invert max-w-none">
+                    {parse(decodeHTMLEntities(event.content), htmlParserOptions)}
+                  </div>
                 </div>
               )}
             </div>
@@ -374,8 +527,8 @@ export default function EventDetailsPage() {
             {/* Hosts Section */}
             {event.hosts && event.hosts.length > 0 && (
               <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-4">Hosts</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <h2 className="text-2xl md:text-3xl font-bold mb-6">Organizers</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {event.hosts.map((host, idx) => (
                     <motion.div
                       key={idx}
@@ -384,7 +537,7 @@ export default function EventDetailsPage() {
                       transition={{ delay: idx * 0.1 }}
                       className="flex flex-col items-center"
                     >
-                      <div className="w-20 h-20 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full p-1 mb-3 overflow-hidden">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full p-1 mb-3 overflow-hidden">
                         {host.image ? (
                           <img
                             src={host.image}
@@ -393,11 +546,11 @@ export default function EventDetailsPage() {
                           />
                         ) : (
                           <div className="w-full h-full rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
-                            <Users className="w-10 h-10 text-gray-500" />
+                            <Users className="w-8 h-8 text-gray-500" />
                           </div>
                         )}
                       </div>
-                      <p className="text-center font-semibold text-sm">{host.name}</p>
+                      <p className="text-center font-semibold text-xs sm:text-sm text-gray-800 dark:text-gray-200 line-clamp-2">{host.name}</p>
                     </motion.div>
                   ))}
                 </div>
@@ -407,8 +560,8 @@ export default function EventDetailsPage() {
             {/* Guests Section */}
             {event.guests && event.guests.length > 0 && (
               <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-4">Special Guests</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <h2 className="text-2xl md:text-3xl font-bold mb-6">Guest Speakers</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {event.guests.map((guest, idx) => (
                     <motion.div
                       key={idx}
@@ -417,7 +570,7 @@ export default function EventDetailsPage() {
                       transition={{ delay: idx * 0.1 }}
                       className="flex flex-col items-center"
                     >
-                      <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full p-1 mb-3 overflow-hidden">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full p-1 mb-3 overflow-hidden">
                         {guest.image ? (
                           <img
                             src={guest.image}
@@ -426,11 +579,11 @@ export default function EventDetailsPage() {
                           />
                         ) : (
                           <div className="w-full h-full rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
-                            <Users className="w-10 h-10 text-gray-500" />
+                            <Users className="w-8 h-8 text-gray-500" />
                           </div>
                         )}
                       </div>
-                      <p className="text-center font-semibold text-sm">{guest.name}</p>
+                      <p className="text-center font-semibold text-xs sm:text-sm text-gray-800 dark:text-gray-200 line-clamp-2">{guest.name}</p>
                     </motion.div>
                   ))}
                 </div>
@@ -440,12 +593,12 @@ export default function EventDetailsPage() {
             {/* Tags */}
             {event.tags && event.tags.length > 0 && (
               <div className="mb-8">
-                <h3 className="text-lg font-semibold mb-3">Tags</h3>
+                <h3 className="text-lg md:text-xl font-semibold mb-4">Topics Covered</h3>
                 <div className="flex flex-wrap gap-2">
                   {event.tags.map((tag, idx) => (
                     <span
                       key={idx}
-                      className="px-3 py-1 bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 rounded-full text-sm"
+                      className="px-3 sm:px-4 py-1 sm:py-2 bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 rounded-full text-xs sm:text-sm font-medium"
                     >
                       #{tag}
                     </span>
@@ -456,12 +609,12 @@ export default function EventDetailsPage() {
 
             {/* Creator Info */}
             {event.createdBy && (
-              <div className="mt-8 p-6 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/10">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                  Event Creator
+              <div className="mt-8 p-6 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-200 dark:border-white/10">
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-2">
+                  Event Organizer
                 </p>
-                <p className="font-semibold text-lg">{event.createdBy.name}</p>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white">{event.createdBy.name}</p>
+                <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm break-all">
                   {event.createdBy.email}
                 </p>
               </div>

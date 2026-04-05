@@ -1,11 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Loader } from "lucide-react";
 import Link from "next/link";
 
-const faqs = [
+interface FAQ {
+  _id: string;
+  question: string;
+  answer: string;
+  order: number;
+  isActive: boolean;
+}
+
+const defaultFaqs = [
   {
     category: "Membership",
     items: [
@@ -85,6 +93,30 @@ const faqs = [
 ];
 
 export default function FAQPage() {
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchFAQs();
+  }, []);
+
+  const fetchFAQs = async () => {
+    try {
+      const response = await fetch("/api/faq?active=true");
+      const data = await response.json();
+
+      if (data.success && data.data.length > 0) {
+        setFaqs(data.data);
+      } else {
+        setFaqs(defaultFaqs);
+      }
+    } catch (err) {
+      console.error("Error fetching FAQs:", err);
+      setFaqs(defaultFaqs);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-white dark:bg-[#0B1F3A] text-black dark:text-white">
       <section className="py-20 text-center bg-gray-50 dark:bg-transparent border-b border-gray-200 dark:border-white/10">
@@ -97,26 +129,37 @@ export default function FAQPage() {
         </p>
       </section>
 
-      <main className="max-w-3xl mx-auto px-6 py-16 space-y-14">
-        {faqs.map((section) => (
-          <div key={section.category}>
-            <h2 className="text-lg font-bold text-cyan-400 uppercase tracking-widest mb-5 flex items-center gap-2">
-              <span className="w-1 h-5 bg-cyan-400 rounded-full inline-block" />
-              {section.category}
-            </h2>
-            <div className="space-y-3">
-              {section.items.map((item) => (
-                <FAQItem key={item.q} q={item.q} a={item.a} />
-              ))}
-            </div>
+      <main className="max-w-3xl mx-auto px-6 py-16 space-y-8">
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader className="w-8 h-8 animate-spin text-cyan-400" />
           </div>
-        ))}
+        ) : faqs.length === 0 ? (
+          <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+            <p>No FAQs available at the moment.</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {faqs.map((faq) => (
+              <FAQItem key={faq._id} q={faq.question} a={faq.answer} />
+            ))}
+          </div>
+        )}
 
         <div className="p-5 rounded-xl border border-cyan-400/20 bg-cyan-400/5 text-sm text-cyan-300 text-center">
           Still have questions? See our{" "}
-          <Link href="/terms" className="underline hover:text-white">Terms &amp; Conditions</Link>,{" "}
-          <Link href="/privacy" className="underline hover:text-white">Privacy Policy</Link>, or{" "}
-          <Link href="/refund-policy" className="underline hover:text-white">Refund Policy</Link>.
+          <Link href="/terms" className="underline hover:text-white">
+            Terms &amp; Conditions
+          </Link>
+          ,{" "}
+          <Link href="/privacy" className="underline hover:text-white">
+            Privacy Policy
+          </Link>
+          , or{" "}
+          <Link href="/refund-policy" className="underline hover:text-white">
+            Refund Policy
+          </Link>
+          .
         </div>
       </main>
     </div>
@@ -151,9 +194,10 @@ function FAQItem({ q, a }: { q: string; a: string }) {
             transition={{ duration: 0.22, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <p className="px-5 pb-4 text-[14px] text-gray-600 dark:text-gray-300 leading-relaxed border-t border-gray-100 dark:border-white/5 pt-3">
-              {a}
-            </p>
+            <div 
+              className="px-5 pb-4 text-[14px] text-gray-600 dark:text-gray-300 leading-relaxed border-t border-gray-100 dark:border-white/5 pt-3"
+              dangerouslySetInnerHTML={{ __html: a }}
+            />
           </motion.div>
         )}
       </AnimatePresence>

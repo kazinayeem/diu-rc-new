@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -5,6 +7,15 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Calendar, MapPin, Users, ArrowRight } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+
+// Decode HTML entities - client-side only
+const decodeHTML = (html: string): string => {
+  if (!html) return "";
+  if (typeof document === "undefined") return html; // Fallback for server
+  const textArea = document.createElement("textarea");
+  textArea.innerHTML = html;
+  return textArea.value || html;
+};
 
 interface EventCardProps {
   event: {
@@ -58,7 +69,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
           {event.title}
         </h3>
 
-        <p className="text-[#8ED6E6]/60 text-xs mb-4 line-clamp-2">{event.description}</p>
+        <div className="text-[#8ED6E6]/60 text-xs mb-4 line-clamp-2 prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: decodeHTML(event.description) }} />
 
         <div className="space-y-1.5 mb-4">
           <div className="flex items-center gap-2 text-xs text-[#8ED6E6]/60">

@@ -43,7 +43,7 @@ export default function ConvenerMessage() {
               <div className="absolute -inset-[3px] rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-500 to-cyan-400/0 opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
               <div className="relative rounded-2xl overflow-hidden bg-[#0a1929]">
                 <Image
-                  src="https://diurc.vercel.app/hafizul_imran.jpg"
+                  src="https://diurc25.vercel.app/hafizul_imran.jpg"
                   alt="Md. Hafizul Imran"
                   width={320}
                   height={380}

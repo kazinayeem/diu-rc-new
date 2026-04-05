@@ -15,14 +15,15 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const skip = (page - 1) * limit;
 
+    const now = new Date();
     const query: any = { isActive: true };
     if (type) query.type = type;
 
-    
+    // Filter for active notices that haven't expired
     query.$or = [
       { expiresAt: { $exists: false } },
       { expiresAt: null },
-      { expiresAt: { $gte: new Date() } },
+      { expiresAt: { $gte: now } },
     ];
 
     const notices = await Notice.find(query)
@@ -45,6 +46,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error: any) {
+    console.error('Notices API error:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

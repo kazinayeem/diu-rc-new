@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/Button";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import EventRegistrationForm from "@/components/public/EventRegistrationForm";
+import CouponApplier from "@/components/public/CouponApplier";
+import parse, { HTMLReactParserOptions, Element, domToReact } from "html-react-parser";
 import {
   Calendar,
   Clock,
@@ -61,6 +63,130 @@ interface EventDetails {
   createdAt: string;
   updatedAt: string;
 }
+
+// Helper function to decode HTML entities
+const decodeHTMLEntities = (text: string): string => {
+  const entities: { [key: string]: string } = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&nbsp;': ' ',
+    '&apos;': "'",
+  };
+  
+  let decoded = text;
+  Object.entries(entities).forEach(([entity, char]) => {
+    decoded = decoded.replace(new RegExp(entity, 'g'), char);
+  });
+  
+  // Handle numeric entities
+  decoded = decoded.replace(/&#(\d+);/g, (match, decimal) => {
+    return String.fromCharCode(parseInt(decimal, 10));
+  });
+  decoded = decoded.replace(/&#x([0-9A-F]+);/gi, (match, hex) => {
+    return String.fromCharCode(parseInt(hex, 16));
+  });
+  
+  return decoded;
+};
+
+// HTML Parser options for React Quill content
+const htmlParserOptions: HTMLReactParserOptions = {
+  replace: (domNode) => {
+    if (domNode instanceof Element) {
+      const element = domNode as any;
+      
+      // Remove inline style attributes and replace with Tailwind classes
+      delete element.attribs.style;
+      
+      // Apply Tailwind classes to HTML elements
+      switch (element.name) {
+        case 'h1':
+          element.attribs.class = `text-2xl md:text-3xl font-bold mt-6 mb-4 text-gray-900 dark:text-white ${element.attribs.class || ''}`;
+          break;
+        case 'h2':
+          element.attribs.class = `text-xl md:text-2xl font-bold mt-6 mb-3 text-gray-900 dark:text-white ${element.attribs.class || ''}`;
+          break;
+        case 'h3':
+          element.attribs.class = `text-lg md:text-xl font-semibold mt-5 mb-3 text-gray-900 dark:text-white ${element.attribs.class || ''}`;
+          break;
+        case 'h4':
+          element.attribs.class = `text-base md:text-lg font-semibold mt-4 mb-2 text-gray-900 dark:text-white ${element.attribs.class || ''}`;
+          break;
+        case 'p':
+          element.attribs.class = `mb-4 leading-relaxed text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'span':
+          element.attribs.class = `text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'ul':
+          element.attribs.class = `list-disc list-inside mb-4 ml-4 space-y-2 text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'ol':
+          element.attribs.class = `list-decimal list-inside mb-4 ml-4 space-y-2 text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'li':
+          element.attribs.class = `mb-2 leading-relaxed text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'table':
+          element.attribs.class = `w-full border-collapse border border-gray-300 dark:border-gray-600 my-4 ${element.attribs.class || ''}`;
+          break;
+        case 'thead':
+          element.attribs.class = `bg-cyan-600 dark:bg-cyan-700 text-white ${element.attribs.class || ''}`;
+          break;
+        case 'th':
+          element.attribs.class = `px-4 py-3 text-left font-semibold border border-gray-300 dark:border-gray-600 ${element.attribs.class || ''}`;
+          break;
+        case 'td':
+          element.attribs.class = `px-4 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'tr':
+          if (element.parent?.name === 'tbody') {
+            element.attribs.class = `hover:bg-gray-100 dark:hover:bg-white/10 transition-colors ${element.attribs.class || ''}`;
+            const rowIndex = element.parent.children.indexOf(element);
+            if (rowIndex % 2 === 0) {
+              element.attribs.class += ` bg-gray-50 dark:bg-white/5`;
+            }
+          }
+          break;
+        case 'blockquote':
+          element.attribs.class = `border-l-4 border-cyan-600 dark:border-cyan-400 pl-4 py-2 mb-4 bg-cyan-50 dark:bg-cyan-900/20 italic text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'code':
+          element.attribs.class = `bg-gray-200 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-red-600 dark:text-red-400 ${element.attribs.class || ''}`;
+          break;
+        case 'pre':
+          element.attribs.class = `bg-gray-800 dark:bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4 font-mono text-sm ${element.attribs.class || ''}`;
+          break;
+        case 'a':
+          element.attribs.class = `text-cyan-600 dark:text-cyan-400 hover:underline transition-colors ${element.attribs.class || ''}`;
+          element.attribs.target = '_blank';
+          element.attribs.rel = 'noopener noreferrer';
+          break;
+        case 'strong':
+        case 'b':
+          element.attribs.class = `font-semibold text-gray-900 dark:text-white ${element.attribs.class || ''}`;
+          break;
+        case 'em':
+        case 'i':
+          element.attribs.class = `italic text-gray-700 dark:text-gray-300 ${element.attribs.class || ''}`;
+          break;
+        case 'hr':
+          element.attribs.class = `border-gray-300 dark:border-gray-600 my-6 ${element.attribs.class || ''}`;
+          break;
+        case 'img':
+          element.attribs.class = `max-w-full h-auto rounded-lg my-4 ${element.attribs.class || ''}`;
+          break;
+        case 'br':
+          return <br />;
+        default:
+          break;
+      }
+    }
+  },
+};
 
 export default function BootcampDetailsPage() {
   const params = useParams();
@@ -343,17 +469,16 @@ export default function BootcampDetailsPage() {
             {/* Description */}
             <div className="mb-8">
               <h2 className="text-2xl font-bold mb-4">About This Bootcamp</h2>
-              <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-                {event.description}
-              </p>
+              <div className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                {parse(decodeHTMLEntities(event.description), htmlParserOptions)}
+              </div>
 
               {event.content && (
                 <div className="mt-6 p-6 bg-gray-50 dark:bg-white/5 rounded-xl">
                   <h3 className="text-lg font-semibold mb-3">Bootcamp Details</h3>
-                  <div 
-                    className="prose prose-invert max-w-none text-gray-700 dark:text-gray-300 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mt-4 [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mt-3 [&_h3]:mb-2 [&_p]:mb-3 [&_ul]:mb-3 [&_ul]:ml-4 [&_li]:mb-1 [&_li]:list-disc"
-                    dangerouslySetInnerHTML={{ __html: event.content }}
-                  />
+                  <div className="prose prose-invert max-w-none">
+                    {parse(decodeHTMLEntities(event.content), htmlParserOptions)}
+                  </div>
                 </div>
               )}
             </div>
@@ -672,14 +797,27 @@ export default function BootcampDetailsPage() {
 
                   {/* Registration Form or Link */}
                   {event.registrationOpen && (event.spotsRemaining === null || event.spotsRemaining === undefined || event.spotsRemaining > 0) ? (
-                    <EventRegistrationForm
-                      eventId={event._id}
-                      eventTitle={event.title}
-                      isPaid={event.isPaid}
-                      registrationFee={event.registrationFee}
-                      paymentMethods={event.paymentMethods}
-                      onRegistrationSuccess={handleRegistrationSuccess}
-                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0.25 }}
+                    >
+                      <div className="mb-4">
+                        <CouponApplier
+                          eventId={event._id}
+                          isPaid={event.isPaid}
+                          registrationFee={event.registrationFee}
+                        />
+                      </div>
+                      <EventRegistrationForm
+                        eventId={event._id}
+                        eventTitle={event.title}
+                        isPaid={event.isPaid}
+                        registrationFee={event.registrationFee}
+                        paymentMethods={event.paymentMethods}
+                        onRegistrationSuccess={handleRegistrationSuccess}
+                      />
+                    </motion.div>
                   ) : event.registrationLimit && event.spotsRemaining === 0 ? (
                     <div className="w-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 font-bold py-4 px-4 rounded-lg text-center border border-red-300 dark:border-red-400/40">
                       <p className="text-lg">🚫 Bootcamp Fully Booked</p>

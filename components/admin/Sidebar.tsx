@@ -28,6 +28,9 @@ import {
   Mail,
   Palette,
   Award,
+  ScrollText,
+  HelpCircle,
+  MapPin,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -53,6 +56,9 @@ const ALL_MENU_ITEMS: MenuItem[] = [
   { href: "/admin/sponsors", label: "Sponsors", icon: Star, permission: "sponsors" },
   { href: "/admin/hall-of-fame", label: "Hall of Fame", icon: GraduationCap, permission: "hall-of-fame" },
   { href: "/admin/settings/homepage", label: "Homepage Content", icon: ImageIcon, superAdminOnly: true },
+  { href: "/admin/content-pages", label: "Content Pages", icon: ScrollText, superAdminOnly: true },
+  { href: "/admin/faq", label: "FAQ", icon: HelpCircle, superAdminOnly: true },
+  { href: "/admin/contact-us", label: "Contact Us", icon: MapPin, superAdminOnly: true },
   { href: "/admin/settings/smtp", label: "SMTP Config", icon: Mail, superAdminOnly: true },
   { href: "/admin/settings/admins", label: "Manage Admins", icon: ShieldCheck, superAdminOnly: true },
   { href: "/admin/settings", label: "Settings", icon: Settings, superAdminOnly: true },

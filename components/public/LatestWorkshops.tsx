@@ -6,6 +6,15 @@ import { Button } from "@/components/ui/Button";
 
 import { useGetEventsQuery } from "@/lib/api/api";
 
+// Decode HTML entities - client-side only
+const decodeHTML = (html: string): string => {
+  if (!html) return "";
+  if (typeof document === "undefined") return html; // Fallback for server
+  const textArea = document.createElement("textarea");
+  textArea.innerHTML = html;
+  return textArea.value || html;
+};
+
 export default function LatestWorkshops() {
   const { data, isLoading } = useGetEventsQuery({ query: "type=workshop&limit=3&sort=latest" });
   const workshops = data?.data || [];
@@ -46,9 +55,7 @@ export default function LatestWorkshops() {
 
               <h3 className="text-xl font-bold mb-2">{ws.title}</h3>
 
-              <p className="text-white/70 text-sm line-clamp-3">
-                {ws.description}
-              </p>
+              <div className="text-white/70 text-sm line-clamp-3 prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: decodeHTML(ws.description) }} />
 
               <p className="mt-3 text-white/60 text-sm">
                 📅 {new Date(ws.eventDate).toDateString()}

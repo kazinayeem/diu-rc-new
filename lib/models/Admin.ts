@@ -111,13 +111,7 @@ AdminSchema.methods.comparePassword = async function (
 AdminSchema.index({ email: 1 });
 AdminSchema.index({ role: 1, isActive: 1 });
 
-
-
-
-// Delete cached model to pick up schema changes after hot reload / redeploy
-delete (mongoose.models as any).Admin;
-
 const Admin: Model<IAdmin> =
-  mongoose.model<IAdmin>("Admin", AdminSchema);
+  mongoose.models.Admin || mongoose.model<IAdmin>("Admin", AdminSchema);
 
 export default Admin;

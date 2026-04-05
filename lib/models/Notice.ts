@@ -68,8 +68,8 @@ NoticeSchema.index({ isActive: 1, type: 1, priority: -1 });
 NoticeSchema.index({ expiresAt: 1 });
 NoticeSchema.index({ isMarquee: 1 });
 
-delete (mongoose.models as any).Notice;
-const Notice: Model<INotice> = mongoose.model<INotice>('Notice', NoticeSchema);
+const Notice: Model<INotice> =
+  mongoose.models.Notice || mongoose.model<INotice>('Notice', NoticeSchema);
 
 export default Notice;
 

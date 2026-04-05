@@ -49,8 +49,14 @@ export default function CertificatesPage() {
   const [importSummary, setImportSummary] = useState<{
     totalRowsDetected: number;
     imported: number;
+    duplicates?: number;
+    invalid?: number;
+    errors?: number;
+    emptyRowsIgnored?: number;
   } | null>(null);
   const [importMessage, setImportMessage] = useState("");
+  const [importError, setImportError] = useState("");
+  const [showImportGuide, setShowImportGuide] = useState(false);
 
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [bulkDownloading, setBulkDownloading] = useState(false);
@@ -148,8 +154,8 @@ export default function CertificatesPage() {
   };
 
   const certificateDescription = (cert: CertificateRow) => {
-    if (cert.description) return cert.description;
-    return `for successfully participating in ${cert.event || "the event"} organized by DIU Robotics Club`;
+    // Just return a completing message without duplicating name
+    return `for successfully completing ${cert.event || "the program"}`;
   };
 
   const readBlobAsDataUrl = (blob: Blob) =>
@@ -205,12 +211,25 @@ export default function CertificatesPage() {
     pdf.setFontSize(recipientFontSize);
     pdf.text(recipient, CERT_WIDTH / 2, 386, { align: "center" });
 
+    // Add event name below recipient name
+    pdf.setFont("times", "normal");
+    pdf.setFontSize(20);
+    pdf.setTextColor(30, 58, 138);
+    pdf.text(`${cert.event || ""}`, CERT_WIDTH / 2, 420, { align: "center" });
+
+    pdf.setTextColor(30, 58, 138);
     const desc = certificateDescription(cert);
     const descFont = desc.length > 150 ? 14 : desc.length > 115 ? 16 : 18;
     pdf.setFont("times", "normal");
     pdf.setFontSize(descFont);
     const wrapped = pdf.splitTextToSize(desc, 840);
     pdf.text(wrapped, CERT_WIDTH / 2, 474, { align: "center" });
+
+    // Add best wishes text at the bottom
+    pdf.setFont("times", "italic");
+    pdf.setFontSize(16);
+    pdf.setTextColor(30, 58, 138);
+    pdf.text("Best Wishes!", CERT_WIDTH / 2, 590, { align: "center" });
   };
 
   const downloadOneCertificate = async (cert: CertificateRow) => {
@@ -280,6 +299,7 @@ export default function CertificatesPage() {
 
     setImporting(true);
     setImportMessage("");
+    setImportError("");
     setImportSummary(null);
 
     try {
@@ -296,15 +316,18 @@ export default function CertificatesPage() {
         throw new Error(data.error || "Import failed");
       }
 
-      setImportMessage("File uploaded");
+      setImportMessage(data.message || "File uploaded successfully");
       setImportSummary({
         totalRowsDetected: data.totalRowsDetected || 0,
         imported: data.imported || 0,
+        duplicates: data.duplicates || 0,
+        invalid: data.invalid || 0,
+        errors: data.errors || 0,
       });
       setImportFile(null);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Import failed";
-      setImportMessage(message);
+      setImportError(message);
     } finally {
       setImporting(false);
     }
@@ -419,18 +442,69 @@ export default function CertificatesPage() {
       </div>
 
       <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-5 space-y-4">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <FileSpreadsheet size={18} className="text-[#3DB5D8]" />
-          Import Certificate Excel
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+            <FileSpreadsheet size={18} className="text-[#3DB5D8]" />
+            Import Certificate Excel
+          </h2>
+          <button
+            onClick={() => setShowImportGuide(!showImportGuide)}
+            className="text-sm text-[#3DB5D8] hover:text-[#5cc8e6] underline"
+          >
+            {showImportGuide ? "Hide" : "Show"} Format Guide
+          </button>
+        </div>
 
-        <div className="grid md:grid-cols-[1fr_auto] gap-3">
+        {showImportGuide && (
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 space-y-3 text-sm">
+            <div>
+              <h3 className="font-semibold text-blue-200 mb-2">✓ Required Columns:</h3>
+              <p className="text-white/70">Your Excel file must include columns for:</p>
+              <ul className="list-disc list-inside text-white/60 mt-1 space-y-1">
+                <li><span className="font-mono text-blue-300">Certificate ID</span> (or: ID, Cert ID, Certificate No)</li>
+                <li><span className="font-mono text-blue-300">Name</span> (or: Recipient Name, Full Name, Student Name)</li>
+                <li><span className="font-mono text-blue-300">Email</span> (or: Email Address, Recipient Email)</li>
+                <li><span className="font-mono text-blue-300">Workshop/Event</span> (or: Event, Event Name, Course, Program)</li>
+                <li><span className="font-mono text-blue-300">Issue Date</span> (or: Date, Issued Date, Completion Date)</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-blue-200 mb-2">ℹ️ Optional Columns:</h3>
+              <p className="text-white/70">Name Filled Up - for display variant of recipient name</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-blue-200 mb-2">📝 Example Format:</h3>
+              <div className="bg-black/20 rounded p-2 font-mono text-xs text-white/50 overflow-x-auto">
+                <div>Certificate ID | Name | Email | Event | Date Issued</div>
+                <div>CERT-001 | John Doe | john@email.com | Workshop | 2026-04-05</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="grid md:grid-cols-[1fr_auto_auto] gap-3">
           <input
             type="file"
             accept=".xlsx,.xls"
-            onChange={(e) => setImportFile(e.target.files?.[0] || null)}
+            onChange={(e) => {
+              setImportFile(e.target.files?.[0] || null);
+              setImportError("");
+              setImportMessage("");
+            }}
             className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-[#3DB5D8]/20 file:text-[#9de6f8]"
           />
+          <Button
+            onClick={() => {
+              const link = document.createElement('a');
+              link.href = '/templates/certificate-import-template.xlsx';
+              link.download = 'certificate-import-template.xlsx';
+              link.click();
+            }}
+            className="flex items-center gap-2 bg-blue-500/80 hover:bg-blue-500 text-white px-4 py-2 rounded-lg"
+          >
+            <Download size={16} />
+            Download Template
+          </Button>
           <Button
             onClick={handleImportData}
             disabled={!importFile || importing}
@@ -441,14 +515,25 @@ export default function CertificatesPage() {
           </Button>
         </div>
 
+        {importError && (
+          <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-sm text-red-300 space-y-2">
+            <p className="font-semibold">❌ Import Failed:</p>
+            <p>{importError}</p>
+          </div>
+        )}
+
         {(importMessage || importSummary) && (
-          <div className="bg-white/5 border border-white/10 rounded-lg p-3 text-sm text-white/90 space-y-1">
-            {importMessage && <p>{importMessage}</p>}
+          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 text-sm text-green-300 space-y-2">
+            {importMessage && <p className="font-semibold">✓ {importMessage}</p>}
             {importSummary && (
-              <>
-                <p>Total rows detected: {importSummary.totalRowsDetected}</p>
-                <p>Successfully imported: {importSummary.imported}</p>
-              </>
+              <div className="space-y-1 text-xs">
+                <p>📊 Total data rows: <span className="font-semibold">{importSummary.totalRowsDetected}</span></p>
+                <p>✅ Successfully imported: <span className="font-semibold text-green-400">{importSummary.imported}</span></p>
+                {importSummary.emptyRowsIgnored ? <p>⏭️ Empty rows ignored: <span className="font-semibold text-gray-400">{importSummary.emptyRowsIgnored}</span></p> : null}
+                {importSummary.duplicates ? <p>⚠️ Duplicates skipped: <span className="font-semibold text-yellow-400">{importSummary.duplicates}</span></p> : null}
+                {importSummary.invalid ? <p>❌ Invalid/incomplete rows: <span className="font-semibold text-red-400">{importSummary.invalid}</span></p> : null}
+                {importSummary.errors ? <p>❌ Errors during import: <span className="font-semibold text-red-400">{importSummary.errors}</span></p> : null}
+              </div>
             )}
           </div>
         )}
